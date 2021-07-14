@@ -32,7 +32,7 @@ function gco() {
 
 function _master_or_main() {
     # return default branch
-    return $(git branch | grep "master\|main" | tr -d \* | xargs)
+    git branch | grep "master\|main" | tr -d \* | xargs
 }
 
 function grebase() {
@@ -48,7 +48,7 @@ function grebase() {
         return
     fi
     git checkout $default
-    git pull
+    git pull origin $default
     git checkout $current_branch
     git rebase $default
     return $?
