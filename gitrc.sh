@@ -5,12 +5,13 @@ NC='\033[0m' # No Color
 # git checkout branch
 function gco() {
     # no args, list branches with numbers
+    default=$(_master_or_main)
     if [[ $# -eq 0 ]]; then
         branches=$(git branch)
         counter=1
         echo $branches | while read b; do
-            # if branch is not master, show number
-            if [[ $b != *"master" ]]; then
+            # if branch is not master or main, show number
+            if [[ $b != *$default* ]]; then
                 echo "${GREEN}$counter${NC}: $b" | tr -d \* | xargs
                 ((counter++))
             fi
@@ -29,29 +30,36 @@ function gco() {
     fi
 }
 
+function _master_or_main() {
+    # return default branch
+    return $(git branch | grep "master\|main" | tr -d \* | xargs)
+}
+
 function grebase() {
-    current_branch=$(git branch | grep \* | cut -d' ' -f2)
-    # if current branch is master do nothing
-    if [[ $current_branch == "master" ]]; then
-        return
-    fi
-    git checkout master
-    git pull
-    git checkout $current_branch
-    git rebase master
-    return $?
-}
-
-function gcom() {
-    git checkout master
-}
-
-function gdiff() {
     # check if uncommitted changes exist
     if [[ $(git status --porcelain) != "" ]]; then
         echo "${RED}You have uncommitted changes. Please commit or stash them before running this command.${NC}"
         return
     fi
+    default=$(_master_or_main)
+    current_branch=$(git branch | grep \* | cut -d' ' -f2)
+    # if current branch is master do nothing
+    if [[ $current_branch == $default ]]; then
+        return
+    fi
+    git checkout $default
+    git pull
+    git checkout $current_branch
+    git rebase $default
+    return $?
+}
+
+function gcom() {
+    default=$(_master_or_main)
+    git checkout $default
+}
+
+function gdiff() {
     grebase
     if [[ $? -ne 0 ]]; then
         echo "${RED}There are merge conflicts. Please resolve them before running this command.${NC}"
