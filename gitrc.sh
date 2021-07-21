@@ -4,37 +4,65 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
+
 # git checkout branch
 function gco() {
     # no args, list branches with numbers
     default=$(_master_or_main)
+    current=$(_current_branch)
+    branches=$(git branch)
+    unstaged=""
+    if [[ $(git status --porcelain) != "" ]]; then
+        unstaged=" (${RED}unstaged changes${NC})"
+    fi
     if [[ $# -eq 0 ]]; then
-        branches=$(git branch)
         counter=1
+        current_marker=""
+        if [[ "$branches" == *"* $default"* ]]; then
+            current_marker=" (${RED}current${NC})${unstaged}"
+        fi
+        echo "${GREEN}0${NC}: $default$current_marker"
         echo $branches | while read b; do
             # if branch is not master or main, show number
             if [[ $b != *$default* ]]; then
-                echo "${GREEN}$counter${NC}: $b" | tr -d \* | xargs
+                current_marker=""
+                if [[ $b == *"*"* ]]; then
+                    current_marker=" (${RED}current${NC})${unstaged}"
+                fi
+                echo "${GREEN}$counter${NC}: $b$current_marker" | tr -d \* | xargs
                 ((counter++))
             fi
         done
+
+        echo -n "Choose branch: "
+        read branchNum
     else
-        # switch to numbered branch
-        branches=$(git branch)
-        counter=1
-        echo $branches | while read b; do
-            branch=$(echo $b | tr -d \* | xargs)
-            if [[ $1 -eq $counter ]]; then
-                git checkout $branch
+        branchNum=$1
+    fi
+    counter=1
+    if [[ $branchNum == 0 ]]; then
+        git checkout $default
+        return
+    fi
+    echo $branches | while read b; do
+        # if branch is not master or main, show number
+        if [[ $b != *$default* ]]; then
+            if [[ $branchNum -eq $counter ]]; then
+                git checkout $(echo $b | tr -d \* | xargs)
+                break
             fi
             ((counter++))
-        done
-    fi
+        fi
+    done
 }
 
 function _master_or_main() {
     # return default branch
     git branch | grep "master\|main" | tr -d \* | xargs
+}
+
+function _current_branch() {
+    git branch | grep \* | cut -d' ' -f2
 }
 
 function grebase() {
@@ -44,7 +72,7 @@ function grebase() {
         return
     fi
     default=$(_master_or_main)
-    current_branch=$(git branch | grep \* | cut -d' ' -f2)
+    current_branch=$(_current_branch)
     # if current branch is master do nothing
     if [[ $current_branch == $default ]]; then
         return
