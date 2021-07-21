@@ -1,1 +1,1 @@
-source ./gitrc.sh
+source ~/dotfiles/gitrc.sh

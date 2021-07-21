@@ -1,3 +1,5 @@
+set +x
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
@@ -70,6 +72,8 @@ function gdiff() {
     if [[ $1 == "-f" ]]; then
         force="-f"
     fi  
+    # get timestamp
+    timestamp=$(date +%Y-%m-%d_%H-%M-%S)
     # good to diff
     # get commit title
     commit_title=$(git log --pretty=format:"%s" -n 1)
@@ -77,13 +81,20 @@ function gdiff() {
     branch_name=$(git branch | grep \* | cut -d' ' -f2)
     # get repository name
     repository_name=$(git remote -v | grep push | cut -d'/' -f6 | cut -d' ' -f1)
+    git diff $(_master_or_main) > /tmp/diff_$repository_name_$branch_name_$timestamp.diff
+    code /tmp/diff_$repository_name_$branch_name_$timestamp.diff
+    # ask for confirmation
+    echo "Do you want to commit this diff? [y/n]"
+    read -n 1 -r
+    if [[ $REPLY == "n" ]]; then
+        return
+    fi
+
     git push $force origin $branch_name
     if [[ $? -ne 0 ]]; then
         echo "${RED}There was an error pushing to the remote repository. Please resolve the error and try again.${NC}"
         return
     fi
-    # get timestamp
-    timestamp=$(date +%Y-%m-%d_%H-%M-%S)
     # create aws codecommit pull request
     echo "Creating pull request for ${GREEN} $branch_name ${NC}: ${GREEN}$commit_title${NC}"
     aws codecommit create-pull-request \
