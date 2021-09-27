@@ -7,6 +7,14 @@ NC='\033[0m' # No Color
 
 # git checkout branch
 function gco() {
+    # check for -d flag
+    delete_branch=false
+    if [[ $* == *-d* ]] ; then
+        delete_branch=true
+        echo "Deleting branch"
+        shift
+    fi
+    echo "$*"
     # no args, list branches with numbers
     default=$(_master_or_main)
     current=$(_current_branch)
@@ -45,10 +53,24 @@ function gco() {
         return
     fi
     echo $branches | while read b; do
-        # if branch is not master or main, show number
         if [[ $b != *$default* ]]; then
             if [[ $branchNum -eq $counter ]]; then
-                git checkout $(echo $b | tr -d \* | xargs)
+                if [[ $delete_branch == true ]]; then
+                    # if this branch is the current branch exit without deleting
+                    if [[ $b == *"*"* ]]; then
+                        echo "${RED}Cannot delete current branch${NC}"
+                        return
+                    fi
+                    echo "Delete branch ${RED}${b}${NC}?"
+                    select yn in "Yes" "No"; do
+                        case $yn in
+                            Yes ) git branch -D $b; break;;
+                            No ) break;;
+                        esac
+                    done
+                else
+                    git checkout $(echo $b | tr -d \* | xargs)
+                fi
                 break
             fi
             ((counter++))
@@ -112,11 +134,12 @@ function gdiff() {
     git diff $(_master_or_main) > /tmp/diff_$repository_name_$branch_name_$timestamp.diff
     code /tmp/diff_$repository_name_$branch_name_$timestamp.diff
     # ask for confirmation
-    echo "Do you want to commit this diff? [y/n]"
-    read -n 1 -r
-    if [[ $REPLY == "n" ]]; then
-        return
-    fi
+    echo "Do you want to commit this diff?"
+    select yn in "Yes" "No"; do
+        case $yn in
+            Yes ) break;;
+            No ) return;;
+        esac
 
     git push $force origin $branch_name
     if [[ $? -ne 0 ]]; then
