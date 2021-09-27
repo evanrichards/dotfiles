@@ -140,7 +140,7 @@ function gdiff() {
             Yes ) break;;
             No ) return;;
         esac
-
+    done
     git push $force origin $branch_name
     if [[ $? -ne 0 ]]; then
         echo "${RED}There was an error pushing to the remote repository. Please resolve the error and try again.${NC}"
