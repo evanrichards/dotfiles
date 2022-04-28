@@ -165,3 +165,10 @@ function gdiff() {
         cat /tmp/pull_request_$timestamp.json
     fi
 }
+
+function gnew() {
+    # make a new branch prefixed with evan/
+    # convert all arguments to dash-separated string
+    branch_name=$(echo $@ | tr ' ' '-')
+    git checkout -b evan/$branch_name
+}
