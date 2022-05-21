@@ -42,3 +42,8 @@ touch .tmux.conf
 # nvm install
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh
 | bash
+
+brew install zsh-syntax-highlighting
+
+#dracula colors for alacritty, tmux, vim, zsh-syntax-highlighting https://draculatheme.com
+alias vim="nvim"
