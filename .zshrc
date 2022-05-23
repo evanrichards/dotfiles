@@ -4,6 +4,9 @@ export ARCHFLAGS="-arch arm64"
 # Opt arrow keys should move words
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
+if [ ! -d "$HOME/zsh-syntax-highlighting" ]; then
+        brew install zsh-syntax-highlighting
+fi
 source /Users/evanrichards/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # Theme work
