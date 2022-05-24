@@ -18,26 +18,28 @@ Plug 'dracula/vim', { 'as': 'dracula' }
 call plug#end()
 colorscheme dracula
 
-syntax enable
-
 syntax on
 
 filetype plugin indent on
 
-set number
-set ruler
+set number relativenumber
 set visualbell
 set encoding=utf-8
 set wrap
 set textwidth=79
+set colorcolumn=80
 set formatoptions=tcqrn1
 set tabstop=2
 set softtabstop=2
+set shiftwidth=2
+set smartindent
 set expandtab
 set noshiftround
+set smartcase
+set ignorecase
 
 " Cursor motion
-set scrolloff=3
+set scrolloff=8
 set backspace=indent,eol,start
 set matchpairs+=<:>
 runtime! macros/matchit.vim
@@ -49,30 +51,15 @@ set hidden
 
 set ttyfast
 
-set laststatus=2
-
 set showmode
 set showcmd
+let g:mapleader = ","
 
 map <leader><space> :let @/=''<cr> " clear search
 
 inoremap <F1> <ESC>:set invfullscreen<CR>a
 nnoremap <F1> :set invfullscreen<CR>
 vnoremap <F1> :set invfullscreen<CR>
-
-" Textmate holdouts
-
-" Formatting
-map <leader>q gqip
-
-" Visualize tabs and newlines
-set listchars=tab:▸\ ,eol:¬
-map <leader>l :set list!<CR> " Toggle tabs and EOL
-
-
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-let g:indentLine_char = '⦙'
-
 
 
 if executable('pyls')
