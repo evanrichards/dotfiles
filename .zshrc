@@ -3,7 +3,12 @@ export TERM='screen-256color'
 # Compilation flags
 export ARCHFLAGS="-arch arm64"
 # let asdf choose our versions
-. /usr/local/opt/asdf/libexec/asdf.sh
+if [ -d /usr/local/opt/asdf/libexec ]; then
+  . /usr/local/opt/asdf/libexec/asdf.sh
+fi
+if [ -d /opt/homebrew/opt/asdf/libexec ]; then
+  . /opt/homebrew/opt/asdf/libexec/asdf.sh
+fi
 # Opt arrow keys should move words
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
@@ -40,3 +45,5 @@ alias ll="exa -alh"
 alias cat="bat"
 alias dotfiles="cd $HOME/code/dotfiles"
 source "$HOME/code/dotfiles/gitrc.sh"
+
+
