@@ -1,6 +1,4 @@
-
 set nocompatible
-
 filetype off
 
 " Vim-plug
@@ -71,11 +69,6 @@ map <leader>q gqip
 set listchars=tab:▸\ ,eol:¬
 map <leader>l :set list!<CR> " Toggle tabs and EOL
 
-set t_Co=256
-set background=dark
-let g:solarized_termcolors=256
-let g:solarized_termtrans=1
-colorscheme solarized
 
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 let g:indentLine_char = '⦙'
