@@ -14,6 +14,8 @@ Plug 'google/vim-maktaba'
 Plug 'google/vim-codefmt'
 Plug 'google/vim-glaive'
 Plug 'dracula/vim', { 'as': 'dracula' }
+Plug 'kamykn/spelunker.vim'
+Plug 'kamykn/popup-menu.nvim'
 
 call plug#end()
 colorscheme dracula
@@ -37,6 +39,7 @@ set expandtab
 set noshiftround
 set smartcase
 set ignorecase
+set nospell
 
 " Cursor motion
 set scrolloff=8

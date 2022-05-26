@@ -2,6 +2,11 @@ export EDITOR='nvim'
 export TERM='screen-256color'
 # Compilation flags
 export ARCHFLAGS="-arch arm64"
+# node stuff
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
 # let asdf choose our versions
 if [ -d /usr/local/opt/asdf/libexec ]; then
   . /usr/local/opt/asdf/libexec/asdf.sh
@@ -31,11 +36,6 @@ if [ ! -d "$HOME/.dracula/zsh-syntax-highlighting" ]; then
 fi
 source "$HOME/.dracula/zsh-syntax-highlighting/zsh-syntax-highlighting.sh"
 ZSH_HIGHLIGHT_STYLES[cursor]='bold'
-
-# node stuff
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # my aliases
 alias vim="nvim"
