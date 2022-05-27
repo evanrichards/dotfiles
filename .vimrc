@@ -16,6 +16,7 @@ Plug 'google/vim-glaive'
 Plug 'dracula/vim', { 'as': 'dracula' }
 Plug 'kamykn/spelunker.vim'
 Plug 'kamykn/popup-menu.nvim'
+Plug 'fladson/vim-kitty'
 
 call plug#end()
 colorscheme dracula
