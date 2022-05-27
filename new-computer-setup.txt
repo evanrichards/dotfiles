@@ -7,7 +7,7 @@ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/$(whoami)/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
 tmux
 # install latest vim
-brew install nvim exa bat rg
+brew install nvim exa bat rg kitty
 # vim plug: https://github.com/junegunn/vim-plug
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -24,6 +24,7 @@ brew tap homebrew/cask-fonts
 brew tap huytd/cask-fonts
 brew install --cask font-iosevka
 brew install --cask font-haskplex-nerd
+brew install --cask font-fira-code
 
 # Setup alacrity configs
 touch .alacritty.yml
