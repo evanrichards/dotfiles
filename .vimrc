@@ -24,8 +24,12 @@ call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
     Plug 'mhinz/vim-signify'
     " wide ranging language support
     Plug 'sheerun/vim-polyglot'
+    " Git support
+    Plug 'tpope/vim-fugitive'
     " Github support, :Gbrowse and <C-X><C-O> for omnicomplete
     Plug 'tpope/vim-rhubarb'
+    " navigate tmux panes with <C-movement> keys
+    Plug 'christoomey/vim-tmux-navigator'
 
 call plug#end()
 
