@@ -1,121 +1,116 @@
 set nocompatible
-filetype off
 
 " Vim-plug
 call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
 
-Plug 'prabirshrestha/vim-lsp'
-Plug 'mattn/vim-lsp-settings'
-Plug 'prabirshrestha/asyncomplete.vim'
-Plug 'prabirshrestha/asyncomplete-lsp.vim'
-Plug 'tpope/vim-sensible'
-Plug 'github/copilot.vim'
-Plug 'google/vim-maktaba'
-Plug 'google/vim-codefmt'
-Plug 'google/vim-glaive'
-Plug 'dracula/vim', { 'as': 'dracula' }
-Plug 'kamykn/spelunker.vim'
-Plug 'kamykn/popup-menu.nvim'
-Plug 'fladson/vim-kitty'
+    " https://github.com/tpope/vim-sensible
+    Plug 'tpope/vim-sensible'
+    " https://github.com/github/copilot.vim
+    Plug 'github/copilot.vim'
+    " code formatting
+    Plug 'google/vim-maktaba'
+    Plug 'google/vim-codefmt'
+    " remove reflections
+    Plug 'dracula/vim', { 'as': 'dracula' }
+    " https://github.com/kamykn/spelunker.vim
+    " spell checking, use Zl for list of replacements, Zg to add, Zt to toggle
+    Plug 'kamykn/spelunker.vim'
+    Plug 'kamykn/popup-menu.nvim'
+    " kitty syntax highligting, way overkill
+    Plug 'fladson/vim-kitty'
+    " auto-close parens, quotes, and brackets; auto-formats with new lines
+    Plug 'cohama/lexima.vim'
+    " show git status on lines
+    Plug 'mhinz/vim-signify'
+    " wide ranging language support
+    Plug 'sheerun/vim-polyglot'
+    " Github support, :Gbrowse and <C-X><C-O> for omnicomplete
+    Plug 'tpope/vim-rhubarb'
 
 call plug#end()
+
+" cop that vlad fit
 colorscheme dracula
 
+" turn on syntax highlighting
 syntax on
 
-filetype plugin indent on
+" turn on file-type specific features
+filetype on
+filetype indent on
+filetype plugin on
 
+" show the line number the cursor is on and relatve line numbers in
+" either direction
 set number relativenumber
+" shhhh
 set visualbell
-set encoding=utf-8
+set noerrorbells
+" wrap lines when they are too long
 set wrap
+
+" Maximum width of text that is being inserted.  A longer line will be
+" broken after white space to get this width.  A zero value disables
+" this.
 set textwidth=79
+" Show a line at 80 chars
 set colorcolumn=80
-set formatoptions=tcqrn1
-set tabstop=2
-set softtabstop=2
-set shiftwidth=2
+" tabs should look like 4 spaces
+set tabstop=4
+" treat tabs like 4 spaces when editing
+set softtabstop=4
+" auto indent width
+set shiftwidth=4
 set smartindent
+" turn tabs into spaces
 set expandtab
-set noshiftround
-set smartcase
+" use case insensitive search...
 set ignorecase
+" ... unless there is a capital in the search
+set smartcase
+" turn off native spell checking
 set nospell
+" show the mode at the bottom if not normal mode
+set showmode
+" show dimensions of selection in visual mode
+set showcmd
 
 " Cursor motion
+" start scrolling the screen when the cursor is 8 lines from the edge
 set scrolloff=8
 set backspace=indent,eol,start
+" add < > to % matching
 set matchpairs+=<:>
-runtime! macros/matchit.vim
 
-nnoremap j gj
-nnoremap k gk
+" Disabling the directional keys
+map <up> <nop>
+map <down> <nop>
+map <left> <nop>
+map <right> <nop>
+imap <up> <nop>
+imap <down> <nop>
+imap <left> <nop>
+imap <right> <nop>
 
+" if you open a new vim buffer, hide the old, dont throw it away
 set hidden
 
-set ttyfast
-
-set showmode
-set showcmd
+" set leader key to comma
 let g:mapleader = ","
 
-map <leader><space> :let @/=''<cr> " clear search
+" clear search highlighting with ,+<space>
+map <leader><space> :let @/=''<cr>
 
-inoremap <F1> <ESC>:set invfullscreen<CR>a
-nnoremap <F1> :set invfullscreen<CR>
-vnoremap <F1> :set invfullscreen<CR>
-
-
-if executable('pyls')
-    " pip install python-language-server
-    au User lsp_setup call lsp#register_server({
-        \ 'name': 'pyls',
-        \ 'cmd': {server_info->['pyls']},
-        \ 'allowlist': ['python'],
-        \ })
-endif
-
-function! s:on_lsp_buffer_enabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
-    nmap <buffer> gd <plug>(lsp-definition)
-    nmap <buffer> gs <plug>(lsp-document-symbol-search)
-    nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gi <plug>(lsp-implementation)
-    nmap <buffer> gt <plug>(lsp-type-definition)
-    nmap <buffer> <leader>rn <plug>(lsp-rename)
-    nmap <buffer> [g <plug>(lsp-previous-diagnostic)
-    nmap <buffer> ]g <plug>(lsp-next-diagnostic)
-    nmap <buffer> K <plug>(lsp-hover)
-    " this was disabled because it was causing the default vim behaviour
-    " to fail for some reason, gotta have my scroll down
-    " nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
-    " nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
-
-    let g:lsp_format_sync_timeout = 1000
-    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
-    
-    " refer to doc to add more commands
-endfunction
-
-augroup lsp_install
-    au!
-    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
-    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
-augroup END
-
+" set up autoformatting for certain file types through vim-codefmt
 augroup autoformat_settings
-  autocmd FileType bzl AutoFormatBuffer buildifier
   autocmd FileType c,cpp,proto,javascript,arduino AutoFormatBuffer clang-format
-  autocmd FileType dart AutoFormatBuffer dartfmt
   autocmd FileType go AutoFormatBuffer gofmt
-  autocmd FileType gn AutoFormatBuffer gn
   autocmd FileType html,css,sass,scss,less,json AutoFormatBuffer js-beautify
-  autocmd FileType java AutoFormatBuffer google-java-format
   autocmd FileType python AutoFormatBuffer yapf
-  " Alternative: autocmd FileType python AutoFormatBuffer autopep8
   autocmd FileType rust AutoFormatBuffer rustfmt
-  autocmd FileType vue AutoFormatBuffer prettier
 augroup END
+
+" format styntax highlight primsa files like typescript
+autocmd BufNewFile,BufRead *.prisma set syntax=typescript
+" delete trailing whitespace on save
+autocmd BufWritePre * :%s/\s\+$//e
