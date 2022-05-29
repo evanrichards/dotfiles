@@ -43,6 +43,7 @@ alias tree="exa --tree"
 alias ls="exa"
 alias ll="exa -alh"
 alias cat="bat"
+alias chezmoicd="cd $HOME/.local/share/chezmoi"
 alias dotfiles="cd $HOME/code/dotfiles"
 source "$HOME/code/dotfiles/gitrc.sh"
 
