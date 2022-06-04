@@ -10,6 +10,7 @@ call plug#begin(has('nvim') ? stdpath('data') . '/plugged' : '~/.vim/plugged')
     " code formatting
     Plug 'google/vim-maktaba'
     Plug 'google/vim-codefmt'
+    Plug 'sbdchd/neoformat'
     " remove reflections
     Plug 'dracula/vim', { 'as': 'dracula' }
     " https://github.com/kamykn/spelunker.vim
@@ -82,11 +83,11 @@ set textwidth=79
 " Show a line at 80 chars
 set colorcolumn=80
 " tabs should look like 4 spaces
-set tabstop=4
+set tabstop=2
 " treat tabs like 4 spaces when editing
-set softtabstop=4
+set softtabstop=2
 " auto indent width
-set shiftwidth=4
+set shiftwidth=2
 set smartindent
 " turn tabs into spaces
 set expandtab
@@ -107,6 +108,9 @@ set scrolloff=8
 set backspace=indent,eol,start
 " add < > to % matching
 set matchpairs+=<:>
+" code formatting, try to look for local prettier
+let g:neoformat_try_node_exe = 1
+autocmd BufWritePre *.ts Neoformat
 
 " Disabling the directional keys
 map <up> <nop>
@@ -122,7 +126,7 @@ imap <right> <nop>
 set hidden
 
 " set leader key to comma
-let g:mapleader = ","
+let g:mapleader = " "
 
 " clear search highlighting with ,+<space>
 map <leader><space> :let @/=''<cr>
@@ -159,6 +163,10 @@ require("nvim-lsp-installer").setup({
         }
     }
 })
+
+require('telescope').setup{ defaults = {
+    file_ignore_patterns = {"dist", "generated", "node_modules", "prisma/migrations"}
+    } }
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -198,7 +206,6 @@ local servers = {
     'cssls',
     'dockerls',
     'eslint',
-    'gopls',
     'grammarly',
     'graphql',
     'html',
@@ -207,7 +214,6 @@ local servers = {
     'pyright',
     'remark_ls',
     'rust_analyzer',
-    'sqls',
     'sumneko_lua',
     'tsserver',
     'vimls',
@@ -216,16 +222,19 @@ local servers = {
 
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 for _, lsp in pairs(servers) do
- -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
   require('lspconfig')[lsp].setup {
     capabilities = capabilities,
     on_attach = on_attach,
-    flags = {
-      -- This will be the default in neovim 0.7+
-      debounce_text_changes = 150,
-    }
   }
 end
+
+require('lspconfig').tsserver.setup {
+  init_options = {
+    preferences = {
+      importModuleSpecifierPreference = 'non-relative',
+    },
+  },
+}
 
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
