@@ -11,6 +11,8 @@ require("packer").startup(function()
 	use("sbdchd/neoformat")
 	-- remove reflections
 	use({ "dracula/vim", as = "dracula" })
+	-- one dark theme
+	use("navarasu/onedark.nvim")
 	-- https://github.com/kamykn/spelunker.vim
 	-- spell checking, use Zl for list of replacements, Zg to add, Zt to toggle
 	use("kamykn/spelunker.vim")
@@ -18,7 +20,9 @@ require("packer").startup(function()
 	-- kitty syntax highligting, way overkill
 	use("fladson/vim-kitty")
 	-- auto-close parens, quotes, and brackets; auto-formats with new lines
-	use("cohama/lexima.vim")
+	-- this was annoying me so I disabled it
+	-- use("cohama/lexima.vim")
+
 	-- show git status on lines
 	use("mhinz/vim-signify")
 	-- wide ranging language support
@@ -50,10 +54,20 @@ require("packer").startup(function()
 	use("hrsh7th/nvim-cmp")
 	use("hrsh7th/cmp-vsnip")
 	use("hrsh7th/vim-vsnip")
-end)
-vim.opt.completeopt = "menu,menuone,noselect"
 
-vim.cmd("colorscheme dracula")
+	-- statusline stuff
+	use("nvim-lualine/lualine.nvim")
+end)
+vim.opt.completeopt = { "menu", "menuone", "noselect" }
+-- turn on lualine statusline
+require("lualine").setup()
+
+--vim.cmd("colorscheme dracula")
+--options here are dark, darker, cool, deep, warm, warmer
+require("onedark").setup({
+	style = "dark",
+})
+require("onedark").load()
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.visualbell = true
