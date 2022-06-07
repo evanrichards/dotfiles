@@ -60,6 +60,8 @@ require("packer").startup(function()
 	use("nvim-lualine/lualine.nvim")
 
 	use("kyazdani42/nvim-tree.lua")
+
+	use("folke/trouble.nvim")
 end)
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 -- turn on lualine statusline
@@ -68,6 +70,14 @@ require("nvim-tree").setup({})
 vim.keymap.set("n", "<C-n>", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<leader>r", ":NvimTreeRefresh<CR>")
 vim.keymap.set("n", "<leader>c", ":NvimTreeFindFile<CR>")
+
+require("trouble").setup({})
+vim.keymap.set("n", "<leader>xx", ":TroubleToggle<CR>")
+vim.keymap.set("n", "<leader>xw", ":TroubleToggle workspace_diagnostics<CR>")
+vim.keymap.set("n", "<leader>xd", ":TroubleToggle document_diagnostics<CR>")
+vim.keymap.set("n", "<leader>xq", ":TroubleToggle quickfix<CR>")
+vim.keymap.set("n", "<leader>xl", ":TroubleToggle loclist<CR>")
+vim.keymap.set("n", "gR", ":TroubleToggle lsp_references<CR>")
 
 --vim.cmd("colorscheme dracula")
 --options here are dark, darker, cool, deep, warm, warmer
