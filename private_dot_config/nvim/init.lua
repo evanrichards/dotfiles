@@ -1,4 +1,5 @@
 vim.g.mapleader = " "
+
 require("packer").startup(function()
 	use("wbthomason/packer.nvim")
 	-- https://github.com/tpope/vim-sensible
@@ -57,10 +58,16 @@ require("packer").startup(function()
 
 	-- statusline stuff
 	use("nvim-lualine/lualine.nvim")
+
+	use("kyazdani42/nvim-tree.lua")
 end)
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 -- turn on lualine statusline
 require("lualine").setup()
+require("nvim-tree").setup({})
+vim.keymap.set("n", "<C-n>", ":NvimTreeToggle<CR>")
+vim.keymap.set("n", "<leader>r", ":NvimTreeRefresh<CR>")
+vim.keymap.set("n", "<leader>c", ":NvimTreeFindFile<CR>")
 
 --vim.cmd("colorscheme dracula")
 --options here are dark, darker, cool, deep, warm, warmer

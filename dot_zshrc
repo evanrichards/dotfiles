@@ -48,3 +48,4 @@ alias dotfiles="cd $HOME/code/dotfiles"
 source "$HOME/code/dotfiles/gitrc.sh"
 
 
+alias startDocker="open /Applications/Docker.app"
