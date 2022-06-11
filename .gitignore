@@ -73,3 +73,4 @@ fabric.properties
 
 private_dot_config/gh/
 private_dot_config/private_github-copilot/
+private_dot_config/nvim/plugin/

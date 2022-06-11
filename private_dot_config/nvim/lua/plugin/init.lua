@@ -5,11 +5,25 @@ require("packer").startup(function(use)
 	-- https://github.com/github/copilot.vim
 	use("github/copilot.vim")
 	-- code formatting
-	use("sbdchd/neoformat")
+	use({
+		"sbdchd/neoformat",
+		config = function()
+			require("plugin.neoformat")
+		end,
+	})
 	-- one dark theme
-	use("navarasu/onedark.nvim")
+	use({
+		"navarasu/onedark.nvim",
+		config = function()
+			--options here are dark, darker, cool, deep, warm, warmer
+			require("onedark").setup({
+				style = "darker",
+			})
+			require("onedark").load()
+		end,
+	})
 	-- spell checking, use Zl for list of replacements, Zg to add, Zt to toggle
-	use({ "kamykn/spelunker.vim", requires = { { "kamykn/popup-menu.nvim" } } })
+	use({ "kamykn/spelunker.vim", requires = { "kamykn/popup-menu.nvim" } })
 	-- show git status on lines
 	use({
 		"lewis6991/gitsigns.nvim",
@@ -17,54 +31,123 @@ require("packer").startup(function(use)
 			require("gitsigns").setup()
 		end,
 	})
-	-- wide ranging language support
-	use("sheerun/vim-polyglot")
 	-- Git support
 	use("tpope/vim-fugitive")
 	-- Github support, :Gbrowse and <C-X><C-O> for omnicomplete
 	use("tpope/vim-rhubarb")
 	-- navigate tmux panes with <C-movement> keys
 	use("christoomey/vim-tmux-navigator")
-	-- toggle and switch stuff with [ and ]
-	use("tpope/vim-unimpaired")
 	-- needed for telescope
-	use("nvim-lua/plenary.nvim")
-	use("BurntSushi/ripgrep")
-	use("nvim-telescope/telescope-fzf-native.nvim")
-	use("sharkdp/fd")
-	use("kyazdani42/nvim-web-devicons")
-	use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
-	use("nvim-telescope/telescope.nvim")
-	use("nvim-telescope/telescope-ui-select.nvim")
+	use({
+		"nvim-telescope/telescope.nvim",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"BurntSushi/ripgrep",
+			"nvim-telescope/telescope-fzf-native.nvim",
+			"sharkdp/fd",
+			"kyazdani42/nvim-web-devicons",
+			"nvim-treesitter/nvim-treesitter",
+			{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
+		},
+		config = function()
+			require("plugin.telescope")
+		end,
+	})
+	-- this updates inputs and pickers to be good looking
+	use("stevearc/dressing.nvim")
 	-- LSP
-	use("neovim/nvim-lspconfig")
-	use("williamboman/nvim-lsp-installer")
+	use({
+		"neovim/nvim-lspconfig",
+		requires = { "williamboman/nvim-lsp-installer" },
+		config = function()
+			require("plugin.lsp")
+		end,
+	})
 	-- auto-complete
-	use("hrsh7th/cmp-nvim-lsp")
-	use("hrsh7th/cmp-buffer")
-	use("hrsh7th/cmp-path")
-	use("hrsh7th/cmp-cmdline")
-	use("hrsh7th/nvim-cmp")
-	use("hrsh7th/cmp-vsnip")
-	use("hrsh7th/vim-vsnip")
+	use({
+		"hrsh7th/nvim-cmp",
+		requires = {
+			"hrsh7th/cmp-nvim-lsp",
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			"hrsh7th/cmp-cmdline",
+			"hrsh7th/cmp-vsnip",
+			"hrsh7th/vim-vsnip",
+		},
+		config = function()
+			require("plugin.nvim-cmp")
+		end,
+	})
 
 	-- statusline stuff
-	use("nvim-lualine/lualine.nvim")
+	use({
+		"nvim-lualine/lualine.nvim",
+		config = function()
+			require("lualine").setup()
+		end,
+		requires = { "kyazdani42/nvim-web-devicons" },
+	})
+	-- file explorer
+	use({
+		"kyazdani42/nvim-tree.lua",
+		config = function()
+			require("plugin.nvim-tree")
+		end,
+		requires = { "kyazdani42/nvim-web-devicons" },
+	})
 
-	use("kyazdani42/nvim-tree.lua")
+	use({
+		"folke/trouble.nvim",
+		requires = { "kyazdani42/nvim-web-devicons" },
+		config = function()
+			require("plugin.trouble")
+		end,
+	})
 
-	use("folke/trouble.nvim")
-
-	use("jose-elias-alvarez/typescript.nvim")
+	use({
+		"jose-elias-alvarez/typescript.nvim",
+		config = function()
+			require("plugin.typescript").setup()
+		end,
+	})
 	-- dashboard
-	use("goolord/alpha-nvim")
+	use({
+		"goolord/alpha-nvim",
+		config = function()
+			require("alpha").setup(require("alpha.themes.startify").config)
+		end,
+		requires = { "kyazdani42/nvim-web-devicons" },
+	})
+	-- github pr review module
 	use({
 		"ldelossa/gh.nvim",
-		requires = { { "ldelossa/litee.nvim" } },
+		config = function()
+			require("litee.gh").setup()
+		end,
+		requires = { {
+			"ldelossa/litee.nvim",
+			config = function()
+				require("litee.lib").setup()
+			end,
+		} },
 	})
+	-- nice override of the vim.notify function
+	use({
+		"rcarriga/nvim-notify",
+		run = function()
+			vim.notify = require("notify")
+		end,
+	})
+
 	--[[ plugins to try but who has the time?
-
+-- like a git status ui thing
+TimUntersberger/neogit
+-- make permalinks to the current line or lines in github
+ruifm/gitlinker.nvim
+-- change projects and get git info in status line
+AckslD/nvim-gfold.lua
+-- create diagrams in ascii
+jbyuki/venn.nvim
+https://github.com/vimwiki/vimwiki
 --]]
-
-	-- github pr review module
 end)
