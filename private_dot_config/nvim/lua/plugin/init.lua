@@ -155,6 +155,7 @@ require("packer").startup(function(use)
 			require("Comment").setup()
 		end,
 	})
+	use("Pocco81/AutoSave.nvim")
 	use("folke/lsp-colors.nvim")
 
 	--[[ plugins to try but who has the time?

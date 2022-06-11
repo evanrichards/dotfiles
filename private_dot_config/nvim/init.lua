@@ -3,6 +3,7 @@ vim.g.mapleader = " "
 -- the only place that clear should be true, the others just add on to it.
 local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { clear = true })
 
+-- this loads all my plugins, configures and initializes them.
 require("plugin")
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
