@@ -47,7 +47,6 @@ require("packer").startup(function(use)
 			"nvim-telescope/telescope-fzf-native.nvim",
 			"sharkdp/fd",
 			"kyazdani42/nvim-web-devicons",
-			"nvim-treesitter/nvim-treesitter",
 			{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
 		},
 		config = function()
@@ -159,14 +158,26 @@ require("packer").startup(function(use)
 	use("folke/lsp-colors.nvim")
 
 	--[[ plugins to try but who has the time?
--- like a git status ui thing
-TimUntersberger/neogit
--- make permalinks to the current line or lines in github
-ruifm/gitlinker.nvim
--- change projects and get git info in status line
-AckslD/nvim-gfold.lua
--- create diagrams in ascii
-jbyuki/venn.nvim
-https://github.com/vimwiki/vimwiki
+	-- like a git status ui thing
+	TimUntersberger/neogit
+	-- better diff view stuff
+	sindrets/diffview.nvim
+	another git suite thing
+	tanvirtin/vgit.nvim
+	-- make permalinks to the current line or lines in github
+	ruifm/gitlinker.nvim
+	-- create diagrams in ascii
+	jbyuki/venn.nvim
+	-- test suite stuff
+	rcarriga/vim-ultest
+	-- note taking and journaling
+	vimwiki/vimwiki
+	renerocksai/telekasten.nvim
+	-- markdown to table of contents
+	mzlogin/vim-markdown-toc
+	-- add a 1s delay to any hjkl movement
+	takac/vim-hardtime
+	-- sql tools
+	nanotee/sqls.nvim
 --]]
 end)
