@@ -1,71 +1,13 @@
 vim.g.mapleader = " "
 
-require("packer").startup(function()
-	use("wbthomason/packer.nvim")
-	-- https://github.com/tpope/vim-sensible
-	use("tpope/vim-sensible")
-	-- https://github.com/github/copilot.vim
-	use("github/copilot.vim")
-	-- code formatting
-	use("google/vim-maktaba")
-	use("google/vim-codefmt")
-	use("sbdchd/neoformat")
-	-- remove reflections
-	use({ "dracula/vim", as = "dracula" })
-	-- one dark theme
-	use("navarasu/onedark.nvim")
-	-- https://github.com/kamykn/spelunker.vim
-	-- spell checking, use Zl for list of replacements, Zg to add, Zt to toggle
-	use("kamykn/spelunker.vim")
-	use("kamykn/popup-menu.nvim")
-	-- kitty syntax highligting, way overkill
-	use("fladson/vim-kitty")
-	-- auto-close parens, quotes, and brackets; auto-formats with new lines
-	-- this was annoying me so I disabled it
-	-- use("cohama/lexima.vim")
-
-	-- show git status on lines
-	use("mhinz/vim-signify")
-	-- wide ranging language support
-	use("sheerun/vim-polyglot")
-	-- Git support
-	use("tpope/vim-fugitive")
-	-- Github support, :Gbrowse and <C-X><C-O> for omnicomplete
-	use("tpope/vim-rhubarb")
-	-- navigate tmux panes with <C-movement> keys
-	use("christoomey/vim-tmux-navigator")
-	-- toggle and switch stuff with [ and ]
-	use("tpope/vim-unimpaired")
-	-- needed for telescope
-	use("nvim-lua/plenary.nvim")
-	use("BurntSushi/ripgrep")
-	use("nvim-telescope/telescope-fzf-native.nvim")
-	use("sharkdp/fd")
-	use("kyazdani42/nvim-web-devicons")
-	use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
-	use("nvim-telescope/telescope.nvim")
-	-- LSP
-	use("neovim/nvim-lspconfig")
-	use("williamboman/nvim-lsp-installer")
-	-- auto-complete
-	use("hrsh7th/cmp-nvim-lsp")
-	use("hrsh7th/cmp-buffer")
-	use("hrsh7th/cmp-path")
-	use("hrsh7th/cmp-cmdline")
-	use("hrsh7th/nvim-cmp")
-	use("hrsh7th/cmp-vsnip")
-	use("hrsh7th/vim-vsnip")
-
-	-- statusline stuff
-	use("nvim-lualine/lualine.nvim")
-
-	use("kyazdani42/nvim-tree.lua")
-
-	use("folke/trouble.nvim")
-end)
+require("plugin")
+require("litee.lib").setup()
+require("litee.gh").setup({})
+require("alpha").setup(require("alpha.themes.startify").config)
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 -- turn on lualine statusline
 require("lualine").setup()
+require("typescript").setup()
 require("nvim-tree").setup({})
 vim.keymap.set("n", "<C-n>", ":NvimTreeToggle<CR>")
 vim.keymap.set("n", "<leader>r", ":NvimTreeRefresh<CR>")
@@ -116,31 +58,39 @@ vim.keymap.set({ "i", "n" }, "<right>", "<nop>")
 -- clear search highlighting with <space>+<space>
 vim.keymap.set({ "n" }, "<leader><space>", ":nohlsearch<CR>")
 
-local augroup = vim.api.nvim_create_augroup("autoformat_settings", { clear = true })
+local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { clear = true })
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*.ts",
+	group = autoformatAugroup,
+	callback = function()
+		local typescript = require("typescript")
+		typescript.actions.removeUnused()
+	end,
+})
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.ts",
-	group = augroup,
+	group = autoformatAugroup,
 	command = "Neoformat",
 })
 
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.lua",
-	group = augroup,
+	group = autoformatAugroup,
 	command = "Neoformat",
 })
 
 -- format syntax highlight prisma files like typescript
 vim.api.nvim_create_autocmd("BufNewFile,BufRead", {
 	pattern = "*.prisma",
-	group = augroup,
+	group = autoformatAugroup,
 	command = "set syntax=typescript",
 })
 
 -- delete trailing whitespace on save
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*",
-	group = augroup,
+	group = autoformatAugroup,
 	command = ":%s/\\s\\+$//e",
 })
 
@@ -166,6 +116,7 @@ require("telescope").setup({
 		file_ignore_patterns = { "dist", "generated", "node_modules", "prisma/migrations" },
 	},
 })
+require("telescope").load_extension("ui-select")
 
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -263,6 +214,8 @@ for _, lsp in pairs(servers) do
 end
 
 require("lspconfig").tsserver.setup({
+	capabilities = capabilities,
+	on_attach = on_attach,
 	init_options = {
 		preferences = {
 			importModuleSpecifierPreference = "non-relative",
@@ -271,6 +224,8 @@ require("lspconfig").tsserver.setup({
 })
 
 require("lspconfig").sumneko_lua.setup({
+	capabilities = capabilities,
+	on_attach = on_attach,
 	settings = {
 		Lua = {
 			diagnostics = {
