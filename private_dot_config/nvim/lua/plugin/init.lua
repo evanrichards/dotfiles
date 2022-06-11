@@ -1,5 +1,6 @@
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
+	use("sheerun/vim-polyglot")
 	-- https://github.com/tpope/vim-sensible
 	use("tpope/vim-sensible")
 	-- https://github.com/github/copilot.vim
@@ -107,7 +108,7 @@ require("packer").startup(function(use)
 	use({
 		"jose-elias-alvarez/typescript.nvim",
 		config = function()
-			require("plugin.typescript").setup()
+			require("plugin.typescript")
 		end,
 	})
 	-- dashboard
@@ -138,6 +139,16 @@ require("packer").startup(function(use)
 			vim.notify = require("notify")
 		end,
 	})
+	-- easymotion style jumps, overrides s|S for in buffer jumps and gs for cross
+	-- buffer
+	use({
+		"ggandor/leap.nvim",
+		config = function()
+			require("leap").set_default_keymaps()
+		end,
+		requires = { "tpope/vim-repeat" },
+	})
+	use("folke/lsp-colors.nvim")
 
 	--[[ plugins to try but who has the time?
 -- like a git status ui thing

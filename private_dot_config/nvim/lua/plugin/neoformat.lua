@@ -1,4 +1,3 @@
--- move this to neoformat file in plugins
 local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { clear = false })
 vim.api.nvim_create_autocmd("BufWritePre", {
 	pattern = "*.ts",
