@@ -148,6 +148,13 @@ require("packer").startup(function(use)
 		end,
 		requires = { "tpope/vim-repeat" },
 	})
+	-- gcc or gc[move] to toggle comments
+	use({
+		"numToStr/Comment.nvim",
+		config = function()
+			require("Comment").setup()
+		end,
+	})
 	use("folke/lsp-colors.nvim")
 
 	--[[ plugins to try but who has the time?
