@@ -7,6 +7,7 @@ local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { c
 require("plugin")
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
+-- in visual mode, when you indent a block, go back into visual mode
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 

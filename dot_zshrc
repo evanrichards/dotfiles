@@ -1,3 +1,4 @@
+#! /bin/zsh
 export EDITOR='nvim'
 export TERM='screen-256color'
 # Compilation flags
@@ -43,9 +44,20 @@ alias tree="exa --tree"
 alias ls="exa"
 alias ll="exa -alh"
 alias cat="bat"
-alias chezmoicd="cd $HOME/.local/share/chezmoi"
-alias dotfiles="cd $HOME/code/dotfiles"
-source "$HOME/code/dotfiles/gitrc.sh"
+alias chezmoicd="cd ${HOME}/.local/share/chezmoi"
+alias dotfiles="cd ${HOME}/code/dotfiles"
+source "${HOME}/code/dotfiles/gitrc.sh"
 
 
 alias startDocker="open /Applications/Docker.app"
+
+# sync my telekasten files with github
+syncTelekasten() {
+  cd ${HOME}/zettelkasten
+  git stash
+  git pull
+  git stash pop
+  git add .
+  git commit -m "sync"
+  git push
+}

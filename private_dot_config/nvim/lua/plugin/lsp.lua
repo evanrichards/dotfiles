@@ -88,7 +88,9 @@ local servers = {
 	"jsonls",
 	"prismals",
 	"pyright",
-	"remark_ls",
+	-- this requires project files to start, i mostly wanted it for notes files
+	-- and diary files so not very useful.
+	-- "remark_ls",
 	"rust_analyzer",
 	"sumneko_lua",
 	"tsserver",

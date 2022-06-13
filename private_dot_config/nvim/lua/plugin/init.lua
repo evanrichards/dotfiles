@@ -1,6 +1,8 @@
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
 	use("sheerun/vim-polyglot")
+	use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
+	use("nvim-treesitter/playground")
 	-- https://github.com/tpope/vim-sensible
 	use("tpope/vim-sensible")
 	-- https://github.com/github/copilot.vim
@@ -53,6 +55,7 @@ require("packer").startup(function(use)
 			require("plugin.telescope")
 		end,
 	})
+	use({ "nvim-telescope/telescope-symbols.nvim", requires = { "nvim-telescope/telescope.nvim" } })
 	-- this updates inputs and pickers to be good looking
 	use("stevearc/dressing.nvim")
 	-- LSP
@@ -156,6 +159,13 @@ require("packer").startup(function(use)
 	})
 	use("Pocco81/AutoSave.nvim")
 	use("folke/lsp-colors.nvim")
+	use({
+		"renerocksai/telekasten.nvim",
+		requires = { "renerocksai/calendar-vim" },
+		config = function()
+			require("plugin.telekasten")
+		end,
+	})
 
 	--[[ plugins to try but who has the time?
 	-- like a git status ui thing
@@ -172,7 +182,6 @@ require("packer").startup(function(use)
 	rcarriga/vim-ultest
 	-- note taking and journaling
 	vimwiki/vimwiki
-	renerocksai/telekasten.nvim
 	-- markdown to table of contents
 	mzlogin/vim-markdown-toc
 	-- add a 1s delay to any hjkl movement
