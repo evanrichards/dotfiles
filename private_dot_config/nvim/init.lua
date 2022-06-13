@@ -7,6 +7,16 @@ local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { c
 require("plugin")
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 
+vim.opt.splitbelow = true
+vim.opt.splitright = true
+
+vim.keymap.set("n", "<C-Left>", ":vertical resize +3<CR>")
+vim.keymap.set("n", "<C-Right>", ":vertical resize -3<CR>")
+vim.keymap.set("n", "<C-Up>", ":resize +3<CR>")
+vim.keymap.set("n", "<C-Down>", ":resize -3<CR>")
+
+vim.keymap.set({ "n", "v" }, "<leader>t-", "<C-w>t<C-w>H")
+vim.keymap.set({ "n", "v" }, "<leader>t|", "<C-w>t<C-w>K")
 -- in visual mode, when you indent a block, go back into visual mode
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
@@ -46,3 +56,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	group = autoformatAugroup,
 	command = ":%s/\\s\\+$//e",
 })
+
+vim.keymap.set("n", "<leader>pp", function()
+	require("treesorter").select()
+end)
