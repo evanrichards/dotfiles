@@ -1,6 +1,10 @@
 vim.keymap.set({ "n", "v" }, "<leader>zf", function()
 	require("telekasten").find_notes()
 end)
+-- telescope style
+vim.keymap.set({ "n", "v" }, "<leader>fz", function()
+	require("telekasten").find_notes()
+end)
 vim.keymap.set({ "n", "v" }, "<leader>zd", function()
 	require("telekasten").find_daily_notes()
 end)

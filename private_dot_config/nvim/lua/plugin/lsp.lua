@@ -82,12 +82,12 @@ local servers = {
 	"cssls",
 	"dockerls",
 	"eslint",
-	"grammarly",
 	"graphql",
 	"html",
 	"jsonls",
 	"prismals",
 	"pyright",
+	"marksman",
 	-- this requires project files to start, i mostly wanted it for notes files
 	-- and diary files so not very useful.
 	-- "remark_ls",
