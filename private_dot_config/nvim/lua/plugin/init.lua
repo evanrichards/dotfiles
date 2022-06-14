@@ -161,9 +161,15 @@ require("packer").startup(function(use)
 	use("folke/lsp-colors.nvim")
 	use({
 		"renerocksai/telekasten.nvim",
-		requires = { "renerocksai/calendar-vim" },
 		config = function()
 			require("plugin.telekasten")
+		end,
+	})
+
+	use({
+		"folke/zen-mode.nvim",
+		config = function()
+			require("zen-mode").setup()
 		end,
 	})
 

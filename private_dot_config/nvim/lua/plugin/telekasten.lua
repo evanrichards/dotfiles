@@ -20,3 +20,14 @@ end)
 vim.keymap.set({ "n", "v" }, "<leader>z", function()
 	require("telekasten").panel()
 end)
+
+local telekastenAugroup = vim.api.nvim_create_augroup("telekasten_augroup", { clear = true })
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "telekasten",
+	group = telekastenAugroup,
+	callback = function()
+		vim.keymap.set({ "n" }, "<leader>ch", function()
+			require("telekasten").toggle_todo()
+		end)
+	end,
+})

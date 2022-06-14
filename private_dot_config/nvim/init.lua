@@ -3,6 +3,9 @@ vim.g.mapleader = " "
 -- the only place that clear should be true, the others just add on to it.
 local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { clear = true })
 
+-- the calendar plugin is adding these which adds a timeout to <leader>ca which
+-- I use a lot more to do code actions
+vim.cmd("let g:calendar_no_mappings=0")
 -- this loads all my plugins, configures and initializes them.
 require("plugin")
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
