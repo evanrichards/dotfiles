@@ -67,6 +67,10 @@ require("packer").startup(function(use)
 			require("plugin.telescope")
 		end,
 	})
+	use({
+		"nvim-telescope/telescope-frecency.nvim",
+		requires = { "tami5/sqlite.lua" },
+	})
 	use({ "nvim-telescope/telescope-symbols.nvim", requires = { "nvim-telescope/telescope.nvim" } })
 	-- this updates inputs and pickers to be good looking
 	use("stevearc/dressing.nvim")
