@@ -53,6 +53,8 @@ alias startDocker="open /Applications/Docker.app"
 
 # sync my telekasten files with github
 syncTelekasten() {
+  # store current directory to return to after sync
+  currentDir=$(pwd)
   cd ${HOME}/zettelkasten
   git stash
   git pull
@@ -60,4 +62,5 @@ syncTelekasten() {
   git add .
   git commit -m "sync"
   git push
+  cd $currentDir
 }

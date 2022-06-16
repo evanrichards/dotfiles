@@ -1,7 +1,18 @@
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
 	use("sheerun/vim-polyglot")
-	use({ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" })
+	use({
+		"nvim-treesitter/nvim-treesitter",
+		run = ":TSUpdate | TSEnable highlight",
+		config = function()
+			require("nvim-treesitter.configs").setup({
+				highlight = {
+					enable = true,
+					additional_vim_regex_highlighting = false,
+				},
+			})
+		end,
+	})
 	use("nvim-treesitter/playground")
 	-- https://github.com/tpope/vim-sensible
 	use("tpope/vim-sensible")
@@ -49,6 +60,7 @@ require("packer").startup(function(use)
 			"nvim-telescope/telescope-fzf-native.nvim",
 			"sharkdp/fd",
 			"kyazdani42/nvim-web-devicons",
+			"nvim-telescope/telescope-ui-select.nvim",
 			{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
 		},
 		config = function()
