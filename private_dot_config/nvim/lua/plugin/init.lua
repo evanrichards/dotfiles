@@ -188,6 +188,19 @@ require("packer").startup(function(use)
 			require("zen-mode").setup()
 		end,
 	})
+	use("pantharshit00/vim-prisma")
+
+	use({
+		"ruifm/gitlinker.nvim",
+		requires = "nvim-lua/plenary.nvim",
+		config = function()
+			require("gitlinker").setup({
+				opts = {
+					print_url = false,
+				},
+			})
+		end,
+	})
 
 	--[[ plugins to try but who has the time?
 	-- like a git status ui thing
@@ -208,7 +221,5 @@ require("packer").startup(function(use)
 	mzlogin/vim-markdown-toc
 	-- add a 1s delay to any hjkl movement
 	takac/vim-hardtime
-	-- sql tools
-	nanotee/sqls.nvim
 --]]
 end)

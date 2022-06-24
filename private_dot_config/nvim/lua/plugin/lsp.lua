@@ -80,7 +80,6 @@ end
 local servers = {
 	"bashls",
 	"cssls",
-	"dockerls",
 	"eslint",
 	"graphql",
 	"html",
@@ -114,6 +113,10 @@ require("lspconfig").tsserver.setup({
 			importModuleSpecifierPreference = "non-relative",
 		},
 	},
+})
+
+require("lspconfig").tsserver.setup({
+	init_options = { preferences = { importModuleSpecifierPreference = "non-relative" } },
 })
 
 require("lspconfig").sumneko_lua.setup({
