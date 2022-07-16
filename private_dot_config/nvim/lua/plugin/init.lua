@@ -137,19 +137,6 @@ require("packer").startup(function(use)
 		end,
 		requires = { "kyazdani42/nvim-web-devicons" },
 	})
-	-- github pr review module
-	use({
-		"ldelossa/gh.nvim",
-		config = function()
-			require("litee.gh").setup()
-		end,
-		requires = { {
-			"ldelossa/litee.nvim",
-			config = function()
-				require("litee.lib").setup()
-			end,
-		} },
-	})
 	-- nice override of the vim.notify function
 	use({
 		"rcarriga/nvim-notify",
@@ -219,17 +206,36 @@ require("packer").startup(function(use)
 			})
 		end,
 	})
+	use({
+		"jbyuki/venn.nvim",
+		config = function()
+			local toggle = function()
+				local venn_enabled = vim.inspect(vim.b.venn_enabled)
+				if venn_enabled == "nil" then
+					vim.b.venn_enabled = true
+					vim.cmd([[setlocal ve=all]])
+					-- draw a line on HJKL keystrokes
+					vim.keymap.set({ "n" }, "J", "<C-v>j:VBox<CR>", { buffer = true })
+					vim.keymap.set({ "n" }, "K", "<C-v>k:VBox<CR>", { buffer = true })
+					vim.keymap.set({ "n" }, "L", "<C-v>l:VBox<CR>", { buffer = true })
+					vim.keymap.set({ "n" }, "H", "<C-v>h:VBox<CR>", { buffer = true })
+					vim.keymap.set({ "v" }, "f", ":VBox<CR>", { buffer = true })
+				else
+					vim.cmd([[setlocal ve=]])
+					vim.cmd([[mapclear <buffer>]])
+					vim.b.venn_enabled = nil
+				end
+			end
+			vim.keymap.set("n", "<leader>v", toggle)
+		end,
+	})
 	--[[ plugins to try but who has the time?
 	-- like a git status ui thing
 	TimUntersberger/neogit
 	-- better diff view stuff
 	sindrets/diffview.nvim
-	another git suite thing
+	-- another git suite thing
 	tanvirtin/vgit.nvim
-	-- create diagrams in ascii
-	jbyuki/venn.nvim
-	-- note taking and journaling
-	vimwiki/vimwiki
 	-- markdown to table of contents
 	mzlogin/vim-markdown-toc
 	-- add a 1s delay to any hjkl movement
