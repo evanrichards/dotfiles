@@ -1,3 +1,4 @@
+#!/bin/bash
 set +x
 
 GREEN='\033[0;32m'
@@ -6,7 +7,7 @@ NC='\033[0m' # No Color
 
 
 # git checkout branch
-function gco() {
+gco() {
     # check for -d flag
     delete_branch=false
     if [[ $* == *-d* ]] ; then
@@ -77,16 +78,16 @@ function gco() {
     done
 }
 
-function _master_or_main() {
+_master_or_main() {
     # return default branch
     git branch | grep " master\| main" | tr -d \* | xargs
 }
 
-function _current_branch() {
+_current_branch() {
     git branch | grep "\*" | cut -d' ' -f2
 }
 
-function grebase() {
+grebase() {
     # check if uncommitted changes exist
     if [[ $(git status --porcelain) != "" ]]; then
         echo "${RED}You have uncommitted changes. Please commit or stash them before running this command.${NC}"
@@ -105,12 +106,12 @@ function grebase() {
     return $?
 }
 
-function gcom() {
+gcom() {
     default=$(_master_or_main)
     git checkout "$default"
 }
 
-function gdiff() {
+gdiff() {
     if [[ $(grebase) -ne 0 ]]; then
         echo "${RED}There are merge conflicts. Please resolve them before running this command.${NC}"
         return
@@ -150,9 +151,14 @@ function gdiff() {
     fi
 }
 
-function gnew() {
+gnew() {
     # make a new branch prefixed with evan/
     # convert all arguments to dash-separated string
     branch_name=$(echo "$@" | tr ' ' '-')
     git checkout -b "evan/$branch_name"
+}
+
+gcane() {
+    git add .
+    git commit --amend --no-edit;
 }

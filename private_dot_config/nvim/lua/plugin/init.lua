@@ -201,7 +201,24 @@ require("packer").startup(function(use)
 			})
 		end,
 	})
-
+	use({
+		"nvim-neotest/neotest",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+			"antoinemadec/FixCursorHold.nvim",
+			"haydenmeade/neotest-jest",
+		},
+		config = function()
+			require("neotest").setup({
+				adapters = {
+					require("neotest-jest")({
+						jestCommand = "yarn run jest --",
+					}),
+				},
+			})
+		end,
+	})
 	--[[ plugins to try but who has the time?
 	-- like a git status ui thing
 	TimUntersberger/neogit
@@ -209,12 +226,8 @@ require("packer").startup(function(use)
 	sindrets/diffview.nvim
 	another git suite thing
 	tanvirtin/vgit.nvim
-	-- make permalinks to the current line or lines in github
-	ruifm/gitlinker.nvim
 	-- create diagrams in ascii
 	jbyuki/venn.nvim
-	-- test suite stuff
-	rcarriga/vim-ultest
 	-- note taking and journaling
 	vimwiki/vimwiki
 	-- markdown to table of contents
