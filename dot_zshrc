@@ -46,7 +46,7 @@ alias ll="exa -alh"
 alias cat="bat"
 alias chezmoicd="cd ${HOME}/.local/share/chezmoi"
 alias dotfiles="cd ${HOME}/code/dotfiles"
-source "${HOME}/code/dotfiles/gitrc.sh"
+source "${HOME}/gitrc.sh"
 
 
 alias startDocker="open /Applications/Docker.app"
@@ -64,3 +64,5 @@ syncTelekasten() {
   git push
   cd $currentDir
 }
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+

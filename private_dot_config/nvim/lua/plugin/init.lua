@@ -181,11 +181,7 @@ require("packer").startup(function(use)
 		"ruifm/gitlinker.nvim",
 		requires = "nvim-lua/plenary.nvim",
 		config = function()
-			require("gitlinker").setup({
-				opts = {
-					print_url = false,
-				},
-			})
+			require("gitlinker").setup()
 		end,
 	})
 	use({

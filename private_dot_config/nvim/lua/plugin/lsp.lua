@@ -115,9 +115,11 @@ require("lspconfig").tsserver.setup({
 	},
 })
 
-require("lspconfig").tsserver.setup({
-	init_options = { preferences = { importModuleSpecifierPreference = "non-relative" } },
-})
+vim.api.nvim_create_user_command("LspRelative", function()
+	require("lspconfig").tsserver.setup({
+		init_options = { preferences = { importModuleSpecifierPreference = "non-relative" } },
+	})
+end, {})
 
 require("lspconfig").sumneko_lua.setup({
 	capabilities = capabilities,
