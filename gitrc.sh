@@ -5,80 +5,6 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-alias gb='git checkout $(git branch | fzf-tmux --prompt="Checkout which branch? ")'
-
-# git checkout branch
-gco() {
-    # check for -d flag
-    delete_branch=false
-    if [[ $* == *-d* ]] ; then
-        delete_branch=true
-        echo "Deleting branch"
-        shift
-    fi
-    echo "$*"
-    # no args, list branches with numbers
-    default=$(_master_or_main)
-    branches=$(git branch)
-    unstaged=""
-    if [[ $(git status --porcelain) != "" ]]; then
-        unstaged=" (${RED}unstaged changes${NC})"
-    fi
-    if [[ $# -eq 0 ]]; then
-        counter=1
-        current_marker=""
-        if [[ "$branches" == *"* $default"* ]]; then
-            current_marker=" (${RED}current${NC})${unstaged}"
-        fi
-        echo "${GREEN}0${NC}: $default$current_marker"
-        echo "$branches" | while read -r b; do
-            # if branch is not master or main, show number
-            if [[ $b != "$default" &&  $b != "* $default" ]]; then
-                current_marker=""
-                if [[ $b == *"*"* ]]; then
-                    current_marker=" (${RED}current${NC})${unstaged}"
-                fi
-                echo "${GREEN}$counter${NC}: $b$current_marker" | tr -d \* | xargs
-                ((counter++))
-            fi
-        done
-
-        echo -n "Choose branch: "
-        read -r branchNum
-    else
-        branchNum=$1
-    fi
-    counter=1
-    if [[ $branchNum == 0 ]]; then
-        git checkout "$default"
-        return
-    fi
-    echo "$branches" | while read -r b; do
-        if [[ $b != "$default" &&  $b != "* $default" ]]; then
-            if [[ $branchNum -eq $counter ]]; then
-                if [[ $delete_branch == true ]]; then
-                    # if this branch is the current branch exit without deleting
-                    if [[ $b == *"*"* ]]; then
-                        echo "${RED}Cannot delete current branch${NC}"
-                        return
-                    fi
-                    echo "Delete branch ${RED}${b}${NC}?"
-                    select yn in "Yes" "No"; do
-                        case $yn in
-                            Yes ) git branch -D "$b"; break;;
-                            No ) break;;
-                        esac
-                    done
-                else
-                    git checkout "$(echo "$b" | tr -d \* | xargs)"
-                fi
-                break
-            fi
-            ((counter++))
-        fi
-    done
-}
-
 _master_or_main() {
     # return default branch
     git branch | grep " master\| main" | tr -d \* | xargs
@@ -94,62 +20,18 @@ grebase() {
         echo "${RED}You have uncommitted changes. Please commit or stash them before running this command.${NC}"
         return
     fi
-    default=$(_master_or_main)
+    rebase_branch=$(gb --prompt 'Choose branch to rebase onto')
     current_branch=$(_current_branch)
     # if current branch is master do nothing
-    if [[ $current_branch == "$default" ]]; then
+    if [[ $current_branch == "$rebase_branch" ]]; then
         return
     fi
-    git checkout "$default"
-    git pull origin "$default"
-    git checkout "$current_branch"
-    git rebase "$default"
-    return $?
+    git rebase -i "$rebase_branch"
 }
 
 gcom() {
     default=$(_master_or_main)
     git checkout "$default"
-}
-
-gdiff() {
-    if [[ $(grebase) -ne 0 ]]; then
-        echo "${RED}There are merge conflicts. Please resolve them before running this command.${NC}"
-        return
-    fi
-    force=""
-    # if -f flag is provided, force the diff
-    if [[ $1 == "-f" ]]; then
-        force="-f"
-    fi
-    # get timestamp
-    timestamp=$(date +%Y-%m-%d_%H-%M-%S)
-    # good to diff
-    # get commit title
-    commit_title=$(git log --pretty=format:"%s" -n 1)
-    # get branch name
-    branch_name=$(git branch | grep "\*" | cut -d' ' -f2)
-    repository_name=$(git remote -v | grep push | cut -d'/' -f2 | cut -d' ' -f1)
-    git diff "$(_master_or_main)" > "/tmp/diff_${repository_name}_${branch_name}_${timestamp}.diff"
-    code "/tmp/diff_${repository_name}_${branch_name}_${timestamp}.diff"
-    # ask for confirmation
-    echo "Do you want to commit this diff?"
-    select yn in "Yes" "No"; do
-        case $yn in
-            Yes ) break;;
-            No ) return;;
-        esac
-    done
-    git push $force origin "$branch_name"
-    if [[ $? -ne 0 ]]; then
-        echo "${RED}There was an error pushing to the remote repository. Please resolve the error and try again.${NC}"
-        return
-    fi
-    echo "Creating pull request for ${GREEN} $branch_name ${NC}: ${GREEN}$commit_title${NC}"
-    # if 'github' in remote url , use github diff
-    if [[ $(git remote -v | grep github) != "" ]]; then
-        githubdiff
-    fi
 }
 
 gnew() {
@@ -161,62 +43,60 @@ gnew() {
 
 gcane() {
     git add .
-    git commit --amend --no-edit;
+    git commit --amend --no-edit
 }
 
-
 is_in_git_repo() {
-  git rev-parse HEAD > /dev/null 2>&1
+    git rev-parse HEAD >/dev/null 2>&1
 }
 
 fzf-down() {
-  fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
+    fzf --height 50% --min-height 20 --border --bind ctrl-/:toggle-preview "$@"
 }
 
-_gf() {
-  is_in_git_repo || return
-  git -c color.status=always status --short |
-  fzf-down -m --ansi --nth 2..,.. \
-    --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1})' |
-  cut -c4- | sed 's/.* -> //'
+gs() {
+    is_in_git_repo || return
+    git -c color.status=always status --short |
+        fzf-down -m --ansi --nth 2..,.. \
+            --preview '(git diff --color=always -- {-1} | sed 1,4d; cat {-1})' |
+        cut -c4- | sed 's/.* -> //'
 }
 
-_gb() {
-  is_in_git_repo || return
-  git branch -a --color=always | grep -v '/HEAD\s' | sort |
-  fzf-down --ansi --multi --tac --preview-window right:70% \
-    --preview 'git log --oneline --graph --date=short --color=always --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1)' |
-  sed 's/^..//' | cut -d' ' -f1 |
-  sed 's#^remotes/##'
+gb() {
+    is_in_git_repo || return
+    git branch -a --color=always | grep -v '/HEAD\s' | sort |
+        fzf-down --ansi --multi --tac --preview-window right:70%:hidden \
+           "$@" \
+            --preview 'git log --oneline --graph --date=short --color=always --pretty="format:%C(auto)%cd %h%d %s" $(sed s/^..// <<< {} | cut -d" " -f1)' |
+        sed 's/^..//' | cut -d' ' -f1 |
+        sed 's#^remotes/##'
 }
 
-_gt() {
-  is_in_git_repo || return
-  git tag --sort -version:refname |
-  fzf-down --multi --preview-window right:70% \
-    --preview 'git show --color=always {}'
+gco() {
+    branch=$(gb --prompt 'Checkout git branch')
+    # check for -d flag
+    if [[ $* == *-d* ]]; then
+        echo "Deleting branch ${branch}"
+        confirm=$(echo "Cancel\nConfirm" | fzf-down --prompt "Delete branch ${branch}?")
+        if [[ $confirm == 'Confirm' ]]; then
+            git branch -D "$branch"
+        fi
+        return
+    fi
+    git checkout "$branch"
 }
 
-_gh() {
-  is_in_git_repo || return
-  git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
-  fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
-    --header 'Press CTRL-S to toggle sort' \
-    --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always' |
-  grep -o "[a-f0-9]\{7,\}"
+glog() {
+    is_in_git_repo || return
+    git log --date=short --format="%C(green)%C(bold)%cd %C(auto)%h%d %s (%an)" --graph --color=always |
+        fzf-down --ansi --no-sort --reverse --multi --bind 'ctrl-s:toggle-sort' \
+            --header 'Press CTRL-S to toggle sort' \
+            --preview 'grep -o "[a-f0-9]\{7,\}" <<< {} | xargs git show --color=always' |
+        grep -o "[a-f0-9]\{7,\}"
 }
 
-_gr() {
-  is_in_git_repo || return
-  git remote -v | awk '{print $1 "\t" $2}' | uniq |
-  fzf-down --tac \
-    --preview 'git log --oneline --graph --date=short --pretty="format:%C(auto)%cd %h%d %s" {1}' |
-  cut -d$'\t' -f1
+gstash() {
+    is_in_git_repo || return
+    git stash list | fzf-down --reverse -d: --preview 'git show --color=always {1}' |
+        cut -d: -f1
 }
-
-_gs() {
-  is_in_git_repo || return
-  git stash list | fzf-down --reverse -d: --preview 'git show --color=always {1}' |
-  cut -d: -f1
-}
-
