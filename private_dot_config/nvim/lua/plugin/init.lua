@@ -1,5 +1,14 @@
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
+	use({
+		"catppuccin/nvim",
+		as = "catppuccin",
+		config = function()
+			vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+			require("catppuccin").setup()
+			vim.cmd([[colorscheme catppuccin]])
+		end,
+	})
 	use("sheerun/vim-polyglot")
 	use({
 		"nvim-treesitter/nvim-treesitter",
@@ -25,17 +34,6 @@ require("packer").startup(function(use)
 			require("plugin.neoformat")
 		end,
 	})
-	-- one dark theme
-	use({
-		"navarasu/onedark.nvim",
-		config = function()
-			--options here are dark, darker, cool, deep, warm, warmer
-			require("onedark").setup({
-				style = "darker",
-			})
-			require("onedark").load()
-		end,
-	})
 	-- spell checking, use Zl for list of replacements, Zg to add, Zt to toggle
 	use({ "kamykn/spelunker.vim", requires = { "kamykn/popup-menu.nvim" } })
 	-- show git status on lines
@@ -58,6 +56,7 @@ require("packer").startup(function(use)
 			"nvim-lua/plenary.nvim",
 			"BurntSushi/ripgrep",
 			"nvim-telescope/telescope-fzf-native.nvim",
+			"nvim-telescope/telescope-github.nvim",
 			"sharkdp/fd",
 			"kyazdani42/nvim-web-devicons",
 			"nvim-telescope/telescope-ui-select.nvim",
@@ -160,7 +159,6 @@ require("packer").startup(function(use)
 			require("Comment").setup()
 		end,
 	})
-	use("Pocco81/AutoSave.nvim")
 	use("folke/lsp-colors.nvim")
 	use({
 		"renerocksai/telekasten.nvim",

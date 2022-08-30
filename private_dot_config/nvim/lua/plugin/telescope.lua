@@ -5,6 +5,7 @@ require("telescope").setup({
 })
 require("telescope").load_extension("ui-select")
 require("telescope").load_extension("frecency")
+require("telescope").load_extension("gh")
 
 -- Find files using Telescope command-line sugar.
 vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>")
