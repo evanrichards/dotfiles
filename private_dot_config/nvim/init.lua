@@ -23,8 +23,6 @@ vim.keymap.set({ "n", "v" }, "<leader>t|", "<C-w>t<C-w>K")
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
 
-vim.opt.number = true
-vim.opt.relativenumber = true
 vim.opt.visualbell = true
 vim.opt.errorbells = false
 vim.opt.wrap = true
@@ -43,11 +41,6 @@ vim.opt.showcmd = true
 
 vim.opt.scrolloff = 8
 vim.opt.backspace = { "indent", "eol", "start" }
-
-vim.keymap.set({ "i", "n" }, "<up>", "<nop>")
-vim.keymap.set({ "i", "n" }, "<down>", "<nop>")
-vim.keymap.set({ "i", "n" }, "<left>", "<nop>")
-vim.keymap.set({ "i", "n" }, "<right>", "<nop>")
 
 -- clear search highlighting with <space>+</>
 vim.keymap.set({ "n" }, "<leader>/", ":nohlsearch<CR>")

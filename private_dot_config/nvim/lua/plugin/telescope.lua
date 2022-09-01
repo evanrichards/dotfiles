@@ -1,11 +1,13 @@
-require("telescope").setup({
+local telescope = require('telescope')
+telescope.setup({
 	defaults = {
 		file_ignore_patterns = { "dist", "generated", "node_modules", "prisma/migrations" },
+
 	},
 })
-require("telescope").load_extension("ui-select")
-require("telescope").load_extension("frecency")
-require("telescope").load_extension("gh")
+telescope.load_extension("ui-select")
+telescope.load_extension("frecency")
+telescope.load_extension("gh")
 
 -- Find files using Telescope command-line sugar.
 vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>")
