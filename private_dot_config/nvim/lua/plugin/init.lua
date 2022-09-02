@@ -28,7 +28,7 @@ require("packer").startup(function(use)
     -- https://github.com/github/copilot.vim
     use("github/copilot.vim")
     -- spell checking, use Zl for list of replacements, Zg to add, Zt to toggle
-    use({"kamykn/spelunker.vim", requires = {"kamykn/popup-menu.nvim"}})
+    use({ "kamykn/spelunker.vim", requires = { "kamykn/popup-menu.nvim" } })
     -- show git status on lines
     use({
         "lewis6991/gitsigns.nvim",
@@ -49,17 +49,17 @@ require("packer").startup(function(use)
             "nvim-telescope/telescope-github.nvim", "sharkdp/fd",
             "kyazdani42/nvim-web-devicons",
             "nvim-telescope/telescope-ui-select.nvim",
-            {"nvim-treesitter/nvim-treesitter", run = ":TSUpdate"}
+            { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
         },
         config = function() require("plugin.telescope") end
     })
     use({
         "nvim-telescope/telescope-frecency.nvim",
-        requires = {"tami5/sqlite.lua"}
+        requires = { "tami5/sqlite.lua" }
     })
     use({
         "nvim-telescope/telescope-symbols.nvim",
-        requires = {"nvim-telescope/telescope.nvim"}
+        requires = { "nvim-telescope/telescope.nvim" }
     })
     -- this updates inputs and pickers to be good looking
     use("stevearc/dressing.nvim")
@@ -70,13 +70,13 @@ require("packer").startup(function(use)
     })
     use({
         "williamboman/mason-lspconfig.nvim",
-        requires = {"williamboman/mason.nvim", "neovim/nvim-lspconfig"},
+        requires = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
         config = function()
             require("mason").setup()
             require("mason-lspconfig").setup()
         end
     })
-    use({"neovim/nvim-lspconfig", config = function() require("plugin.lsp") end})
+    use({ "neovim/nvim-lspconfig", config = function() require("plugin.lsp") end })
     -- auto-complete
     use({
         "hrsh7th/nvim-cmp",
@@ -91,13 +91,13 @@ require("packer").startup(function(use)
     use({
         "nvim-lualine/lualine.nvim",
         config = function() require("lualine").setup() end,
-        requires = {"kyazdani42/nvim-web-devicons"}
+        requires = { "kyazdani42/nvim-web-devicons" }
     })
     -- file explorer
     use({
         "kyazdani42/nvim-tree.lua",
         config = function() require("plugin.nvim-tree") end,
-        requires = {"kyazdani42/nvim-web-devicons"}
+        requires = { "kyazdani42/nvim-web-devicons" }
     })
 
     use({
@@ -110,7 +110,7 @@ require("packer").startup(function(use)
         config = function()
             require("alpha").setup(require("alpha.themes.startify").config)
         end,
-        requires = {"kyazdani42/nvim-web-devicons"}
+        requires = { "kyazdani42/nvim-web-devicons" }
     })
     -- nice override of the vim.notify function
     use({
@@ -122,7 +122,7 @@ require("packer").startup(function(use)
     use({
         "ggandor/leap.nvim",
         config = function() require("leap").set_default_keymaps() end,
-        requires = {"tpope/vim-repeat"}
+        requires = { "tpope/vim-repeat" }
     })
     -- gcc or gc[move] to toggle comments
     use({
@@ -155,7 +155,7 @@ require("packer").startup(function(use)
         config = function()
             require("neotest").setup({
                 adapters = {
-                    require("neotest-jest")({jestCommand = "yarn run jest --"})
+                    require("neotest-jest")({ jestCommand = "yarn run jest --" })
                 }
             })
         end
@@ -169,15 +169,15 @@ require("packer").startup(function(use)
                     vim.b.venn_enabled = true
                     vim.cmd([[setlocal ve=all]])
                     -- draw a line on HJKL keystrokes
-                    vim.keymap.set({"n"}, "J", "<C-v>j:VBox<CR>",
-                                   {buffer = true})
-                    vim.keymap.set({"n"}, "K", "<C-v>k:VBox<CR>",
-                                   {buffer = true})
-                    vim.keymap.set({"n"}, "L", "<C-v>l:VBox<CR>",
-                                   {buffer = true})
-                    vim.keymap.set({"n"}, "H", "<C-v>h:VBox<CR>",
-                                   {buffer = true})
-                    vim.keymap.set({"v"}, "f", ":VBox<CR>", {buffer = true})
+                    vim.keymap.set({ "n" }, "J", "<C-v>j:VBox<CR>",
+                        { buffer = true })
+                    vim.keymap.set({ "n" }, "K", "<C-v>k:VBox<CR>",
+                        { buffer = true })
+                    vim.keymap.set({ "n" }, "L", "<C-v>l:VBox<CR>",
+                        { buffer = true })
+                    vim.keymap.set({ "n" }, "H", "<C-v>h:VBox<CR>",
+                        { buffer = true })
+                    vim.keymap.set({ "v" }, "f", ":VBox<CR>", { buffer = true })
                 else
                     vim.cmd([[setlocal ve=]])
                     vim.cmd([[mapclear <buffer>]])
@@ -185,6 +185,41 @@ require("packer").startup(function(use)
                 end
             end
             vim.keymap.set("n", "<leader>v", toggle)
+        end
+    })
+    use({
+        'nvim-treesitter/nvim-treesitter-context',
+        requires = {
+            'nvim-treesitter/nvim-treesitter',
+        },
+        config = function()
+            require('treesitter-context').setup {
+                enable = true,
+                max_lines = 3,
+                patterns = {
+                    default = {
+                        'class',
+                        'function',
+                        'method',
+                        'for',
+                        'while',
+                        'if',
+                        'switch',
+                        'case',
+                    },
+                }
+            }
+        end
+    })
+    use({
+        'pwntester/octo.nvim',
+        requires = {
+            'nvim-lua/plenary.nvim',
+            'nvim-telescope/telescope.nvim',
+            'kyazdani42/nvim-web-devicons',
+        },
+        config = function()
+            require "octo".setup()
         end
     })
     --[[ plugins to try but who has the time?
