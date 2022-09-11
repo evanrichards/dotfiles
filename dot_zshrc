@@ -23,19 +23,21 @@ if [ ! -d "$HOME/zsh-syntax-highlighting" ]; then
 fi
 source /Users/evanrichards/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# Theme work
-# if directory .dracula does not exist, create it
-if [ ! -d "$HOME/.dracula" ]; then
-        mkdir "$HOME/.dracula"
+# check if we hae a .zsh directory
+if [ ! -d "$HOME/.zsh" ]; then
+        mkdir $HOME/.zsh
 fi
-if [ ! -d "$HOME/.dracula/theme" ]; then
-    git clone https://github.com/dracula/zsh.git ~/.dracula/theme
+if [ ! -d "$HOME/catppuccin" ]; then
+  mkdir -p $HOME/catppuccin
 fi
-source "$HOME/.dracula/theme/dracula.zsh-theme"
-if [ ! -d "$HOME/.dracula/zsh-syntax-highlighting" ]; then
-    git clone https://github.com/dracula/zsh-syntax-highlighting.git ~/.dracula/zsh-syntax-highlighting
+if [ ! -d "$HOME/catppuccin/zsh-syntax-highlighting" ]; then
+  cd $HOME/catppuccin
+  git clone https://github.com/catppuccin/zsh-syntax-highlighting.git
+  cp -v zsh-syntax-highlighting/catppuccin-zsh-syntax-highlighting.zsh ~/.zsh
 fi
-source "$HOME/.dracula/zsh-syntax-highlighting/zsh-syntax-highlighting.sh"
+source ~/.zsh/catppuccin-zsh-syntax-highlighting.zsh
+
+# now load zsh-syntax-highlighting plugin
 ZSH_HIGHLIGHT_STYLES[cursor]='bold'
 
 # my aliases
@@ -48,22 +50,10 @@ alias chezmoicd="cd ${HOME}/.local/share/chezmoi"
 alias dotfiles="cd ${HOME}/code/dotfiles"
 source "${HOME}/gitrc.sh"
 
+source "$HOME/.config/zsh-prompt.zsh"
 
 alias startDocker="open /Applications/Docker.app"
 
-# sync my telekasten files with github
-syncTelekasten() {
-  # store current directory to return to after sync
-  currentDir=$(pwd)
-  cd ${HOME}/zettelkasten
-  git stash
-  git pull
-  git stash pop
-  git add .
-  git commit -m "sync"
-  git push
-  cd $currentDir
-}
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_DEFAULT_OPTS=" \
 --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \

@@ -1,5 +1,16 @@
 require("packer").startup(function(use)
   use("wbthomason/packer.nvim")
+  -- Lua
+  use {
+    "folke/which-key.nvim",
+    config = function()
+      require("which-key").setup {
+        -- your configuration comes here
+        -- or leave it empty to use the default settings
+        -- refer to the configuration section below
+      }
+    end
+  }
   use({
     "catppuccin/nvim",
     as = "catppuccin",
@@ -7,7 +18,7 @@ require("packer").startup(function(use)
       vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
       require("catppuccin").setup()
       vim.cmd([[colorscheme catppuccin]])
-    end
+    end,
   })
   use({
     "nvim-treesitter/nvim-treesitter",
@@ -16,10 +27,10 @@ require("packer").startup(function(use)
       require("nvim-treesitter.configs").setup({
         highlight = {
           enable = true,
-          additional_vim_regex_highlighting = false
-        }
+          additional_vim_regex_highlighting = false,
+        },
       })
-    end
+    end,
   })
   use("nvim-treesitter/playground")
   -- https://github.com/tpope/vim-sensible
@@ -29,7 +40,9 @@ require("packer").startup(function(use)
   -- show git status on lines
   use({
     "lewis6991/gitsigns.nvim",
-    config = function() require("gitsigns").setup() end
+    config = function()
+      require("gitsigns").setup()
+    end,
   })
   -- Git support
   use("tpope/vim-fugitive")
@@ -39,29 +52,35 @@ require("packer").startup(function(use)
   use({
     "nvim-telescope/telescope.nvim",
     requires = {
-      "nvim-lua/plenary.nvim", "BurntSushi/ripgrep",
+      "nvim-lua/plenary.nvim",
+      "BurntSushi/ripgrep",
       "nvim-telescope/telescope-fzf-native.nvim",
-      "nvim-telescope/telescope-github.nvim", "sharkdp/fd",
+      "nvim-telescope/telescope-github.nvim",
+      "sharkdp/fd",
       "kyazdani42/nvim-web-devicons",
       "nvim-telescope/telescope-ui-select.nvim",
-      { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" }
+      { "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
     },
-    config = function() require("plugin.telescope") end
+    config = function()
+      require("plugin.telescope")
+    end,
   })
   use({
     "nvim-telescope/telescope-frecency.nvim",
-    requires = { "tami5/sqlite.lua" }
+    requires = { "tami5/sqlite.lua" },
   })
   use({
     "nvim-telescope/telescope-symbols.nvim",
-    requires = { "nvim-telescope/telescope.nvim" }
+    requires = { "nvim-telescope/telescope.nvim" },
   })
   -- this updates inputs and pickers to be good looking
   use("stevearc/dressing.nvim")
   -- LSP
   use({
     "williamboman/mason.nvim",
-    config = function() require("mason").setup() end
+    config = function()
+      require("mason").setup()
+    end,
   })
   use({
     "williamboman/mason-lspconfig.nvim",
@@ -69,80 +88,111 @@ require("packer").startup(function(use)
     config = function()
       require("mason").setup()
       require("mason-lspconfig").setup()
-    end
+    end,
   })
-  use({ "neovim/nvim-lspconfig", config = function() require("plugin.lsp") end })
+  use({
+    "neovim/nvim-lspconfig",
+    config = function()
+      require("plugin.lsp")
+    end,
+  })
   -- auto-complete
   use({
     "hrsh7th/nvim-cmp",
     requires = {
-      "hrsh7th/cmp-nvim-lsp", "hrsh7th/cmp-buffer", "hrsh7th/cmp-path",
-      "hrsh7th/cmp-cmdline", "hrsh7th/cmp-vsnip", "hrsh7th/vim-vsnip"
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-vsnip",
+      "hrsh7th/vim-vsnip",
     },
-    config = function() require("plugin.nvim-cmp") end
+    config = function()
+      require("plugin.nvim-cmp")
+    end,
   })
 
   -- statusline stuff
   use({
     "nvim-lualine/lualine.nvim",
-    config = function() require("lualine").setup() end,
-    requires = { "kyazdani42/nvim-web-devicons" }
+    config = function()
+      require("lualine").setup()
+    end,
+    requires = { "kyazdani42/nvim-web-devicons" },
   })
   -- file explorer
   use({
     "kyazdani42/nvim-tree.lua",
-    config = function() require("plugin.nvim-tree") end,
-    requires = { "kyazdani42/nvim-web-devicons" }
+    config = function()
+      require("plugin.nvim-tree")
+    end,
+    requires = { "kyazdani42/nvim-web-devicons" },
   })
 
   use({
     "jose-elias-alvarez/typescript.nvim",
-    config = function() require("plugin.typescript") end
+    config = function()
+      require("plugin.typescript")
+    end,
   })
   -- nice override of the vim.notify function
   use({
     "rcarriga/nvim-notify",
-    run = function() vim.notify = require("notify") end
+    run = function()
+      vim.notify = require("notify")
+    end,
   })
   -- easymotion style jumps, overrides s|S for in buffer jumps and gs for cross
   -- buffer
   use({
     "ggandor/leap.nvim",
-    config = function() require("leap").set_default_keymaps() end,
-    requires = { "tpope/vim-repeat" }
+    config = function()
+      require("leap").set_default_keymaps()
+    end,
+    requires = { "tpope/vim-repeat" },
   })
   -- gcc or gc[move] to toggle comments
   use({
     "numToStr/Comment.nvim",
-    config = function() require("Comment").setup() end
+    config = function()
+      require("Comment").setup()
+    end,
   })
   use({
     "renerocksai/telekasten.nvim",
-    config = function() require("plugin.telekasten") end
+    config = function()
+      require("plugin.telekasten")
+    end,
   })
 
   use({
     "folke/zen-mode.nvim",
-    config = function() require("zen-mode").setup() end
+    config = function()
+      require("zen-mode").setup()
+    end,
   })
   use({
     "ruifm/gitlinker.nvim",
     requires = "nvim-lua/plenary.nvim",
-    config = function() require("gitlinker").setup() end
+    config = function()
+      require("gitlinker").setup()
+    end,
   })
   use({
     "nvim-neotest/neotest",
     requires = {
-      "nvim-lua/plenary.nvim", "nvim-treesitter/nvim-treesitter",
-      "antoinemadec/FixCursorHold.nvim", "haydenmeade/neotest-jest"
+      "nvim-lua/plenary.nvim",
+      "nvim-treesitter/nvim-treesitter",
+      "antoinemadec/FixCursorHold.nvim",
+      "haydenmeade/neotest-jest",
     },
     config = function()
       require("neotest").setup({
         adapters = {
-          require("neotest-jest")({ jestCommand = "yarn run jest --" })
-        }
+          require("neotest-jest")({ jestCommand = "yarn run jest --" }),
+        },
       })
-    end
+    end,
   })
   use({
     "jbyuki/venn.nvim",
@@ -153,14 +203,10 @@ require("packer").startup(function(use)
           vim.b.venn_enabled = true
           vim.cmd([[setlocal ve=all]])
           -- draw a line on HJKL keystrokes
-          vim.keymap.set({ "n" }, "J", "<C-v>j:VBox<CR>",
-            { buffer = true })
-          vim.keymap.set({ "n" }, "K", "<C-v>k:VBox<CR>",
-            { buffer = true })
-          vim.keymap.set({ "n" }, "L", "<C-v>l:VBox<CR>",
-            { buffer = true })
-          vim.keymap.set({ "n" }, "H", "<C-v>h:VBox<CR>",
-            { buffer = true })
+          vim.keymap.set({ "n" }, "J", "<C-v>j:VBox<CR>", { buffer = true })
+          vim.keymap.set({ "n" }, "K", "<C-v>k:VBox<CR>", { buffer = true })
+          vim.keymap.set({ "n" }, "L", "<C-v>l:VBox<CR>", { buffer = true })
+          vim.keymap.set({ "n" }, "H", "<C-v>h:VBox<CR>", { buffer = true })
           vim.keymap.set({ "v" }, "f", ":VBox<CR>", { buffer = true })
         else
           vim.cmd([[setlocal ve=]])
@@ -169,58 +215,82 @@ require("packer").startup(function(use)
         end
       end
       vim.keymap.set("n", "<leader>v", toggle)
-    end
+    end,
   })
   use({
-    'nvim-treesitter/nvim-treesitter-context',
+    "nvim-treesitter/nvim-treesitter-context",
     requires = {
-      'nvim-treesitter/nvim-treesitter',
+      "nvim-treesitter/nvim-treesitter",
     },
     config = function()
-      require('treesitter-context').setup {
+      require("treesitter-context").setup({
         enable = true,
         max_lines = 3,
         patterns = {
           default = {
-            'class',
-            'function',
-            'method',
-            'for',
-            'while',
-            'if',
-            'switch',
-            'case',
+            "class",
+            "function",
+            "method",
+            "for",
+            "while",
+            "if",
+            "switch",
+            "case",
           },
-        }
-      }
-    end
+        },
+      })
+    end,
   })
   use({
-    'pwntester/octo.nvim',
+    "pwntester/octo.nvim",
     requires = {
-      'nvim-lua/plenary.nvim',
-      'nvim-telescope/telescope.nvim',
-      'kyazdani42/nvim-web-devicons',
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+      "kyazdani42/nvim-web-devicons",
     },
     config = function()
-      require "octo".setup()
-    end
+      require("octo").setup()
+    end,
   })
-  use { 'mhartington/formatter.nvim',
+  use({
+    "mhartington/formatter.nvim",
     config = function()
       require("formatter").setup({
+        logging = true,
+        log_level = vim.log.levels.ERROR,
 
         filetype = {
           lua = {
             require("formatter.filetypes.lua").stylua,
           },
           typescript = {
-            require("formatter.filetypes.typescript").eslint_d,
+            require("formatter.filetypes.typescript").eslint,
           },
-        }
+          yaml = {
+            require("formatter.filetypes.yaml").pyyaml,
+          },
+          typescriptreact = {
+            require("formatter.filetypes.typescriptreact").eslint_d,
+          },
+          sh = {
+            require("formatter.filetypes.sh").shfmt,
+          },
+          rust = {
+            require("formatter.filetypes.rust").rustfmt,
+          },
+          markdown = {
+            require("formatter.filetypes.markdown").prettier,
+          },
+        },
       })
+    end,
+  })
+  use({
+    'brenoprata10/nvim-highlight-colors',
+    config = function()
+      require('nvim-highlight-colors').setup()
     end
-  }
+  })
   --[[ plugins to try but who has the time?
 	-- like a git status ui thing
 	TimUntersberger/neogit
