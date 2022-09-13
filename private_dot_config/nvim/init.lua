@@ -17,6 +17,7 @@ vim.keymap.set("n", "<C-Right>", ":vertical resize -3<CR>")
 vim.keymap.set("n", "<C-Up>", ":resize +3<CR>")
 vim.keymap.set("n", "<C-Down>", ":resize -3<CR>")
 
+vim.keymap.set("n", "<leader>af", ":FormatWrite<CR>")
 vim.keymap.set({ "n", "v" }, "<leader>t-", "<C-w>t<C-w>H")
 vim.keymap.set({ "n", "v" }, "<leader>t|", "<C-w>t<C-w>K")
 -- in visual mode, when you indent a block, go back into visual mode

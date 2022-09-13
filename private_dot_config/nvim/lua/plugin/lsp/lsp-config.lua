@@ -41,9 +41,6 @@ local on_attach = function(_, buffer)
 	-- vim.keymap.set("n", "gr", function()
 	-- 	vim.lsp.buf.references()
 	-- end, opts)
-	vim.keymap.set("n", "<leader>af", function()
-		vim.lsp.buf.formatting()
-	end, opts)
 end
 local cmp = require("cmp_nvim_lsp")
 

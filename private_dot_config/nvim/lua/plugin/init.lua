@@ -264,13 +264,13 @@ require("packer").startup(function(use)
             require("formatter.filetypes.lua").stylua,
           },
           typescript = {
-            require("formatter.filetypes.typescript").eslint,
+            require("formatter.filetypes.typescript").prettierd,
           },
           yaml = {
             require("formatter.filetypes.yaml").pyyaml,
           },
           typescriptreact = {
-            require("formatter.filetypes.typescriptreact").eslint_d,
+            require("formatter.filetypes.typescriptreact").prettierd,
           },
           sh = {
             require("formatter.filetypes.sh").shfmt,
@@ -304,3 +304,4 @@ require("packer").startup(function(use)
 	takac/vim-hardtime
 --]]
 end)
+
