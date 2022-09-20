@@ -1,7 +1,0 @@
-require("trouble").setup({})
-vim.keymap.set("n", "<leader>xx", ":TroubleToggle<CR>")
-vim.keymap.set("n", "<leader>xw", ":TroubleToggle workspace_diagnostics<CR>")
-vim.keymap.set("n", "<leader>xd", ":TroubleToggle document_diagnostics<CR>")
-vim.keymap.set("n", "<leader>xq", ":TroubleToggle quickfix<CR>")
-vim.keymap.set("n", "<leader>xl", ":TroubleToggle loclist<CR>")
-vim.keymap.set("n", "gR", ":TroubleToggle lsp_references<CR>")
