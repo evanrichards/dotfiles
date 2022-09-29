@@ -18,8 +18,6 @@ vim.keymap.set("n", "<C-Up>", ":resize +3<CR>")
 vim.keymap.set("n", "<C-Down>", ":resize -3<CR>")
 
 vim.keymap.set("n", "<leader>af", ":FormatWrite<CR>")
-vim.keymap.set({ "n", "v" }, "<leader>t-", "<C-w>t<C-w>H")
-vim.keymap.set({ "n", "v" }, "<leader>t|", "<C-w>t<C-w>K")
 -- in visual mode, when you indent a block, go back into visual mode
 vim.keymap.set("v", "<", "<gv")
 vim.keymap.set("v", ">", ">gv")
@@ -39,6 +37,8 @@ vim.opt.smartcase = true
 vim.opt.spell = false
 vim.opt.showmode = true
 vim.opt.showcmd = true
+vim.opt.relativenumber = true
+vim.opt.number = true
 
 vim.opt.scrolloff = 8
 vim.opt.backspace = { "indent", "eol", "start" }
