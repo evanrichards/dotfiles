@@ -285,6 +285,17 @@ require("packer").startup(function(use)
 			require("nvim-highlight-colors").setup()
 		end,
 	})
+	-- Lua
+	use({
+		"folke/trouble.nvim",
+		requires = "kyazdani42/nvim-web-devicons",
+		config = function()
+			require("trouble").setup({
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+			})
+		end,
+	})
 	--[[ plugins to try but who has the time?
 	-- like a git status ui thing
 	TimUntersberger/neogit
