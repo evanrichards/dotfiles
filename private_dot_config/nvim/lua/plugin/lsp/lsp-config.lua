@@ -45,4 +45,10 @@ end
 local cmp = require("cmp_nvim_lsp")
 
 local capabilities = cmp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
+local real_cmp = require("cmp")
+real_cmp.setup({
+  mapping= real_cmp.mapping.preset.insert({
+    ["<CR>"] = real_cmp.mapping.confirm({ select = false }),
+  }),
+})
 return { on_attach = on_attach, capabilities = capabilities }
