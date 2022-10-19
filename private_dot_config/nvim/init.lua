@@ -39,6 +39,12 @@ vim.opt.showmode = true
 vim.opt.showcmd = true
 vim.opt.relativenumber = true
 vim.opt.number = true
+-- command line to be zero height
+-- last status height
+vim.opt.ls = 0
+-- command height
+vim.o.ch = 0
+
 
 vim.opt.scrolloff = 8
 vim.opt.backspace = { "indent", "eol", "start" }
