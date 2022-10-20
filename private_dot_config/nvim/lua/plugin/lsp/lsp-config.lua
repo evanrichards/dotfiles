@@ -43,12 +43,15 @@ local on_attach = function(_, buffer)
 	-- end, opts)
 end
 local cmp = require("cmp_nvim_lsp")
-
-local capabilities = cmp.default_capabilities(vim.lsp.protocol.make_client_capabilities())
 local real_cmp = require("cmp")
 real_cmp.setup({
-  mapping= real_cmp.mapping.preset.insert({
-    ["<CR>"] = real_cmp.mapping.confirm({ select = false }),
-  }),
+	souces = {
+		{ name = "nvim_lsp" },
+	},
+	mapping = real_cmp.mapping.preset.insert({
+		["<CR>"] = real_cmp.mapping.confirm({ select = false }),
+	}),
 })
+
+local capabilities = cmp.default_capabilities()
 return { on_attach = on_attach, capabilities = capabilities }
