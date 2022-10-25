@@ -47,12 +47,14 @@ mason_lspconfig.setup_handlers({
 
 	["tsserver"] = function()
 		require("typescript").setup({
-			on_attach = opts.on_attach,
-			capabilities = opts.capabilities,
-			init_options = {
-				preferences = {
-					importModuleSpecifierPreference = "non-relative",
-					noUnusedParameters = false,
+			server = {
+				capabilities = opts.capabilities,
+				on_attach = opts.on_attach,
+				init_options = {
+					preferences = {
+						importModuleSpecifierPreference = "non-relative",
+						noUnusedParameters = false,
+					},
 				},
 			},
 		})
