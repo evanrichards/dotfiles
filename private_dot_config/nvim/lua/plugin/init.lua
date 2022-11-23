@@ -105,7 +105,6 @@ require("packer").startup(function(use)
 			require("plugin.nvim-cmp")
 		end,
 	})
-
 	-- statusline stuff
 	use({
 		"nvim-lualine/lualine.nvim",
@@ -146,7 +145,6 @@ require("packer").startup(function(use)
 			require("plugin.telekasten")
 		end,
 	})
-
 	use({
 		"folke/zen-mode.nvim",
 		config = function()
@@ -174,29 +172,6 @@ require("packer").startup(function(use)
 					require("neotest-jest")({ jestCommand = "yarn run jest --" }),
 				},
 			})
-		end,
-	})
-	use({
-		"jbyuki/venn.nvim",
-		config = function()
-			local toggle = function()
-				local venn_enabled = vim.inspect(vim.b.venn_enabled)
-				if venn_enabled == "nil" then
-					vim.b.venn_enabled = true
-					vim.cmd([[setlocal ve=all]])
-					-- draw a line on HJKL keystrokes
-					vim.keymap.set({ "n" }, "J", "<C-v>j:VBox<CR>", { buffer = true })
-					vim.keymap.set({ "n" }, "K", "<C-v>k:VBox<CR>", { buffer = true })
-					vim.keymap.set({ "n" }, "L", "<C-v>l:VBox<CR>", { buffer = true })
-					vim.keymap.set({ "n" }, "H", "<C-v>h:VBox<CR>", { buffer = true })
-					vim.keymap.set({ "v" }, "f", ":VBox<CR>", { buffer = true })
-				else
-					vim.cmd([[setlocal ve=]])
-					vim.cmd([[mapclear <buffer>]])
-					vim.b.venn_enabled = nil
-				end
-			end
-			vim.keymap.set("n", "<leader>v", toggle)
 		end,
 	})
 	use({
