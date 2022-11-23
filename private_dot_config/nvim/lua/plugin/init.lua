@@ -133,15 +133,6 @@ require("packer").startup(function(use)
 			vim.notify = require("notify")
 		end,
 	})
-	-- easymotion style jumps, overrides s|S for in buffer jumps and gs for cross
-	-- buffer
-	use({
-		"ggandor/leap.nvim",
-		config = function()
-			require("leap").set_default_keymaps()
-		end,
-		requires = { "tpope/vim-repeat" },
-	})
 	-- gcc or gc[move] to toggle comments
 	use({
 		"numToStr/Comment.nvim",
@@ -233,17 +224,6 @@ require("packer").startup(function(use)
 		end,
 	})
 	use({
-		"pwntester/octo.nvim",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"nvim-telescope/telescope.nvim",
-			"kyazdani42/nvim-web-devicons",
-		},
-		config = function()
-			require("octo").setup()
-		end,
-	})
-	use({
 		"mhartington/formatter.nvim",
 		config = function()
 			require("formatter").setup({
@@ -294,8 +274,6 @@ require("packer").startup(function(use)
 		end,
 	})
 	--[[ plugins to try but who has the time?
-	-- like a git status ui thing
-	TimUntersberger/neogit
 	-- better diff view stuff
 	sindrets/diffview.nvim
 	-- another git suite thing
