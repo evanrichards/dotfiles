@@ -46,27 +46,6 @@ require("packer").startup(function(use)
 	})
 	-- Git support
 	use("tpope/vim-fugitive")
-	-- needed for telescope
-	use({
-		"nvim-telescope/telescope.nvim",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"BurntSushi/ripgrep",
-			"nvim-telescope/telescope-fzf-native.nvim",
-			"nvim-telescope/telescope-github.nvim",
-			"sharkdp/fd",
-			"kyazdani42/nvim-web-devicons",
-			"nvim-telescope/telescope-ui-select.nvim",
-			{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
-		},
-		config = function()
-			require("plugin.telescope")
-		end,
-	})
-	use({
-		"nvim-telescope/telescope-symbols.nvim",
-		requires = { "nvim-telescope/telescope.nvim" },
-	})
 	-- this updates inputs and pickers to be good looking
 	use("stevearc/dressing.nvim")
 	-- LSP
@@ -92,44 +71,29 @@ require("packer").startup(function(use)
 			{ "rafamadriz/friendly-snippets" },
 		},
 		config = function()
-			local lsp = require("lsp-zero")
-			lsp.set_preferences({
-				suggest_lsp_servers = true,
-				setup_servers_on_start = true,
-				set_lsp_keymaps = true,
-				configure_diagnostics = true,
-				cmp_capabilities = true,
-				manage_nvim_cmp = false,
-				call_servers = "local",
-				sign_icons = {},
-			})
-
-			local cmp = require("cmp")
-			local cmp_config = lsp.defaults.cmp_config({
-				window = {
-					completion = cmp.config.window.bordered(),
-				},
-				mapping = cmp.mapping.preset.insert({
-					["<CR>"] = cmp.mapping.confirm({ select = false }),
-				}),
-				cmdline = cmp.setup.cmdline(":", {
-					mapping = cmp.mapping.preset.cmdline(),
-					sources = cmp.config.sources({
-						{ name = "path" },
-					}, {
-						{
-							name = "cmdline",
-							option = {
-								ignore_cmds = { "Man", "!" },
-							},
-						},
-					}),
-				}),
-			})
-
-			cmp.setup(cmp_config)
-			lsp.setup()
+			require("plugin.lsp")
 		end,
+	})
+	-- needed for telescope
+	use({
+		"nvim-telescope/telescope.nvim",
+		requires = {
+			"nvim-lua/plenary.nvim",
+			"BurntSushi/ripgrep",
+			"nvim-telescope/telescope-fzf-native.nvim",
+			"nvim-telescope/telescope-github.nvim",
+			"sharkdp/fd",
+			"kyazdani42/nvim-web-devicons",
+			"nvim-telescope/telescope-ui-select.nvim",
+			{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
+		},
+		config = function()
+			require("plugin.telescope")
+		end,
+	})
+	use({
+		"nvim-telescope/telescope-symbols.nvim",
+		requires = { "nvim-telescope/telescope.nvim" },
 	})
 	-- statusline stuff
 	use({
@@ -218,6 +182,7 @@ require("packer").startup(function(use)
 				filetype = {
 					python = {
 						require("formatter.filetypes.python").black,
+						require("formatter.filetypes.python").isort,
 					},
 					lua = {
 						require("formatter.filetypes.lua").stylua,
