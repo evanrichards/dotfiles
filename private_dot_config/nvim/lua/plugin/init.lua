@@ -71,38 +71,64 @@ require("packer").startup(function(use)
 	use("stevearc/dressing.nvim")
 	-- LSP
 	use({
-		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup()
-		end,
-	})
-	use({
-		"williamboman/mason-lspconfig.nvim",
-		requires = { "williamboman/mason.nvim", "neovim/nvim-lspconfig" },
-		config = function()
-			require("mason").setup()
-			require("mason-lspconfig").setup()
-		end,
-	})
-	use({
-		"neovim/nvim-lspconfig",
-		config = function()
-			require("plugin.lsp")
-		end,
-	})
-	-- auto-complete
-	use({
-		"hrsh7th/nvim-cmp",
+		"VonHeikemen/lsp-zero.nvim",
 		requires = {
-			"hrsh7th/cmp-nvim-lsp",
-			"hrsh7th/cmp-buffer",
-			"hrsh7th/cmp-path",
-			"hrsh7th/cmp-cmdline",
-			"hrsh7th/cmp-vsnip",
-			"hrsh7th/vim-vsnip",
+			-- LSP Support
+			{ "neovim/nvim-lspconfig" },
+			{ "williamboman/mason.nvim" },
+			{ "williamboman/mason-lspconfig.nvim" },
+
+			-- Autocompletion
+			{ "hrsh7th/cmp-buffer" },
+			{ "hrsh7th/cmp-nvim-lsp" },
+			{ "hrsh7th/cmp-nvim-lua" },
+			{ "hrsh7th/cmp-path" },
+			{ "hrsh7th/nvim-cmp" },
+			{ "saadparwaiz1/cmp_luasnip" },
+			{ "hrsh7th/cmp-cmdline" },
+
+			-- Snippets
+			{ "L3MON4D3/LuaSnip" },
+			{ "rafamadriz/friendly-snippets" },
 		},
 		config = function()
-			require("plugin.nvim-cmp")
+			local lsp = require("lsp-zero")
+			lsp.set_preferences({
+				suggest_lsp_servers = true,
+				setup_servers_on_start = true,
+				set_lsp_keymaps = true,
+				configure_diagnostics = true,
+				cmp_capabilities = true,
+				manage_nvim_cmp = false,
+				call_servers = "local",
+				sign_icons = {},
+			})
+
+			local cmp = require("cmp")
+			local cmp_config = lsp.defaults.cmp_config({
+				window = {
+					completion = cmp.config.window.bordered(),
+				},
+				mapping = cmp.mapping.preset.insert({
+					["<CR>"] = cmp.mapping.confirm({ select = false }),
+				}),
+				cmdline = cmp.setup.cmdline(":", {
+					mapping = cmp.mapping.preset.cmdline(),
+					sources = cmp.config.sources({
+						{ name = "path" },
+					}, {
+						{
+							name = "cmdline",
+							option = {
+								ignore_cmds = { "Man", "!" },
+							},
+						},
+					}),
+				}),
+			})
+
+			cmp.setup(cmp_config)
+			lsp.setup()
 		end,
 	})
 	-- statusline stuff
@@ -156,22 +182,6 @@ require("packer").startup(function(use)
 		requires = "nvim-lua/plenary.nvim",
 		config = function()
 			require("gitlinker").setup()
-		end,
-	})
-	use({
-		"nvim-neotest/neotest",
-		requires = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-			"antoinemadec/FixCursorHold.nvim",
-			"haydenmeade/neotest-jest",
-		},
-		config = function()
-			require("neotest").setup({
-				adapters = {
-					require("neotest-jest")({ jestCommand = "yarn run jest --" }),
-				},
-			})
 		end,
 	})
 	use({
@@ -232,12 +242,6 @@ require("packer").startup(function(use)
 					},
 				},
 			})
-		end,
-	})
-	use({
-		"brenoprata10/nvim-highlight-colors",
-		config = function()
-			require("nvim-highlight-colors").setup()
 		end,
 	})
 	-- Lua
