@@ -206,6 +206,9 @@ require("packer").startup(function(use)
 				log_level = vim.log.levels.ERROR,
 
 				filetype = {
+					python = {
+						require("formatter.filetypes.python").black,
+					},
 					lua = {
 						require("formatter.filetypes.lua").stylua,
 					},
