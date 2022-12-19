@@ -61,6 +61,15 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 	command = ":%s/\\s\\+$//e",
 })
 
+local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
+vim.api.nvim_create_autocmd("TextYankPost", {
+	callback = function()
+		vim.highlight.on_yank()
+	end,
+	group = highlight_group,
+	pattern = "*",
+})
+
 nmap("<leader>pp", function()
 	require("treesorter").select()
 end)
