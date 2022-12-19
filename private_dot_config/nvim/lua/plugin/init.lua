@@ -52,7 +52,10 @@ require("packer").startup(function(use)
 	use({
 		"VonHeikemen/lsp-zero.nvim",
 		requires = {
+			-- Useful status updates for LSP
+			"j-hui/fidget.nvim",
 			-- LSP Support
+
 			{ "neovim/nvim-lspconfig" },
 			{ "williamboman/mason.nvim" },
 			{ "williamboman/mason-lspconfig.nvim" },
