@@ -48,3 +48,4 @@ brew install zsh-syntax-highlighting
 
 #dracula colors for alacritty, tmux, vim, zsh-syntax-highlighting https://draculatheme.com
 alias vim="nvim"
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh

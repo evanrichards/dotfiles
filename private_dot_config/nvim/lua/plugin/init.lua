@@ -200,7 +200,11 @@ require("packer").startup(function(use)
 						require("formatter.filetypes.sh").shfmt,
 					},
 					rust = {
-						require("formatter.filetypes.rust").rustfmt,
+						{
+							exe = "rustfmt",
+							args = { "--edition=2021" },
+							stdin = true,
+						},
 					},
 					markdown = {
 						require("formatter.filetypes.markdown").prettier,

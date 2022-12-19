@@ -18,10 +18,11 @@ fi
 # Opt arrow keys should move words
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
-if [ ! -d "$HOME/zsh-syntax-highlighting" ]; then
+
+if [ ! -d "/opt/homebrew/share/zsh-syntax-highlighting" ]; then
         brew install zsh-syntax-highlighting
 fi
-source /Users/evanrichards/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # check if we hae a .zsh directory
 if [ ! -d "$HOME/.zsh" ]; then
@@ -33,9 +34,9 @@ fi
 if [ ! -d "$HOME/catppuccin/zsh-syntax-highlighting" ]; then
   cd $HOME/catppuccin
   git clone https://github.com/catppuccin/zsh-syntax-highlighting.git
-  cp -v zsh-syntax-highlighting/catppuccin-zsh-syntax-highlighting.zsh ~/.zsh
+  cp -v zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh ~/.zsh
 fi
-source ~/.zsh/catppuccin-zsh-syntax-highlighting.zsh
+source ~/.zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
 # now load zsh-syntax-highlighting plugin
 ZSH_HIGHLIGHT_STYLES[cursor]='bold'
