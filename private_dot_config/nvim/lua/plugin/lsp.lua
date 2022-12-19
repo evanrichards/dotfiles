@@ -12,8 +12,6 @@ lsp.configure("tsserver", {
 	on_attach = function(client, bufnr)
 		require("typescript").setup({
 			server = {
-				capabilities = opts.capabilities,
-				on_attach = opts.on_attach,
 				init_options = {
 					preferences = {
 						importModuleSpecifierPreference = "non-relative",
@@ -25,17 +23,14 @@ lsp.configure("tsserver", {
 	end,
 })
 
-lsp.on_attach(function(client, bufnr)
+lsp.on_attach(function(_, bufnr)
 	local noremap = { buffer = bufnr, remap = false }
 	local bind = vim.keymap.set
-	bind("n", "<leader>e", function()
-		vim.diagnostic.open_float()
-	end, noremap)
-	bind("n", "gD", vim.lsp.buf.declaration(), noremap)
-	bind("n", "K", vim.lsp.buf.definition(), noremap)
-	bind("n", "<C-k>", vim.lsp.buf.signature_help(), noremap)
-	bind("n", "<leader>rn", vim.lsp.buf.rename(), noremap)
-	bind("n", "<leader>ca", vim.lsp.buf.code_action(), noremap)
+	bind("n", "<leader>e", vim.diagnostic.open_float, noremap)
+	bind("n", "K", vim.lsp.buf.definition, noremap)
+	bind("n", "<C-k>", vim.lsp.buf.signature_help, noremap)
+	bind("n", "<leader>rn", vim.lsp.buf.rename, noremap)
+	bind("n", "<leader>ca", vim.lsp.buf.code_action, noremap)
 end)
 
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
@@ -71,7 +66,5 @@ cmp.setup.cmdline(":", {
 		},
 	}),
 })
-
-cmp.setup(cmp_config)
 
 lsp.setup()

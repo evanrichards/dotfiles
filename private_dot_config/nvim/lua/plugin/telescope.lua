@@ -10,9 +10,10 @@ telescope.load_extension("gh")
 
 -- Find files using Telescope command-line sugar.
 vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>")
-vim.keymap.set("n", "<leader>fr", ":Telescope frecency<CR>")
+vim.keymap.set("n", "<leader>fr", ":Telescope resume<CR>")
 vim.keymap.set("n", "<leader>fg", ":Telescope live_grep<CR>")
 vim.keymap.set("n", "<leader>fb", ":Telescope buffers<CR>")
+vim.keymap.set("n", "<leader>fs", ":Telescope lsp_document_symbols<CR>")
 vim.keymap.set("n", "<leader>fh", ":Telescope help_tags<CR>")
 vim.keymap.set("n", "<leader>f", ":Telescope<CR>")
 vim.keymap.set("n", "gd", ":Telescope lsp_definitions<CR>")
