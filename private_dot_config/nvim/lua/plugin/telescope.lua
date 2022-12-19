@@ -1,3 +1,4 @@
+local nmap = require("keymap").nmap
 local telescope = require("telescope")
 local builtins = require("telescope.builtin")
 telescope.setup({
@@ -7,10 +8,6 @@ telescope.setup({
 })
 telescope.load_extension("ui-select")
 telescope.load_extension("gh")
-
-local nmap = function(keys, func, desc)
-	vim.keymap.set("n", keys, func, { desc = desc })
-end
 -- Find files using Telescope command-line sugar.
 nmap("<leader>ff", builtins.find_files, "[F]ind [F]iles")
 nmap("<leader>fr", builtins.resume, "[F]ind [R]esume")

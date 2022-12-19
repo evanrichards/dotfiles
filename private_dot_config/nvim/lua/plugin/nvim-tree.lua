@@ -1,3 +1,5 @@
+local nmap = require("keymap").nmap
+local api = require("nvim-tree.api")
 require("nvim-tree").setup({
 	view = {
 		width = 100,
@@ -9,6 +11,8 @@ require("nvim-tree").setup({
 	},
 })
 
-vim.keymap.set("n", "<C-n>", ":NvimTreeToggle<CR>")
-vim.keymap.set("n", "<leader>tr", ":NvimTreeRefresh<CR>")
-vim.keymap.set("n", "<leader>tt", ":NvimTreeFindFile<CR>")
+nmap("<C-n>", api.tree.toggle, "Toggle filetree")
+nmap("<leader>tr", api.tree.reload, "Refresh tree")
+nmap("<leader>tt", function()
+	api.tree.toggle(true)
+end, "Find current file in tree")

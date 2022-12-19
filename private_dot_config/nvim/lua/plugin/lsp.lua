@@ -1,5 +1,6 @@
 local lsp = require("lsp-zero")
 local cmp = require("cmp")
+local nmap = require("keymap").nmap
 
 lsp.preset("recommended")
 
@@ -9,7 +10,7 @@ lsp.set_preferences({
 })
 
 lsp.configure("tsserver", {
-	on_attach = function(client, bufnr)
+	on_attach = function()
 		require("typescript").setup({
 			server = {
 				init_options = {
@@ -24,13 +25,11 @@ lsp.configure("tsserver", {
 })
 
 lsp.on_attach(function(_, bufnr)
-	local noremap = { buffer = bufnr, remap = false }
-	local bind = vim.keymap.set
-	bind("n", "<leader>e", vim.diagnostic.open_float, noremap)
-	bind("n", "K", vim.lsp.buf.definition, noremap)
-	bind("n", "<C-k>", vim.lsp.buf.signature_help, noremap)
-	bind("n", "<leader>rn", vim.lsp.buf.rename, noremap)
-	bind("n", "<leader>ca", vim.lsp.buf.code_action, noremap)
+	nmap("<leader>e", vim.diagnostic.open_float, "Open [E]rrors under cursor", bufnr)
+	nmap("K", vim.lsp.buf.definition, "Display definition", bufnr)
+	nmap("<C-k>", vim.lsp.buf.signature_help, "Display signature", bufnr)
+	nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame symbol", bufnr)
+	nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", bufnr)
 end)
 
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
