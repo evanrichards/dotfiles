@@ -19,10 +19,10 @@ fi
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
-if [ ! -d "/opt/homebrew/share/zsh-syntax-highlighting" ]; then
+if [ ! -d $(brew --prefix zsh-syntax-highlighting) ]; then
         brew install zsh-syntax-highlighting
 fi
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source "$(brew --prefix zsh-syntax-highlighting)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # check if we hae a .zsh directory
 if [ ! -d "$HOME/.zsh" ]; then
@@ -54,6 +54,10 @@ source "${HOME}/gitrc.sh"
 source "$HOME/.config/zsh-prompt.zsh"
 export PATH="$(yarn global bin):$PATH"
 
+if [ -d ~/.secrets_rc ]; then
+  touch ~/.secrets_rc
+fi
+source ~/.secrets_rc
 
 alias startDocker="open /Applications/Docker.app"
 

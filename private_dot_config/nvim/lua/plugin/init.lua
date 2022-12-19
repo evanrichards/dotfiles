@@ -236,6 +236,20 @@ require("packer").startup(function(use)
 			})
 		end,
 	})
+	-- Packer
+	use({
+		"jackMort/ChatGPT.nvim",
+		config = function()
+			require("chatgpt").setup({
+				welcome_message = "",
+			})
+		end,
+		requires = {
+			"MunifTanjim/nui.nvim",
+			"nvim-lua/plenary.nvim",
+			"nvim-telescope/telescope.nvim",
+		},
+	})
 	--[[ plugins to try but who has the time?
 	-- better diff view stuff
 	sindrets/diffview.nvim

@@ -26,7 +26,7 @@ lsp.configure("tsserver", {
 
 lsp.on_attach(function(_, bufnr)
 	nmap("<leader>e", vim.diagnostic.open_float, "Open [E]rrors under cursor", bufnr)
-	nmap("K", vim.lsp.buf.definition, "Display definition", bufnr)
+	nmap("K", vim.lsp.buf.hover, "Display definition", bufnr)
 	nmap("<C-k>", vim.lsp.buf.signature_help, "Display signature", bufnr)
 	nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame symbol", bufnr)
 	nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", bufnr)
