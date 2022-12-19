@@ -52,6 +52,8 @@ alias dotfiles="cd ${HOME}/code/dotfiles"
 source "${HOME}/gitrc.sh"
 
 source "$HOME/.config/zsh-prompt.zsh"
+export PATH="$(yarn global bin):$PATH"
+
 
 alias startDocker="open /Applications/Docker.app"
 
