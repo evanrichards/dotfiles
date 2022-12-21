@@ -53,14 +53,6 @@ vim.opt.backspace = { "indent", "eol", "start" }
 -- clear search highlighting with <space>+</>
 nmap("<leader>/", ":nohlsearch<CR>")
 
--- delete trailing whitespace on save
-local autoformatAugroup = vim.api.nvim_create_augroup("autoformat_settings", { clear = true })
-vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*",
-	group = autoformatAugroup,
-	command = ":%s/\\s\\+$//e",
-})
-
 local highlight_group = vim.api.nvim_create_augroup("YankHighlight", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
 	callback = function()
@@ -69,7 +61,3 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = highlight_group,
 	pattern = "*",
 })
-
-nmap("<leader>pp", function()
-	require("treesorter").select()
-end)
