@@ -1,4 +1,6 @@
 #! /bin/zsh
+autoload -U compinit
+compinit -i
 export EDITOR='nvim'
 export TERM='screen-256color'
 # Compilation flags
