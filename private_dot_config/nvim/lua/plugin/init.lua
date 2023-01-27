@@ -113,6 +113,12 @@ require("packer").startup(function(use)
 	use({
 		"nvim-lualine/lualine.nvim",
 		config = function()
+			local function recordingStatus()
+				if vim.fn.reg_recording() ~= "" then
+					return "🔴"
+				end
+				return ""
+			end
 			require("lualine").setup({
 				options = {
 					theme = "catppuccin",
@@ -120,7 +126,7 @@ require("packer").startup(function(use)
 					section_separators = { left = "", right = "" },
 				},
 				sections = {
-					lualine_a = { "mode" },
+					lualine_a = { { recordingStatus }, "mode" },
 					lualine_b = { "branch", "diff" },
 					lualine_c = { "filename" },
 					lualine_x = { require("wpm").wpm, require("wpm").historic_graph, "filetype" },
