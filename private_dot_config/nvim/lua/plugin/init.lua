@@ -35,7 +35,6 @@ require("packer").startup(function(use)
 	use("nvim-treesitter/playground")
 	-- https://github.com/tpope/vim-sensible
 	use("tpope/vim-sensible")
-	-- https://github.com/github/copilot.vim
 	use({
 		"kylechui/nvim-surround",
 		tag = "*", -- Use for stability; omit to use `main` branch for the latest features
@@ -45,12 +44,20 @@ require("packer").startup(function(use)
 			})
 		end,
 	})
+	-- https://github.com/github/copilot.vim
 	use("github/copilot.vim")
 	-- show git status on lines
 	use({
 		"lewis6991/gitsigns.nvim",
 		config = function()
-			require("gitsigns").setup()
+			require("gitsigns").setup({
+				current_line_blame = true,
+				current_line_blame_opts = {
+					virt_text = true,
+					virt_text_pos = "right_align",
+					delay = 1000,
+				},
+			})
 		end,
 	})
 	-- Git support
@@ -111,7 +118,21 @@ require("packer").startup(function(use)
 	use({
 		"nvim-lualine/lualine.nvim",
 		config = function()
-			require("lualine").setup()
+			require("lualine").setup({
+				options = {
+					theme = "catppuccin",
+					component_separators = "|",
+					section_separators = { left = "", right = "" },
+				},
+				sections = {
+					lualine_a = { "mode" },
+					lualine_b = { "branch", "diff" },
+					lualine_c = { "filename" },
+					lualine_x = { require("wpm").wpm, require("wpm").historic_graph, "filetype" },
+					lualine_y = { "progress" },
+					lualine_z = { "location" },
+				},
+			})
 		end,
 		requires = { "kyazdani42/nvim-web-devicons" },
 	})
@@ -254,6 +275,12 @@ require("packer").startup(function(use)
 			"nvim-lua/plenary.nvim",
 			"nvim-telescope/telescope.nvim",
 		},
+	})
+	use({
+		"jcdickinson/wpm.nvim",
+		config = function()
+			require("wpm").setup({})
+		end,
 	})
 	--[[ plugins to try but who has the time?
 	-- better diff view stuff
