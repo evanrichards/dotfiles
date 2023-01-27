@@ -52,11 +52,6 @@ require("packer").startup(function(use)
 		config = function()
 			require("gitsigns").setup({
 				current_line_blame = true,
-				current_line_blame_opts = {
-					virt_text = true,
-					virt_text_pos = "right_align",
-					delay = 1000,
-				},
 			})
 		end,
 	})
@@ -260,6 +255,7 @@ require("packer").startup(function(use)
 				-- your configuration comes here
 				-- or leave it empty to use the default settings
 			})
+			require("keymap").nmap("<leader>xx", "<cmd>TroubleToggle<cr>")
 		end,
 	})
 	-- Packer
