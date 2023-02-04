@@ -61,3 +61,9 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = highlight_group,
 	pattern = "*",
 })
+vim.opt.errorformat = "%+A\\ %#%f\\ %#(%l\\\\\\,%c):\\ %m,%C%m"
+vim.cmd("set makeprg=yarn\\ tsc")
+-- if our filetype is typescript then we want to set errorformat
+-- vim.cmd("autocmd FileType typescript setlocal errorformat=%+A %#%f %#(%l\\,%c): %m,%C%m")
+-- and we want to set the makeprg
+-- vim.cmd("autocmd FileType typescript setlocal makeprg=yarn\\ tsc\\ --noEmit")

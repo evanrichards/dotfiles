@@ -16,6 +16,7 @@ nmap("<leader>?", builtins.oldfiles, "[?] Find recently opened files")
 nmap("<leader>fr", builtins.resume, "[F]ind [R]esume")
 nmap("<leader>fg", builtins.live_grep, "[F]ind [G]rep")
 nmap("<leader>fb", builtins.buffers, "[F]ind [B]uffers")
+nmap("<leader>fq", builtins.quickfix, "[F]ind [Q]uickfix")
 nmap("<leader>fs", function()
 	-- You can pass additional configuration to telescope to change theme, layout, etc.
 	builtins.current_buffer_fuzzy_find(require("telescope.themes").get_dropdown({
