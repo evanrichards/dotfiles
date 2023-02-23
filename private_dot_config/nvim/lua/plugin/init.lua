@@ -140,6 +140,7 @@ require("packer").startup(function(use)
 	-- file explorer
 	use({
 		"kyazdani42/nvim-tree.lua",
+		commit = "8b8d457",
 		config = function()
 			require("plugin.nvim-tree")
 		end,
@@ -223,12 +224,16 @@ require("packer").startup(function(use)
 					},
 					typescript = {
 						require("formatter.filetypes.typescript").prettierd,
+						-- require("formatter.filetypes.typescript").eslint_d,
 					},
 					yaml = {
 						require("formatter.filetypes.yaml").pyyaml,
 					},
 					typescriptreact = {
 						require("formatter.filetypes.typescriptreact").prettierd,
+					},
+					sql = {
+						require("formatter.filetypes.sql").pgformat,
 					},
 					sh = {
 						require("formatter.filetypes.sh").shfmt,
