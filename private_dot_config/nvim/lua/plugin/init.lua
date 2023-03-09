@@ -271,16 +271,10 @@ require("packer").startup(function(use)
 	})
 	-- Packer
 	use({
-		"jackMort/ChatGPT.nvim",
-		config = function()
-			require("chatgpt").setup({
-				welcome_message = "",
-			})
-		end,
+		"dpayne/CodeGPT.nvim",
 		requires = {
 			"MunifTanjim/nui.nvim",
 			"nvim-lua/plenary.nvim",
-			"nvim-telescope/telescope.nvim",
 		},
 	})
 	use({
@@ -289,14 +283,4 @@ require("packer").startup(function(use)
 			require("wpm").setup({})
 		end,
 	})
-	--[[ plugins to try but who has the time?
-	-- better diff view stuff
-	sindrets/diffview.nvim
-	-- another git suite thing
-	tanvirtin/vgit.nvim
-	-- markdown to table of contents
-	mzlogin/vim-markdown-toc
-	-- add a 1s delay to any hjkl movement
-	takac/vim-hardtime
---]]
 end)
