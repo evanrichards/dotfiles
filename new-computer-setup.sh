@@ -5,31 +5,29 @@ git
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/$(whoami)/.zprofile
 eval "$(/opt/homebrew/bin/brew shellenv)"
-tmux
+brew install chezmoi
+touch ~/.secrets_rc
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply evanrichards
+
+
 # install latest vim
-brew install nvim exa bat rg
+brew install nvim exa bat rg asdf fzf tmux gpg zsh-syntax-highlighting
 
 # if on mac 
 brew install kitty
+# switch to kitty from here
 
-# Some font stuff that is needed for alacrity configs
+tmux
+
+# If on mac
 brew tap homebrew/cask-fonts
 brew tap huytd/cask-fonts
 brew install --cask font-fira-code
 
 # if on linux
 sudo apt-get install zsh
-
-# set tmux to be 1-based windows
-brew install tmux
-touch .tmux.conf
-
-
-# nvm install
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
-
-brew install zsh-syntax-highlighting
-
-#dracula colors for alacritty, tmux, vim, zsh-syntax-highlighting https://draculatheme.com
-alias vim="nvim"
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+asdf plugin-add nodejs yarn
+asdf install nodejs latest
+asdf install yarn latest
+asdf global yarn latest
+asdf global nodejs latest
