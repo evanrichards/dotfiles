@@ -11,7 +11,7 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply evanrichards
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 
 # install latest vim
-brew install nvim exa bat rg asdf fzf tmux gpg zsh-syntax-highlighting
+brew install nvim exa bat rg asdf fzf tmux gpg zsh-syntax-highlighting gh
 
 # my kitty config expects a running tmux session
 tmux
