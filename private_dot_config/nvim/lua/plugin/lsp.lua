@@ -43,7 +43,9 @@ local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
 	["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
 	["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
+	["<CR>"] = cmp.mapping.confirm({ select = false }),
 })
+-- print cmp_mappings
 -- I want tab to be used by copilot, and have to manually select drop down items
 cmp_mappings["<Tab>"] = nil
 cmp_mappings["<S-Tab>"] = nil
@@ -54,6 +56,7 @@ cmp_config["completion"] = {
 	completeopt = "menu,menuone,noinsert,noselect",
 }
 lsp.setup_nvim_cmp(cmp_config)
+lsp.setup()
 
 cmp.setup.cmdline("/", {
 	mapping = cmp.mapping.preset.cmdline(),
@@ -76,4 +79,6 @@ cmp.setup.cmdline(":", {
 	}),
 })
 
-lsp.setup()
+cmp.setup({
+	mapping = cmp_mappings,
+})

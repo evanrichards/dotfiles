@@ -61,7 +61,6 @@ alias chezmoicd="cd ${HOME}/.local/share/chezmoi"
 alias dotfiles="cd ${HOME}/code/dotfiles"
 source "${HOME}/gitrc.sh"
 
-source "$HOME/.config/zsh-prompt.zsh"
 export PATH="$(yarn global bin):$PATH"
 export PATH="/Users/evanrichards/.local/bin:$PATH"
 export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib"
@@ -70,7 +69,7 @@ export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
 export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
 
 
-if [ -d ~/.secrets_rc ]; then
+if [ ! -d ~/.secrets_rc ]; then
   touch ~/.secrets_rc
 fi
 source ~/.secrets_rc
