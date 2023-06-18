@@ -28,6 +28,9 @@ fi
 # Opt arrow keys should move words
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
+# Ctrl-p/n should do down/up
+bindkey "^P" up-line-or-history
+bindkey "^N" down-line-or-history
 
 if [ ! -d $(brew --prefix zsh-syntax-highlighting) ]; then
         brew install zsh-syntax-highlighting
