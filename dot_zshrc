@@ -25,12 +25,10 @@ fi
 if [ -d /opt/homebrew/opt/asdf/libexec ]; then
   . /opt/homebrew/opt/asdf/libexec/asdf.sh
 fi
+bindkey -e
 # Opt arrow keys should move words
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
-# Ctrl-p/n should do down/up
-bindkey "^P" up-line-or-history
-bindkey "^N" down-line-or-history
 
 if [ ! -d $(brew --prefix zsh-syntax-highlighting) ]; then
         brew install zsh-syntax-highlighting
