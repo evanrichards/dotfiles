@@ -298,5 +298,8 @@ require("packer").startup(function(use)
 				spinner = { "⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷" },
 			})
 		end,
+		requires = {
+			"rcarriga/nvim-notify",
+		},
 	})
 end)
