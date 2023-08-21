@@ -153,7 +153,7 @@ require("packer").startup(function(use)
 	-- nice override of the vim.notify function
 	use({
 		"rcarriga/nvim-notify",
-		run = function()
+		config = function()
 			vim.notify = require("notify")
 		end,
 	})

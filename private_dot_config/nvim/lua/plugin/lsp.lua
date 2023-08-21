@@ -23,6 +23,9 @@ lsp.configure("tsserver", {
 					preferences = {
 						importModuleSpecifierPreference = "non-relative",
 						noUnusedParameters = false,
+						autoImportFileExcludePatterns = {
+							"aws-sdk/client-textract",
+						},
 					},
 				},
 			},
