@@ -85,5 +85,11 @@ function _G.open_url()
 	vim.fn.jobstart({ "open", url })
 end
 
+local function generate_uuid()
+	vim.fn.system("uuidgen|sed 's/.*/&/'|tr '[A-Z]' '[a-z]' | pbcopy")
+end
+
+vim.api.nvim_create_user_command("GenerateUUID", generate_uuid, {})
+
 -- Map visual mode command to open url
 vim.api.nvim_set_keymap("v", "<leader>u", ":lua open_url()<CR>", { noremap = true, silent = true })
