@@ -93,3 +93,9 @@ vim.api.nvim_create_user_command("GenerateUUID", generate_uuid, {})
 
 -- Map visual mode command to open url
 vim.api.nvim_set_keymap("v", "<leader>u", ":lua open_url()<CR>", { noremap = true, silent = true })
+function _G.select_and_sort()
+	vim.cmd("norm vi[")
+	vim.cmd("'<,'>sort")
+end
+
+vim.api.nvim_set_keymap("n", "<leader>sa", ":lua select_and_sort()<CR>", { noremap = true, silent = true })
