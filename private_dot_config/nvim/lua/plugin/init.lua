@@ -137,16 +137,6 @@ require("packer").startup(function(use)
 		end,
 		requires = { "kyazdani42/nvim-web-devicons" },
 	})
-	-- file explorer
-	use({
-		"kyazdani42/nvim-tree.lua",
-		commit = "8b8d457",
-		config = function()
-			require("plugin.nvim-tree")
-		end,
-		requires = { "kyazdani42/nvim-web-devicons" },
-	})
-
 	use({
 		"jose-elias-alvarez/typescript.nvim",
 	})
@@ -301,5 +291,12 @@ require("packer").startup(function(use)
 		requires = {
 			"rcarriga/nvim-notify",
 		},
+	})
+	use({
+		"stevearc/oil.nvim",
+		config = function()
+			require("oil").setup()
+			vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+		end,
 	})
 end)
