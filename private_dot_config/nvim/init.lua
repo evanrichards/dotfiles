@@ -87,6 +87,7 @@ end
 
 local function generate_uuid()
 	vim.fn.system("uuidgen|sed 's/.*/&/'|tr '[A-Z]' '[a-z]' | pbcopy")
+	vim.fn.execute('normal! "+p')
 end
 
 vim.api.nvim_create_user_command("GenerateUUID", generate_uuid, {})
