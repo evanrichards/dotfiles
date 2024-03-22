@@ -74,3 +74,5 @@ compdef _gt_yargs_completions gt
 if command -v pyenv >/dev/null; then
   eval "$(pyenv init -)"
 fi
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
