@@ -1,0 +1,41 @@
+# Load Cargo environment
+. "$HOME/.cargo/env"
+
+# Environment variables
+export EDITOR='nvim'
+export TERM='screen-256color'
+export ARCHFLAGS="-arch arm64"
+export NVM_DIR="$HOME/.nvm"
+export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib"
+export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
+export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+export PYENV_ROOT="$HOME/.pyenv"
+
+# Load secrets
+if [ ! -d ~/.secrets_rc ]; then
+  touch ~/.secrets_rc
+fi
+source ~/.secrets_rc
+
+# Load asdf
+if [ -d /usr/local/opt/asdf/libexec ]; then
+  . /usr/local/opt/asdf/libexec/asdf.sh
+elif [ -d /opt/homebrew/opt/asdf/libexec ]; then
+  . /opt/homebrew/opt/asdf/libexec/asdf.sh
+fi
+
+# Load nvm
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# PATH modifications
+export PATH="/Users/evanrichards/.local/bin:$PATH"
+export PATH="$PYENV_ROOT/shims:$PATH"
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
+export PATH="/opt/homebrew/opt/fzf/bin:$PATH"
+
