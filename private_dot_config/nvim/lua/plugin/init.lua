@@ -152,7 +152,25 @@ require("packer").startup(function(use)
 		requires = { "kyazdani42/nvim-web-devicons" },
 	})
 	use({
-		"jose-elias-alvarez/typescript.nvim",
+		"pmizio/typescript-tools.nvim",
+		requires = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+		config = function()
+			require("typescript-tools").setup({
+				expose_as_code_action = "all",
+				tsserver_plugins = {
+					"@styled/typescript-styled-plugin",
+				},
+				tsserver_file_preferences = {
+					quotePreference = "single",
+					importModuleSpecifierPreference = "non-relative",
+					noUnusedParameters = false,
+					autoImportFileExcludePatterns = {
+						"./**/node_modules/@aws-sdk/client-textract/**",
+						"**/node_modules/@aws-sdk/client-textract/**",
+					},
+				},
+			})
+		end,
 	})
 	-- nice override of the vim.notify function
 	use({

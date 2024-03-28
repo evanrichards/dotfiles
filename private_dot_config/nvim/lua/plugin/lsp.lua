@@ -15,24 +15,6 @@ lsp.set_preferences({
 	sign_icons = {},
 })
 
-lsp.configure("tsserver", {
-	on_attach = function()
-		require("typescript").setup({
-			server = {
-				init_options = {
-					preferences = {
-						importModuleSpecifierPreference = "non-relative",
-						noUnusedParameters = false,
-						autoImportFileExcludePatterns = {
-							"aws-sdk/client-textract",
-						},
-					},
-				},
-			},
-		})
-	end,
-})
-
 lsp.on_attach(function(_, bufnr)
 	nmap("K", vim.lsp.buf.hover, "Display definition", bufnr)
 	nmap("<C-k>", vim.lsp.buf.signature_help, "Display signature", bufnr)
