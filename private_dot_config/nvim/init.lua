@@ -3,11 +3,6 @@ vim.g.mapleader = " "
 -- the only place that clear should be true, the others just add on to it.
 local nmap = require("keymap").nmap
 local vmap = require("keymap").vmap
--- Enable true color support
-vim.opt.termguicolors = true
-
--- Set the number of colors to 256
-vim.cmd('set t_Co=256')
 
 -- this loads all my plugins, configures and initializes them.
 require("plugin")
