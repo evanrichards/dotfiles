@@ -100,3 +100,22 @@ function _G.select_and_sort()
 end
 
 vim.api.nvim_set_keymap("n", "<leader>sa", ":lua select_and_sort()<CR>", { noremap = true, silent = true })
+
+if vim.g.loaded_nvim_tenant_list then
+	return
+end
+
+vim.api.nvim_create_user_command("TenantList", function()
+	require("plugin.tenant-list").tenant_list()
+end, { desc = "Open Tenant List" })
+
+-- Create an autocommand to set the keymap for SQL files
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "sql",
+	callback = function()
+		local opts = { noremap = true, silent = true }
+		vim.api.nvim_buf_set_keymap(0, "n", "<leader>tl", "<cmd>TenantList<CR>", opts)
+	end,
+})
+
+vim.g.loaded_nvim_tenant_list = 1
