@@ -23,19 +23,11 @@ FILE_PATH=$(echo "$RAW_TEXT" | grep -oE '\/[a-zA-Z0-9_\/\.-]+')
 if [[ -n "$URL" ]]; then
   # If a URL is extracted, open it
   open "$URL"
-elif [[ -n "$FILE_PATH" ]]; then
-  # If a file path is extracted, open it depending on the file type
-  # if its a directory, open it in vim in a new tmux pane
-  # Get the current directory of the tmux pane where the command is run
-  if [[ -d "$FILE_PATH" ]]; then
-    tmux split-window -h -p 50 -c "$CURRENT_DIR" "zsh -i -c 'nvim $FILE_PATH'"
-  # if its a a code file, open it in vim
-  elif [[ -f "$FILE_PATH" && "$FILE_PATH" =~ \.(c|cpp|java|py|sh|rb|pl|php|js|html|css|scss|json|xml|yml|yaml|md|txt|ts|tsx)$ ]]; then
-    tmux split-window -h -p 50 -c "$CURRENT_DIR" "zsh -i -c 'nvim $FILE_PATH'"
-  else
-    # if its a file, open it in the default application
-    open "$FILE_PATH"
-  fi
+elif [[ -d "$FILE_PATH" ]]; then
+  tmux split-window -h -p 50 -c "$CURRENT_DIR" "zsh -i -c 'nvim $FILE_PATH'"
+# if its a a code file, open it in vim
+elif [[ -f "$FILE_PATH" && "$FILE_PATH" =~ \.(c|cpp|java|py|sh|rb|pl|php|js|html|css|scss|json|xml|yml|yaml|md|txt|ts|tsx)$ ]]; then
+  tmux split-window -h -p 50 -c "$CURRENT_DIR" "zsh -i -c 'nvim $FILE_PATH'"
 else
   # Loop through each line that matches the structured identifier pattern
   echo "$RAW_TEXT" | grep -oE 'qid::[a-z_]+:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}' | while read -r QID; do
