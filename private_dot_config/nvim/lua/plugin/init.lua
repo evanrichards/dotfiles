@@ -16,7 +16,21 @@ require("packer").startup(function(use)
 		as = "catppuccin",
 		config = function()
 			vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
-			require("catppuccin").setup()
+			require("catppuccin").setup({
+				integrations = {
+					cmp = true,
+					gitsigns = true,
+					mason = true,
+					notify = true,
+					treesitter = true,
+					treesitter_context = true,
+					telescope = {
+						enabled = true,
+					},
+					telekasten = true,
+					which_key = true,
+				},
+			})
 			vim.cmd([[colorscheme catppuccin]])
 		end,
 	})
@@ -161,12 +175,6 @@ require("packer").startup(function(use)
 		end,
 	})
 	use({
-		"folke/zen-mode.nvim",
-		config = function()
-			require("zen-mode").setup()
-		end,
-	})
-	use({
 		"ruifm/gitlinker.nvim",
 		requires = "nvim-lua/plenary.nvim",
 		config = function()
@@ -214,7 +222,6 @@ require("packer").startup(function(use)
 					},
 					typescript = {
 						require("formatter.filetypes.typescript").prettierd,
-						-- require("formatter.filetypes.typescript").eslint_d,
 					},
 					yaml = {
 						require("formatter.filetypes.yaml").pyyaml,
@@ -247,16 +254,6 @@ require("packer").startup(function(use)
 			})
 		end,
 	})
-	-- Lua
-	use({
-		"folke/trouble.nvim",
-		requires = "kyazdani42/nvim-web-devicons",
-		config = function()
-			require("trouble").setup({})
-			require("keymap").nmap("<leader>xx", "<cmd>TroubleToggle<cr>")
-		end,
-	})
-	-- Packer
 	use({
 		"dpayne/CodeGPT.nvim",
 		requires = {
