@@ -156,17 +156,19 @@ require("packer").startup(function(use)
 		requires = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
 		config = function()
 			require("typescript-tools").setup({
-				expose_as_code_action = "all",
-				tsserver_plugins = {
-					"@styled/typescript-styled-plugin",
-				},
-				tsserver_file_preferences = {
-					quotePreference = "single",
-					importModuleSpecifierPreference = "non-relative",
-					noUnusedParameters = false,
-					autoImportFileExcludePatterns = {
-						"./**/node_modules/@aws-sdk/client-textract/**",
-						"**/node_modules/@aws-sdk/client-textract/**",
+				settings = {
+					expose_as_code_action = "all",
+					tsserver_plugins = {
+						"@styled/typescript-styled-plugin",
+					},
+					tsserver_file_preferences = {
+						quotePreference = "single",
+						importModuleSpecifierPreference = "non-relative",
+						noUnusedParameters = false,
+						autoImportFileExcludePatterns = {
+							"./**/node_modules/@aws-sdk/client-textract/**",
+							"**/node_modules/@aws-sdk/client-textract/**",
+						},
 					},
 				},
 			})
