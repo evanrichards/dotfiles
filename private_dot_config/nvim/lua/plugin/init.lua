@@ -1,6 +1,7 @@
 require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
 	-- Lua
+	use("loop-payments/tenant-search.nvim")
 	use({
 		"folke/which-key.nvim",
 		config = function()
