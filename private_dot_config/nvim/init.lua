@@ -3,10 +3,9 @@ vim.g.mapleader = " "
 -- the only place that clear should be true, the others just add on to it.
 local nmap = require("keymap").nmap
 local vmap = require("keymap").vmap
-vim.notify("Loading plugins", "info", { title = "Neovim" })
+require('lazy_init')
 
 -- this loads all my plugins, configures and initializes them.
-require("plugin")
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 -- global statusline
 vim.opt.laststatus = 3
