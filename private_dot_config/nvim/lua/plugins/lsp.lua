@@ -1,4 +1,4 @@
-local lsp_map = require("helpers.keymap").lsp_map
+local lsp_map = require("helpers.keys").lsp_map
 
 return {
 	{
