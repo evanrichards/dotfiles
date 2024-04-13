@@ -1,3 +1,5 @@
+-- Handle plugins with lazy.nvim
+require("core.lazy")
 vim.g.mapleader = " "
 -- thinking of this a shared augroup across any autoformatting plugins, this is
 -- the only place that clear should be true, the others just add on to it.
