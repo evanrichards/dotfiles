@@ -60,17 +60,13 @@ return {
 
 			-- This function gets run when an LSP connects to a particular buffer.
 			local on_attach = function(client, bufnr)
+				local builtins = require("telescope.builtin")
 				lsp_map("<leader>e", vim.diagnostic.open_float, bufnr, "Show diagnostics")
 				lsp_map("<leader>rn", vim.lsp.buf.rename, bufnr, "Rename symbol")
 				lsp_map("<leader>ca", vim.lsp.buf.code_action, bufnr, "Code action")
-				lsp_map("<leader>ld", vim.lsp.buf.type_definition, bufnr, "Type definition")
-				lsp_map("<leader>ls", require("telescope.builtin").lsp_document_symbols, bufnr, "Document symbols")
-
-				lsp_map("gd", vim.lsp.buf.definition, bufnr, "Goto Definition")
-				lsp_map("gr", require("telescope.builtin").lsp_references, bufnr, "Goto References")
-				lsp_map("gI", vim.lsp.buf.implementation, bufnr, "Goto Implementation")
+				lsp_map("gd", builtins.lsp_definitions, bufnr, "Goto Definition")
+				lsp_map("gr", builtins.lsp_references, bufnr, "Goto References")
 				lsp_map("K", vim.lsp.buf.hover, bufnr, "Hover Documentation")
-				lsp_map("gD", vim.lsp.buf.declaration, bufnr, "Goto Declaration")
 			end
 
 			-- nvim-cmp supports additional completion capabilities, so broadcast that to servers

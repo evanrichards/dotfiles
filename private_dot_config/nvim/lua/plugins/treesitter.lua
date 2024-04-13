@@ -9,7 +9,7 @@ return {
 		end,
 		config = function()
 			require("nvim-treesitter.configs").setup({
-				ensure_installed = { "c", "cpp", "go", "lua", "python", "rust", "vimdoc", "vim" },
+				ensure_installed = { "all" },
 				highlight = {
 					enable = true,
 					additional_vim_regex_highlighting = false,
