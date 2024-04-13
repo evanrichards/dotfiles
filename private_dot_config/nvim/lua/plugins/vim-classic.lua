@@ -1,7 +1,6 @@
 return {
 	"tpope/vim-sensible",
 	"kylechui/nvim-surround",
-	"tpope/vim-fugitive",
 	"stevearc/dressing.nvim",
 	{
 		"numToStr/Comment.nvim",

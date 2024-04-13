@@ -1,9 +1,17 @@
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		build = ":TSUpdate | TSEnable highlight",
+
+		dependencies = {
+			"nvim-treesitter/nvim-treesitter-textobjects",
+		},
+
+		build = function()
+			pcall(require("nvim-treesitter.install").update({ with_sync = true }))
+		end,
 		config = function()
 			require("nvim-treesitter.configs").setup({
+				ensure_installed = { "c", "cpp", "go", "lua", "python", "rust", "vimdoc", "vim" },
 				highlight = {
 					enable = true,
 					additional_vim_regex_highlighting = false,

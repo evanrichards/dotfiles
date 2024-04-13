@@ -1,112 +1,133 @@
-local nmap = require("keymap").nmap
+local lsp_map = function(lhs, rhs, bufnr, desc)
+	vim.keymap.set("n", lhs, rhs, { silent = true, buffer = bufnr, desc = desc })
+end
+
 return {
 	{
-		"VonHeikemen/lsp-zero.nvim",
+		"neovim/nvim-lspconfig",
 		dependencies = {
-			-- Useful status updates for LSP
-			"j-hui/fidget.nvim",
-			-- LSP Support
-
-			{ "neovim/nvim-lspconfig" },
-			{ "williamboman/mason.nvim" },
-			{ "williamboman/mason-lspconfig.nvim" },
-
-			-- Autocompletion
-			{ "hrsh7th/cmp-buffer" },
-			{ "hrsh7th/cmp-nvim-lsp" },
-			{ "hrsh7th/cmp-nvim-lua" },
-			{ "hrsh7th/cmp-path" },
-			{ "hrsh7th/nvim-cmp" },
-			{ "saadparwaiz1/cmp_luasnip" },
-			{ "hrsh7th/cmp-cmdline" },
-
-			-- Snippets
-			{ "L3MON4D3/LuaSnip" },
-			{ "rafamadriz/friendly-snippets" },
+			"williamboman/mason.nvim",
+			"williamboman/mason-lspconfig.nvim",
+			{
+				"j-hui/fidget.nvim",
+				tag = "legacy",
+				event = "LspAttach",
+			},
+			"folke/neodev.nvim",
+			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
-			local lsp = require("lsp-zero")
-			lsp.extend_lspconfig()
-			lsp.on_attach(function(_, bufnr)
-				lsp.default_keymaps({ buffer = bufnr })
-				nmap("<leader>e", vim.diagnostic.open_float, "Show diagnostics", bufnr)
-				nmap("K", vim.lsp.buf.hover, "Display hover", bufnr)
-				nmap("<C-k>", vim.lsp.buf.signature_help, "Display signature", bufnr)
-				nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame symbol", bufnr)
-				nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", bufnr)
-			end)
-
-			lsp.set_preferences({
-				suggest_lsp_servers = true,
-				setup_servers_on_start = true,
-				-- manage my own keymaps here for now because i want to use telescope for
-				-- some of the lsp stuff
-				set_lsp_keymaps = false,
-				configure_diagnostics = true,
-				cmp_capabilities = true,
-				manage_nvim_cmp = true,
-				call_servers = "local",
-				sign_icons = {},
+			-- Set up Mason before anything else
+			require("mason").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"lua_ls",
+					"pylsp",
+				},
+				automatic_installation = true,
 			})
-			lsp.extend_cmp()
-			local cmp = require("cmp")
 
-			local cmp_select = { behavior = cmp.SelectBehavior.Select }
+			-- Neodev setup before LSP config
+			require("neodev").setup()
 
-			local cmp_mappings = lsp.defaults.cmp_mappings({
-				["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
-				["<C-n>"] = cmp.mapping.select_next_item(cmp_select),
-				["<CR>"] = cmp.mapping.confirm({ select = false }),
-			})
-			-- print cmp_mappings
-			-- I want tab to be used by copilot, and have to manually select drop down items
-			cmp_mappings["<Tab>"] = nil
-			cmp_mappings["<S-Tab>"] = nil
-			local cmp_config = lsp.defaults.cmp_config()
-			cmp_config["mapping"] = cmp_mappings
-			cmp_config["preselect"] = "none"
-			cmp_config["completion"] = {
-				completeopt = "menu,menuone,noinsert,noselect",
+			-- Turn on LSP status information
+			require("fidget").setup()
+
+			-- Set up cool signs for diagnostics
+			local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+			for type, icon in pairs(signs) do
+				local hl = "DiagnosticSign" .. type
+				vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+			end
+
+			-- Diagnostic config
+			local config = {
+				virtual_text = false,
+				signs = {
+					active = signs,
+				},
+				update_in_insert = true,
+				underline = true,
+				severity_sort = true,
+				float = {
+					focusable = true,
+					style = "minimal",
+					border = "rounded",
+					source = "always",
+					header = "",
+					prefix = "",
+				},
 			}
+			vim.diagnostic.config(config)
 
-			cmp.setup.cmdline("/", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = {
-					{ name = "buffer" },
+			-- This function gets run when an LSP connects to a particular buffer.
+			local on_attach = function(client, bufnr)
+				lsp_map("<leader>e", vim.diagnostic.open_float, bufnr, "Show diagnostics")
+				lsp_map("<leader>rn", vim.lsp.buf.rename, bufnr, "Rename symbol")
+				lsp_map("<leader>ca", vim.lsp.buf.code_action, bufnr, "Code action")
+				lsp_map("<leader>ld", vim.lsp.buf.type_definition, bufnr, "Type definition")
+				lsp_map("<leader>ls", require("telescope.builtin").lsp_document_symbols, bufnr, "Document symbols")
+
+				lsp_map("gd", vim.lsp.buf.definition, bufnr, "Goto Definition")
+				lsp_map("gr", require("telescope.builtin").lsp_references, bufnr, "Goto References")
+				lsp_map("gI", vim.lsp.buf.implementation, bufnr, "Goto Implementation")
+				lsp_map("K", vim.lsp.buf.hover, bufnr, "Hover Documentation")
+				lsp_map("gD", vim.lsp.buf.declaration, bufnr, "Goto Declaration")
+			end
+
+			-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+
+			-- Lua
+			require("lspconfig")["lua_ls"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+				settings = {
+					Lua = {
+						completion = {
+							callSnippet = "Replace",
+						},
+						diagnostics = {
+							globals = { "vim" },
+						},
+						workspace = {
+							library = {
+								[vim.fn.expand("$VIMRUNTIME/lua")] = true,
+								[vim.fn.stdpath("config") .. "/lua"] = true,
+							},
+						},
+					},
 				},
 			})
 
-			cmp.setup.cmdline(":", {
-				mapping = cmp.mapping.preset.cmdline(),
-				sources = cmp.config.sources({
-					{ name = "path" },
-				}, {
-					{
-						name = "cmdline",
-						option = {
-							ignore_cmds = { "Man", "!" },
+			-- Python
+			require("lspconfig")["pylsp"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+				settings = {
+					pylsp = {
+						plugins = {
+							flake8 = {
+								enabled = true,
+								maxLineLength = 88, -- Black's line length
+							},
+							-- Disable plugins overlapping with flake8
+							pycodestyle = {
+								enabled = false,
+							},
+							mccabe = {
+								enabled = false,
+							},
+							pyflakes = {
+								enabled = false,
+							},
+							-- Use Black as the formatter
+							autopep8 = {
+								enabled = false,
+							},
 						},
 					},
-				}),
-			})
-
-			cmp.setup({
-				mapping = cmp_mappings,
-			})
-		end,
-	},
-	{
-		"williamboman/mason.nvim",
-		dependencies = {
-			"VonHeikemen/lsp-zero.nvim",
-		},
-		config = function()
-			local lsp = require("lsp-zero")
-			lsp.extend_lspconfig()
-			require("mason").setup()
-			require("mason-lspconfig").setup({
-				handlers = {
-					lsp.default_setup,
 				},
 			})
 		end,

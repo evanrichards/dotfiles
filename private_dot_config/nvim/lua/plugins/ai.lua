@@ -1,7 +1,5 @@
 return {
-	{
-		"github/copilot.vim",
-	},
+	{ "github/copilot.vim" },
 	{
 		"dpayne/CodeGPT.nvim",
 		dependencies = {
