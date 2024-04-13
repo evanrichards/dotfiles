@@ -17,4 +17,11 @@ return {
   map = map,
   lsp_map = lsp_map,
   set_leader = set_leader,
+  nmap = function(lhs, rhs, desc)
+    map("n", lhs, rhs, desc)
+  end,
+  vmap = function(lhs, rhs, desc)
+    map("v", lhs, rhs, desc)
+  end,
+
 }
