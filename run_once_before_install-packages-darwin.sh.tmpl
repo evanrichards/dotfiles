@@ -1,8 +1,10 @@
+{{- if eq .chezmoi.os "darwin" -}}
+#!/bin/bash
+
+brew bundle --no-lock --file=/dev/stdin <<EOF
 tap "homebrew/bundle"
-tap "homebrew/cask"
 tap "homebrew/cask-drivers"
 tap "homebrew/cask-fonts"
-tap "homebrew/core"
 tap "huytd/cask-fonts"
 tap "nextdns/tap"
 tap "osx-cross/arm"
@@ -41,3 +43,5 @@ cask "font-fira-code"
 cask "font-haskplex-nerd"
 cask "github"
 cask "kitty"
+EOF
+{{ end -}}

@@ -5,3 +5,6 @@
     command = "nvim"
 [diff]
     pager = "diff-so-fancy"
+[git]
+    autoCommit = true
+    autoPush = true
