@@ -59,16 +59,7 @@ return {
 			vim.diagnostic.config(config)
 
 			-- This function gets run when an LSP connects to a particular buffer.
-			local on_attach = function(client, bufnr)
-				local builtins = require("telescope.builtin")
-				lsp_map("<leader>e", vim.diagnostic.open_float, bufnr, "Show diagnostics")
-				lsp_map("<leader>rn", vim.lsp.buf.rename, bufnr, "Rename symbol")
-				lsp_map("<leader>ca", vim.lsp.buf.code_action, bufnr, "Code action")
-				lsp_map("gd", builtins.lsp_definitions, bufnr, "Goto Definition")
-				lsp_map("gr", builtins.lsp_references, bufnr, "Goto References")
-				lsp_map("K", vim.lsp.buf.hover, bufnr, "Hover Documentation")
-			end
-
+			local on_attach = require("helpers.lsp-on-attach")
 			-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
@@ -96,35 +87,35 @@ return {
 				},
 			})
 
-			-- -- Python
-			-- lspconfig["pylsp"].setup({
-			-- 	on_attach = on_attach,
-			-- 	capabilities = capabilities,
-			-- 	settings = {
-			-- 		pylsp = {
-			-- 			plugins = {
-			-- 				flake8 = {
-			-- 					enabled = true,
-			-- 					maxLineLength = 88, -- Black's line length
-			-- 				},
-			-- 				-- Disable plugins overlapping with flake8
-			-- 				pycodestyle = {
-			-- 					enabled = false,
-			-- 				},
-			-- 				mccabe = {
-			-- 					enabled = false,
-			-- 				},
-			-- 				pyflakes = {
-			-- 					enabled = false,
-			-- 				},
-			-- 				-- Use Black as the formatter
-			-- 				autopep8 = {
-			-- 					enabled = false,
-			-- 				},
-			-- 			},
-			-- 		},
-			-- 	},
-			-- })
+			-- Python
+			lspconfig["pylsp"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+				settings = {
+					pylsp = {
+						plugins = {
+							flake8 = {
+								enabled = true,
+								maxLineLength = 88, -- Black's line length
+							},
+							-- Disable plugins overlapping with flake8
+							pycodestyle = {
+								enabled = false,
+							},
+							mccabe = {
+								enabled = false,
+							},
+							pyflakes = {
+								enabled = false,
+							},
+							-- Use Black as the formatter
+							autopep8 = {
+								enabled = false,
+							},
+						},
+					},
+				},
+			})
 		end,
 	},
 }

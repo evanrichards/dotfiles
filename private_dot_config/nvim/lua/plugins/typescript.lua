@@ -1,4 +1,3 @@
-local lsp_map = require("helpers.keys").lsp_map
 return {
 	{
 		"pmizio/typescript-tools.nvim",
@@ -10,15 +9,7 @@ return {
 		},
 		config = function()
 			-- This function gets run when an LSP connects to a particular buffer.
-			local on_attach = function(_, bufnr)
-				local builtins = require("telescope.builtin")
-				lsp_map("<leader>e", vim.diagnostic.open_float, bufnr, "Show diagnostics")
-				lsp_map("<leader>rn", vim.lsp.buf.rename, bufnr, "Rename symbol")
-				lsp_map("<leader>ca", vim.lsp.buf.code_action, bufnr, "Code action")
-				lsp_map("gd", builtins.lsp_definitions, bufnr, "Goto Definition")
-				lsp_map("gr", builtins.lsp_references, bufnr, "Goto References")
-				lsp_map("K", vim.lsp.buf.hover, bufnr, "Hover Documentation")
-			end
+			local on_attach = require("helpers.lsp-on-attach")
 			local capabilities = vim.lsp.protocol.make_client_capabilities()
 			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 			require("typescript-tools").setup({
