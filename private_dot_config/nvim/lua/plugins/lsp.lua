@@ -1,10 +1,6 @@
 local nmap = require("keymap").nmap
 return {
 	{
-		"williamboman/mason.nvim",
-		config = true,
-	},
-	{
 		"VonHeikemen/lsp-zero.nvim",
 		dependencies = {
 			-- Useful status updates for LSP
@@ -30,7 +26,15 @@ return {
 		},
 		config = function()
 			local lsp = require("lsp-zero")
-			local cmp = require("cmp")
+			lsp.extend_lspconfig()
+			lsp.on_attach(function(_, bufnr)
+				lsp.default_keymaps({ buffer = bufnr })
+				nmap("<leader>e", vim.diagnostic.open_float, "Show diagnostics", bufnr)
+				nmap("K", vim.lsp.buf.hover, "Display hover", bufnr)
+				nmap("<C-k>", vim.lsp.buf.signature_help, "Display signature", bufnr)
+				nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame symbol", bufnr)
+				nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", bufnr)
+			end)
 
 			lsp.set_preferences({
 				suggest_lsp_servers = true,
@@ -44,14 +48,8 @@ return {
 				call_servers = "local",
 				sign_icons = {},
 			})
-
-			lsp.on_attach(function(_, bufnr)
-				nmap("K", vim.lsp.buf.hover, "Display definition", bufnr)
-				nmap("<C-k>", vim.lsp.buf.signature_help, "Display signature", bufnr)
-				nmap("<leader>e", vim.diagnostic.open_float, "Open [E]rrors under cursor", bufnr)
-				nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[N]ame symbol", bufnr)
-				nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction", bufnr)
-			end)
+			lsp.extend_cmp()
+			local cmp = require("cmp")
 
 			local cmp_select = { behavior = cmp.SelectBehavior.Select }
 
@@ -70,8 +68,6 @@ return {
 			cmp_config["completion"] = {
 				completeopt = "menu,menuone,noinsert,noselect",
 			}
-			lsp.setup_nvim_cmp(cmp_config)
-			lsp.setup()
 
 			cmp.setup.cmdline("/", {
 				mapping = cmp.mapping.preset.cmdline(),
@@ -96,6 +92,22 @@ return {
 
 			cmp.setup({
 				mapping = cmp_mappings,
+			})
+		end,
+	},
+	{
+		"williamboman/mason.nvim",
+		dependencies = {
+			"VonHeikemen/lsp-zero.nvim",
+		},
+		config = function()
+			local lsp = require("lsp-zero")
+			lsp.extend_lspconfig()
+			require("mason").setup()
+			require("mason-lspconfig").setup({
+				handlers = {
+					lsp.default_setup,
+				},
 			})
 		end,
 	},

@@ -39,7 +39,6 @@ alias ls="exa"
 alias ll="exa -alh"
 alias cat="bat"
 alias dotfiles="cd ${HOME}/code/dotfiles"
-source "${HOME}/gitrc.sh"
 alias gr="gt"
 alias startDocker="open /Applications/Docker.app"
 
