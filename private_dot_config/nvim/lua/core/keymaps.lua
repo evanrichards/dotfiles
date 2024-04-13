@@ -12,3 +12,7 @@ vmap(">", ">gv")
 nmap("<leader>/", ":nohlsearch<CR>")
 
 nmap("<leader>fw", "<cmd>w<cr>", "Write")
+
+-- Deleting buffers
+local buffers = require("helpers.buffers")
+nmap("<leader>db", buffers.delete_this, "Current buffer")
