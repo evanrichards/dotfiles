@@ -10,3 +10,5 @@ vmap("<", "<gv")
 vmap(">", ">gv")
 -- clear search highlighting with <space>+</>
 nmap("<leader>/", ":nohlsearch<CR>")
+
+map("n", "<leader>fw", "<cmd>w<cr>", "Write")
