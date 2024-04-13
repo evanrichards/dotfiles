@@ -23,9 +23,10 @@ return {
 			pcall(telescope.load_extension, "fzf")
 			telescope.load_extension("ui-select")
 			telescope.load_extension("gh")
+			telescope.load_extension("chezmoi")
 			-- Find files using Telescope command-line sugar.
 			nmap("<leader>ff", builtins.find_files, "[F]ind [F]iles")
-
+			nmap("<leader>fc", telescope.extensions.chezmoi.find_files, "[F]ind [C]hezmoi files")
 			nmap("<leader>?", builtins.oldfiles, "[?] Find recently opened files")
 			nmap("<leader>fr", builtins.resume, "[F]ind [R]esume")
 			nmap("<leader>fg", builtins.live_grep, "[F]ind [G]rep")
