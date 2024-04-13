@@ -19,6 +19,7 @@ vim.opt.showcmd = true
 vim.opt.scrolloff = 8
 vim.opt.cmdheight = 0
 vim.opt.laststatus = 3
+vim.opt.termguicolors = true
 
 -- Set other options
 vim.cmd.colorscheme("catppuccin")
