@@ -1,5 +1,3 @@
-local lsp_map = require("helpers.keys").lsp_map
-
 return {
 	{
 		"neovim/nvim-lspconfig",
@@ -113,6 +111,33 @@ return {
 								enabled = false,
 							},
 						},
+					},
+				},
+			})
+
+			lspconfig["jsonls"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+				settings = {
+					json = {
+						schemas = require("schemastore").json.schemas(),
+						validate = { enable = true },
+					},
+				},
+			})
+			lspconfig["yamlls"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+				settings = {
+					yaml = {
+						schemaStore = {
+							-- You must disable built-in schemaStore support if you want to use
+							-- this plugin and its advanced options like `ignore`.
+							enable = false,
+							-- Avoid TypeError: Cannot read properties of undefined (reading 'length')
+							url = "",
+						},
+						schemas = require("schemastore").yaml.schemas(),
 					},
 				},
 			})
