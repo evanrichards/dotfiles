@@ -13,7 +13,6 @@ return {
 			},
 			"folke/neodev.nvim",
 			"hrsh7th/cmp-nvim-lsp",
-			"b0o/schemastore.nvim",
 		},
 		config = function()
 			-- Set up Mason before anything else
@@ -76,7 +75,7 @@ return {
 			local lspconfig = require("lspconfig")
 
 			-- Lua
-			lspconfig.lua_ls.setup({
+			lspconfig["lua_ls"].setup({
 				on_attach = on_attach,
 				capabilities = capabilities,
 				settings = {
@@ -97,60 +96,35 @@ return {
 				},
 			})
 
-			-- Python
-			lspconfig.pylsp.setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
-				settings = {
-					pylsp = {
-						plugins = {
-							flake8 = {
-								enabled = true,
-								maxLineLength = 88, -- Black's line length
-							},
-							-- Disable plugins overlapping with flake8
-							pycodestyle = {
-								enabled = false,
-							},
-							mccabe = {
-								enabled = false,
-							},
-							pyflakes = {
-								enabled = false,
-							},
-							-- Use Black as the formatter
-							autopep8 = {
-								enabled = false,
-							},
-						},
-					},
-				},
-			})
-			local schemastore = require("schemastore")
-
-			lspconfig.jsonls.setup({
-				settings = {
-					json = {
-						schemas = schemastore.json.schemas(),
-						validate = { enable = true },
-					},
-				},
-			})
-
-			lspconfig.yamlls.setup({
-				settings = {
-					yaml = {
-						schemaStore = {
-							-- You must disable built-in schemaStore support if you want to use
-							-- this plugin and its advanced options like `ignore`.
-							enable = false,
-							-- Avoid TypeError: Cannot read properties of undefined (reading 'length')
-							url = "",
-						},
-						schemas = schemastore.yaml.schemas(),
-					},
-				},
-			})
+			-- -- Python
+			-- lspconfig["pylsp"].setup({
+			-- 	on_attach = on_attach,
+			-- 	capabilities = capabilities,
+			-- 	settings = {
+			-- 		pylsp = {
+			-- 			plugins = {
+			-- 				flake8 = {
+			-- 					enabled = true,
+			-- 					maxLineLength = 88, -- Black's line length
+			-- 				},
+			-- 				-- Disable plugins overlapping with flake8
+			-- 				pycodestyle = {
+			-- 					enabled = false,
+			-- 				},
+			-- 				mccabe = {
+			-- 					enabled = false,
+			-- 				},
+			-- 				pyflakes = {
+			-- 					enabled = false,
+			-- 				},
+			-- 				-- Use Black as the formatter
+			-- 				autopep8 = {
+			-- 					enabled = false,
+			-- 				},
+			-- 			},
+			-- 		},
+			-- 	},
+			-- })
 		end,
 	},
 }
