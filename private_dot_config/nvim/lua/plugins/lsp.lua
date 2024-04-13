@@ -1,6 +1,4 @@
-local lsp_map = function(lhs, rhs, bufnr, desc)
-	vim.keymap.set("n", lhs, rhs, { silent = true, buffer = bufnr, desc = desc })
-end
+local lsp_map = require("helpers.keymap").lsp_map
 
 return {
 	{

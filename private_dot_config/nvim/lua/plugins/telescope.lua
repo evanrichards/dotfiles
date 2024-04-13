@@ -1,4 +1,4 @@
-local nmap = require("keymap").nmap
+local nmap = require("helpers.keys").nmap
 return {
   {
     "nvim-telescope/telescope.nvim",

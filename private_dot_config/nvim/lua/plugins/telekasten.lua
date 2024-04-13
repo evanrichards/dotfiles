@@ -1,13 +1,11 @@
+local nmap = require("helpers.keys").nmap
+local imap = require("helpers.keys").imap
+local map = require("helpers.keys").map
+
 return {
 	"renerocksai/telekasten.nvim",
 	config = function()
-		require("plugin.telekasten")
-	end,
-	config = function()
 		local tk = require("telekasten")
-		local nmap = require("keymap").nmap
-		local imap = require("keymap").imap
-		local map = require("keymap").map
 
 		map({ "n", "v" }, "<leader>zf", tk.find_notes, "[Z]ettelkasten [F]ind")
 		-- telescope style

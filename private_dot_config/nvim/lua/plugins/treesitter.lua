@@ -2,9 +2,7 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter-textobjects",
-		},
+		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
 
 		build = function()
 			pcall(require("nvim-treesitter.install").update({ with_sync = true }))
@@ -21,9 +19,7 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter-context",
-		requires = {
-			"nvim-treesitter/nvim-treesitter",
-		},
+		requires = { "nvim-treesitter/nvim-treesitter" },
 		opts = function(_, opts)
 			opts.enable = true
 			opts.max_lines = 3
