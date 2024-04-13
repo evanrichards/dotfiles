@@ -23,15 +23,16 @@ brew "fzf"
 brew "gh"
 brew "git-lfs"
 brew "go"
+brew "gpg"
 brew "huggingface-cli", link: false
 brew "imagemagick"
 brew "jq"
+brew "kitty"
 brew "llvm"
 brew "luarocks"
 brew "mkcert"
 brew "neovim"
 brew "ripgrep"
-brew "spotify-tui"
 brew "tmux"
 brew "watchman"
 brew "zsh-syntax-highlighting"
@@ -45,3 +46,43 @@ cask "github"
 cask "kitty"
 EOF
 {{ end -}}
+
+{{- if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+
+sudo apt-get update
+sudo apt-get install -y \
+    asdf \
+    awscli \
+    bat \
+    chezmoi \
+    cmake \
+    diff-so-fancy \
+    exa \
+    fzf \
+    gh \
+    git-lfs \
+    gpg \
+    imagemagick \
+    jq \
+    llvm \
+    luarocks \
+    mkcert \
+    neovim \
+    ripgrep \
+    tmux \
+    watchman \
+    zsh-syntax-highlighting \
+    fd-find \
+    wget \
+    zsh
+{{ end -}}
+
+# If tmux plugins directory does not exist, clone the tpm repo
+if [ ! -d ~/.tmux/plugins/tpm ]; then
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
+if [ ! -d ~/powerlevel10k ]; then
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+fi

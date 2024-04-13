@@ -38,7 +38,6 @@ alias tree="exa --tree"
 alias ls="exa"
 alias ll="exa -alh"
 alias cat="bat"
-alias dotfiles="cd ${HOME}/code/dotfiles"
 alias gr="gt"
 alias startDocker="open /Applications/Docker.app"
 
