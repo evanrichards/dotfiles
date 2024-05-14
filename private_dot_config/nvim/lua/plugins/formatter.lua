@@ -39,6 +39,15 @@ return {
 				markdown = {
 					require("formatter.filetypes.markdown").prettier,
 				},
+				go = {
+					function()
+						return {
+							exe = "gofmt",
+							args = { "-s" },
+							stdin = true,
+						}
+					end,
+				},
 				["*"] = {
 					-- "formatter.filetypes.any" defines default configurations for any
 					-- filetype

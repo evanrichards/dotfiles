@@ -2,6 +2,10 @@ local map = function(mode, lhs, rhs, desc)
 	vim.keymap.set(mode, lhs, rhs, { silent = true, desc = desc })
 end
 
+local bufmap = function(mode, lhs, rhs, bufnr, desc)
+  vim.keymap.set(mode, lhs, rhs, { silent = true, buffer = bufnr, desc = desc })
+end
+
 local lsp_map = function(lhs, rhs, bufnr, desc)
 	vim.keymap.set("n", lhs, rhs, { silent = true, buffer = bufnr, desc = desc })
 end
@@ -25,4 +29,5 @@ return {
 	imap = function(lhs, rhs, desc)
 		map("i", lhs, rhs, desc)
 	end,
+  bufmap = bufmap,
 }

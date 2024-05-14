@@ -10,8 +10,7 @@ return {
 		config = function()
 			-- This function gets run when an LSP connects to a particular buffer.
 			local on_attach = require("helpers.lsp-on-attach")
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
+			local capabilities = require("helpers.lsp-client-capabilities")
 			require("typescript-tools").setup({
 				on_attach = on_attach,
 				capabilities = capabilities,

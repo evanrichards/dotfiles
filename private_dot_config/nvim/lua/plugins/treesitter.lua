@@ -37,4 +37,8 @@ return {
 			}
 		end,
 	},
+	{
+		"nvim-treesitter/playground",
+		requires = { "nvim-treesitter/nvim-treesitter" },
+	},
 }

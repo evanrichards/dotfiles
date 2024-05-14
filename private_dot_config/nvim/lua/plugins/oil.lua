@@ -6,4 +6,5 @@ return {
 	end,
 	-- Optional dependencies
 	dependencies = { "nvim-tree/nvim-web-devicons" },
+	lazy = false,
 }

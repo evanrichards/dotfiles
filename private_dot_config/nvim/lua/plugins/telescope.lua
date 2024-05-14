@@ -1,4 +1,6 @@
 local nmap = require("helpers.keys").nmap
+local vmap = require("helpers.keys").vmap
+local getVisualSelection = require("helpers.visual_selection")
 return {
 	{
 		"nvim-telescope/telescope.nvim",
@@ -43,6 +45,12 @@ return {
 			nmap("<leader>f", builtins.builtin, "[F]ind something")
 			nmap("gd", builtins.lsp_definitions, "[G]oto [D]efinition")
 			nmap("gr", builtins.lsp_references, "[G]oto [R]eferences")
+			vmap("<leader>fg", function()
+				local selection = getVisualSelection()
+				builtins.grep_string({
+					search = selection,
+				})
+			end, "[F]ind [G]rep")
 		end,
 	},
 	{
