@@ -59,7 +59,7 @@ return {
 			-- This function gets run when an LSP connects to a particular buffer.
 			local on_attach = require("helpers.lsp-on-attach")
 			-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-			local capabilities = require("helpers.lsp-client-capabilities")
+			local capabilities = require("helpers.lsp-client-capabilities").get_capabilities()
 			local lspconfig = require("lspconfig")
 			-- Lua
 			lspconfig["lua_ls"].setup({

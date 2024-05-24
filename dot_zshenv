@@ -38,4 +38,4 @@ export PATH="$PYENV_ROOT/shims:$PATH"
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
 export PATH="/opt/homebrew/opt/fzf/bin:$PATH"
-
+export PATH="/Users/evanrichards/go/bin:$PATH"
