@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Set the starting directory (default to current directory)
+start_dir="${1:-.}"
+
+# Set the ignore regex (default to empty)
+ignore_regex="${2:-}"
+
+# Find all files recursively in the starting directory, ignoring hidden directories
+find "$start_dir" -type f -not -path '*/\.*' | while read -r file; do
+  # Check if the ignore regex is provided and the file matches it
+  if [ -n "$ignore_regex" ] && [[ "$file" =~ $ignore_regex ]]; then
+    continue
+  fi
+
+  # Get the relative path of the file
+  relative_path="${file#"$start_dir"/}"
+
+  # Print the relative path as a separator
+  echo "=== $relative_path ==="
+
+  # Print the contents of the file
+  cat -n "$file"
+
+  # Add a newline for readability
+  echo ""
+done

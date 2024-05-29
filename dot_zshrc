@@ -5,6 +5,8 @@ fpath+=$HOME/.zsh/completion
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+# add $HOME/scripts to the path
+export PATH=$HOME/scripts:$PATH
 
 #! /bin/zsh
 autoload -U compinit
@@ -34,12 +36,19 @@ ZSH_HIGHLIGHT_STYLES[cursor]='bold'
 
 # Aliases
 alias vim="nvim"
+alias v="nvim"
 alias tree="exa --tree"
 alias ls="exa"
 alias ll="exa -alh"
 alias cat="bat"
 alias gr="gt"
 alias startDocker="open /Applications/Docker.app"
+# makes a new scratch buffer
+alias scratch="nvim -c 'set buftype=nofile' -c 'enew'"
+
+vscratch() {
+    tmux split-window -h "nvim -c 'set buftype=nofile' -c 'enew' -c 'autocmd BufLeave <buffer> :q!'"
+}
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
@@ -73,4 +82,3 @@ if command -v pyenv >/dev/null; then
   eval "$(pyenv init -)"
 fi
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-
