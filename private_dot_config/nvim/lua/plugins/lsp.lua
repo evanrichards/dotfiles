@@ -143,6 +143,31 @@ return {
 				on_attach = on_attach,
 				capabilities = capabilities,
 			})
+			lspconfig["tsserver"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+				init_options = {
+					plugins = {
+						{
+							name = "@styled/typescript-styled-plugin",
+							location = "~/.asdf/installs/nodejs/18.18.2/lib/node_modules/@styled/typescript-styled-plugin",
+							languages = {
+								"typescript",
+								"javascript",
+							},
+						},
+					},
+					preferences = {
+						quotePreference = "single",
+						importModuleSpecifierPreference = "non-relative",
+						noUnusedParameters = false,
+						autoImportFileExcludePatterns = {
+							"./**/node_modules/@aws-sdk/client-textract/**",
+							"**/node_modules/@aws-sdk/client-textract/**",
+						},
+					},
+				},
+			})
 		end,
 	},
 }
