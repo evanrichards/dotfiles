@@ -112,6 +112,10 @@ return {
 					},
 				},
 			})
+			lspconfig["pyright"].setup({
+				on_attach = on_attach,
+				capabilities = capabilities,
+			})
 
 			lspconfig["jsonls"].setup({
 				on_attach = on_attach,
@@ -159,6 +163,7 @@ return {
 					},
 					preferences = {
 						quotePreference = "single",
+						includeCompletionsWithSnippetText = false,
 						importModuleSpecifierPreference = "non-relative",
 						noUnusedParameters = false,
 						autoImportFileExcludePatterns = {

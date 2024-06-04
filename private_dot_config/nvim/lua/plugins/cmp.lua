@@ -48,12 +48,6 @@ return {
 						behavior = cmp.ConfirmBehavior.Replace,
 						select = false,
 					}),
-					["<Tab>"] = cmp.mapping(function(fallback)
-						fallback()
-					end, { "i", "s" }),
-					["<S-Tab>"] = cmp.mapping(function(fallback)
-						fallback()
-					end, { "i", "s" }),
 				}),
 				formatting = {
 					fields = { "kind", "abbr", "menu" },
