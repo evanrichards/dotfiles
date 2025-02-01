@@ -1,5 +1,6 @@
 local nmap = require("helpers.keys").nmap
 local vmap = require("helpers.keys").vmap
+
 return {
 	{
 		"nvim-telescope/telescope.nvim",
@@ -22,6 +23,7 @@ return {
 			telescope.setup({
 				defaults = {
 					file_ignore_patterns = { "dist", "generated", "node_modules", "prisma/migrations" },
+					path_display = { "filename_first" },
 				},
 
 				extensions = {

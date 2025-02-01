@@ -151,6 +151,7 @@ return {
 				on_attach = on_attach,
 				capabilities = capabilities,
 				init_options = {
+          maxTsServerMemory = 8192,
 					plugins = {
 						{
 							name = "@styled/typescript-styled-plugin",

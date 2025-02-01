@@ -4,7 +4,7 @@ return {
 		return {
 			auto_open_qflist = true,
 			auto_close_qflist = false,
-			bin_path = vim.fn.findfile("node_modules/.bin/tsc"),
+			bin_path = vim.fn.findfile("~/.scripts/run_tsc.sh"),
 			enable_progress_notifications = true,
 			flags = {
 				noEmit = true,

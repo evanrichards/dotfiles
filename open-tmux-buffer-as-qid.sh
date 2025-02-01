@@ -42,7 +42,7 @@ elif [[ -n "$FILE_PATH" ]]; then
   open_file_in_vim "$FILE_PATH"
 else
   # Loop through each line that matches the structured identifier pattern
-  echo "$RAW_TEXT" | grep -oE 'qid::[a-z_]+:[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}' | while read -r QID; do
+  echo "$RAW_TEXT" | grep -oE 'qid::[a-z_]+:[0-9a-f]{8}-[0-9a-f]{4}-[47][0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}' | while read -r QID; do
     URL="https://go/qid/$QID"
     open_url "$URL"
   done

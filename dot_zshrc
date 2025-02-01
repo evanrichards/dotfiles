@@ -37,9 +37,9 @@ ZSH_HIGHLIGHT_STYLES[cursor]='bold'
 # Aliases
 alias vim="nvim"
 alias v="nvim"
-alias tree="exa --tree"
-alias ls="exa"
-alias ll="exa -alh"
+alias tree="eza --tree"
+alias ls="eza"
+alias ll="eza -alh"
 alias cat="bat"
 alias gr="gt"
 alias startDocker="open /Applications/Docker.app"
