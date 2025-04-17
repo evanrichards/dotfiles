@@ -11,6 +11,21 @@ export PATH=$HOME/scripts:$PATH
 NPM_GLOBAL_BIN="$(npm prefix -g)/bin"
 
 export PATH=$NPM_GLOBAL_BIN:$PATH
+# 💾 History Settings
+HISTFILE=$HOME/.zsh_history
+HISTSIZE=1000000
+SAVEHIST=1000000
+
+setopt APPEND_HISTORY             # Don't overwrite, just append
+setopt INC_APPEND_HISTORY         # Write after each command
+setopt SHARE_HISTORY              # Share history across sessions
+setopt HIST_EXPIRE_DUPS_FIRST     # Prefer deleting dupes
+setopt HIST_IGNORE_ALL_DUPS       # No duplicate entries
+setopt HIST_FIND_NO_DUPS          # Skip dupes in reverse search
+setopt HIST_REDUCE_BLANKS         # Normalize spacing
+setopt HIST_SAVE_NO_DUPS          # skip saving duplicate entries at all
+setopt HIST_IGNORE_SPACE          # ignore lines starting with space
+setopt EXTENDED_HISTORY           # save timestamps + duration
 
 #! /bin/zsh
 autoload -U compinit
@@ -86,3 +101,13 @@ if command -v pyenv >/dev/null; then
   eval "$(pyenv init -)"
 fi
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+zmodload zsh/zprof
+# then run `zprof` after shell startup
+autoload -Uz add-zsh-hook
+
+flush_history() {
+  fc -RI   # Reread history file, then insert into history list
+}
+
+add-zsh-hook precmd flush_history
