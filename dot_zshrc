@@ -8,6 +8,10 @@ fi
 # add $HOME/scripts to the path
 export PATH=$HOME/scripts:$PATH
 
+NPM_GLOBAL_BIN="$(npm prefix -g)/bin"
+
+export PATH=$NPM_GLOBAL_BIN:$PATH
+
 #! /bin/zsh
 autoload -U compinit
 compinit -i

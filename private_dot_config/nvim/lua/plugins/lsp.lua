@@ -2,6 +2,7 @@ return {
 	{
 		"neovim/nvim-lspconfig",
 		dependencies = {
+			"b0o/schemastore.nvim",
 			"williamboman/mason.nvim",
 			"williamboman/mason-lspconfig.nvim",
 			{
@@ -58,8 +59,8 @@ return {
 
 			-- This function gets run when an LSP connects to a particular buffer.
 			local on_attach = require("helpers.lsp-on-attach")
-			-- nvim-cmp supports additional completion capabilities, so broadcast that to servers
-			local capabilities = require("helpers.lsp-client-capabilities").get_capabilities()
+			local capabilities = vim.lsp.protocol.make_client_capabilities()
+			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 			local lspconfig = require("lspconfig")
 			-- Lua
 			lspconfig["lua_ls"].setup({
@@ -151,7 +152,7 @@ return {
 				on_attach = on_attach,
 				capabilities = capabilities,
 				init_options = {
-          maxTsServerMemory = 8192,
+					maxTsServerMemory = 8192,
 					plugins = {
 						{
 							name = "@styled/typescript-styled-plugin",
