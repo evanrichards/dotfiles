@@ -108,5 +108,3 @@ autoload -Uz add-zsh-hook
 flush_history() {
   fc -RI   # Reread history file, then insert into history list
 }
-
-add-zsh-hook precmd flush_history
