@@ -101,7 +101,6 @@ if command -v pyenv >/dev/null; then
   eval "$(pyenv init -)"
 fi
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 zmodload zsh/zprof
 # then run `zprof` after shell startup
 autoload -Uz add-zsh-hook
