@@ -1,56 +1,9 @@
-{{- if eq .chezmoi.os "darwin" -}}
 #!/bin/bash
 
-brew bundle --no-lock --file=/dev/stdin <<EOF
-tap "homebrew/bundle"
-tap "homebrew/cask-drivers"
-tap "homebrew/cask-fonts"
-tap "huytd/cask-fonts"
-tap "nextdns/tap"
-tap "osx-cross/arm"
-tap "osx-cross/avr"
-tap "qmk/qmk"
-tap "vmware-tanzu/carvel"
-tap "yasyf/do"
-brew "asdf"
-brew "zsh-autosuggestions"
-brew "awscli"
-brew "bat"
-brew "chezmoi"
-brew "cmake"
-brew "diff-so-fancy"
-brew "eza"
-brew "fzf"
-brew "gh"
-brew "git-lfs"
-brew "go"
-brew "gpg"
-brew "huggingface-cli", link: false
-brew "imagemagick"
-brew "jq"
-brew "kitty"
-brew "llvm"
-brew "luarocks"
-brew "mkcert"
-brew "neovim"
-brew "ripgrep"
-brew "tmux"
-brew "watchman"
-brew "zsh-syntax-highlighting"
-brew "yasyf/do/do"
-brew "fd"
-brew "wget"
-cask "1password-cli"
-cask "font-fira-code"
-cask "font-haskplex-nerd"
-cask "github"
-cask "kitty"
-EOF
-{{ end -}}
+{{ if eq .chezmoi.os "darwin" }}
+brew bundle
 
-{{- if eq .chezmoi.os "linux" -}}
-#!/bin/bash
-
+{{ else if eq .chezmoi.os "linux" }}
 sudo apt-get update
 sudo apt-get install -y \
     asdf \
@@ -67,6 +20,7 @@ sudo apt-get install -y \
     imagemagick \
     jq \
     llvm \
+    mise \
     luarocks \
     mkcert \
     neovim \
@@ -77,7 +31,7 @@ sudo apt-get install -y \
     fd-find \
     wget \
     zsh
-{{ end -}}
+{{ end }}
 
 # If tmux plugins directory does not exist, clone the tpm repo
 if [ ! -d ~/.tmux/plugins/tpm ]; then
@@ -87,3 +41,6 @@ fi
 if [ ! -d ~/powerlevel10k ]; then
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 fi
+
+mise install -y
+mise use node

@@ -7,6 +7,7 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 # add $HOME/scripts to the path
 export PATH=$HOME/scripts:$PATH
+eval "$(mise activate zsh)"
 
 NPM_GLOBAL_BIN="$(npm prefix -g)/bin"
 
