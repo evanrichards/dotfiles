@@ -23,7 +23,6 @@ setopt SHARE_HISTORY              # Share history across sessions
 setopt HIST_EXPIRE_DUPS_FIRST     # Prefer deleting dupes
 setopt HIST_IGNORE_ALL_DUPS       # No duplicate entries
 setopt HIST_FIND_NO_DUPS          # Skip dupes in reverse search
-setopt HIST_REDUCE_BLANKS         # Normalize spacing
 setopt HIST_SAVE_NO_DUPS          # skip saving duplicate entries at all
 setopt HIST_IGNORE_SPACE          # ignore lines starting with space
 setopt EXTENDED_HISTORY           # save timestamps + duration
@@ -109,3 +108,5 @@ autoload -Uz add-zsh-hook
 flush_history() {
   fc -RI   # Reread history file, then insert into history list
 }
+export TURBO_UI=0
+eval "$(mise activate zsh)"

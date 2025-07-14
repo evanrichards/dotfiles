@@ -18,13 +18,6 @@ if [ ! -d ~/.secrets_rc ]; then
 fi
 source ~/.secrets_rc
 
-# Load asdf
-if [ -d /usr/local/opt/asdf/libexec ]; then
-  . /usr/local/opt/asdf/libexec/asdf.sh
-elif [ -d /opt/homebrew/opt/asdf/libexec ]; then
-  . /opt/homebrew/opt/asdf/libexec/asdf.sh
-fi
-
 # Load nvm
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"

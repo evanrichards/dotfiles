@@ -16,13 +16,6 @@ return {
 		config = function()
 			-- Set up Mason before anything else
 			require("mason").setup()
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"lua_ls",
-					"pylsp",
-				},
-				automatic_installation = true,
-			})
 
 			-- Neodev setup before LSP config
 			require("neodev").setup()
@@ -59,13 +52,13 @@ return {
 
 			-- This function gets run when an LSP connects to a particular buffer.
 			local on_attach = require("helpers.lsp-on-attach")
-			local capabilities = vim.lsp.protocol.make_client_capabilities()
-			capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
-			local lspconfig = require("lspconfig")
-			-- Lua
-			lspconfig["lua_ls"].setup({
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+			vim.lsp.config("*", {
 				on_attach = on_attach,
 				capabilities = capabilities,
+			})
+			-- Lua
+			vim.lsp.config("lua_ls", {
 				settings = {
 					Lua = {
 						completion = {
@@ -85,9 +78,7 @@ return {
 			})
 
 			-- Python
-			lspconfig["pylsp"].setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
+			vim.lsp.config("pylsp", {
 				settings = {
 					pylsp = {
 						plugins = {
@@ -113,14 +104,8 @@ return {
 					},
 				},
 			})
-			lspconfig["pyright"].setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
-			})
 
-			lspconfig["jsonls"].setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
+			vim.lsp.config("jsonls", {
 				settings = {
 					json = {
 						schemas = require("schemastore").json.schemas(),
@@ -128,9 +113,8 @@ return {
 					},
 				},
 			})
-			lspconfig["yamlls"].setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
+
+			vim.lsp.config("yamlls", {
 				settings = {
 					yaml = {
 						schemaStore = {
@@ -144,13 +128,10 @@ return {
 					},
 				},
 			})
-			lspconfig["gopls"].setup({
+
+			vim.lsp.config("ts_ls", {
+
 				on_attach = on_attach,
-				capabilities = capabilities,
-			})
-			lspconfig["ts_ls"].setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
 				init_options = {
 					maxTsServerMemory = 8192,
 					plugins = {
@@ -172,9 +153,14 @@ return {
 							"./**/node_modules/@aws-sdk/client-textract/**",
 							"**/node_modules/@aws-sdk/client-textract/**",
 						},
+						includePackageJsonAutoImports = "on",
+						includeCompletionsForModuleExports = true,
+						suggestFromUnimportedFiles = false,
 					},
 				},
 			})
+
+			vim.lsp.enable({ "ts_ls", "jsonls", "yamlls", "pylsp", "lua_ls", "gopls" })
 		end,
 	},
 }
