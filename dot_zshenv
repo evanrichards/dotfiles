@@ -23,9 +23,9 @@ source ~/.secrets_rc
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # PATH modifications
-export PATH="/Users/evanrichards/.local/bin:$PATH"
+export PATH="/Users/$USER/.local/bin:$PATH"
 export PATH="$PYENV_ROOT/shims:$PATH"
 export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
 export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
 export PATH="/opt/homebrew/opt/fzf/bin:$PATH"
-export PATH="/Users/evanrichards/go/bin:$PATH"
+export PATH="/Users/$USER/go/bin:$PATH"

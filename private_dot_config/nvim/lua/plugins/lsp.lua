@@ -147,7 +147,7 @@ return {
 					preferences = {
 						quotePreference = "single",
 						includeCompletionsWithSnippetText = false,
-						importModuleSpecifierPreference = "non-relative",
+						importModuleSpecifierPreference = "relative",
 						noUnusedParameters = false,
 						autoImportFileExcludePatterns = {
 							"./**/node_modules/@aws-sdk/client-textract/**",

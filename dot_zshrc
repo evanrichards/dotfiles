@@ -108,5 +108,4 @@ autoload -Uz add-zsh-hook
 flush_history() {
   fc -RI   # Reread history file, then insert into history list
 }
-export TURBO_UI=0
 eval "$(mise activate zsh)"
