@@ -15,7 +15,7 @@ fi
 open_file_in_vim() {
   local file_path="$1"
   if [[ -e "$file_path" ]]; then
-    tmux split-window -h -p 50 -c "$CURRENT_DIR" "zsh -i -c 'nvim $file_path'"
+    tmux split-window -h -p 50 -c "$CURRENT_DIR" "zsh -i -c 'nvim \"$file_path\"'"
   fi
 }
 
