@@ -36,18 +36,7 @@ bindkey -e
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
 
-# Install and load zsh-syntax-highlighting with Catppuccin theme
-if [ ! -d "$HOME/.zsh" ]; then
-  mkdir $HOME/.zsh
-fi
-if [ ! -d "$HOME/catppuccin" ]; then
-  mkdir -p $HOME/catppuccin
-fi
-if [ ! -d "$HOME/catppuccin/zsh-syntax-highlighting" ]; then
-  cd $HOME/catppuccin
-  git clone https://github.com/catppuccin/zsh-syntax-highlighting.git
-  cp -v zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh ~/.zsh
-fi
+# Load Catppuccin theme for zsh-syntax-highlighting
 source ~/.zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh
 
 # Customize zsh-syntax-highlighting
@@ -108,4 +97,3 @@ autoload -Uz add-zsh-hook
 flush_history() {
   fc -RI   # Reread history file, then insert into history list
 }
-eval "$(mise activate zsh)"

@@ -41,5 +41,23 @@ if [ ! -d ~/powerlevel10k ]; then
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
 fi
 
-mise install -y
-mise use node
+# Setup Catppuccin theme for zsh-syntax-highlighting
+if [ ! -d "$HOME/.zsh" ]; then
+  mkdir $HOME/.zsh
+fi
+if [ ! -d "$HOME/catppuccin" ]; then
+  mkdir -p $HOME/catppuccin
+fi
+if [ ! -d "$HOME/catppuccin/zsh-syntax-highlighting" ]; then
+  cd $HOME/catppuccin
+  git clone https://github.com/catppuccin/zsh-syntax-highlighting.git
+  cp -v zsh-syntax-highlighting/themes/catppuccin_mocha-zsh-syntax-highlighting.zsh ~/.zsh
+fi
+
+# Install mise tools with error handling
+if command -v mise >/dev/null 2>&1; then
+  mise install -y || echo "Warning: mise install failed"
+  mise use node || echo "Warning: mise use node failed"
+else
+  echo "Warning: mise not found, skipping mise setup"
+fi

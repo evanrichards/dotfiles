@@ -2,7 +2,6 @@
 export EDITOR='nvim'
 export TERM='screen-256color'
 export ARCHFLAGS="-arch arm64"
-export NVM_DIR="$HOME/.nvm"
 export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib"
 export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
 export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
@@ -13,14 +12,10 @@ export FZF_DEFAULT_OPTS=" \
 export PYENV_ROOT="$HOME/.pyenv"
 
 # Load secrets
-if [ ! -d ~/.secrets_rc ]; then
+if [ ! -f ~/.secrets_rc ]; then
   touch ~/.secrets_rc
 fi
 source ~/.secrets_rc
-
-# Load nvm
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 
 # PATH modifications
 export PATH="/Users/$USER/.local/bin:$PATH"
