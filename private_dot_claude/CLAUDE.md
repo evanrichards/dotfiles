@@ -45,3 +45,11 @@ content focused on what was asked for.
 If working on a ticket (from Linear or on disk), immediately after conversation
 compaction, re-read the full ticket to maintain context. Ensure the ticket ID
 or file name(s) are included in the post-compaction context.
+
+When writing classes, if a method has no `self.` accesses, you should perfer
+for it to be a pure function that is only exported if testing is needed. This
+makes it easier to test.
+
+In the backend repo, you can use the `./apps/backend/scripts/prod_psql.sh`
+script as psql. you can run it like
+`echo "SELECT 1 as test;" | ./apps/backend/scripts/prod_psql.sh`
