@@ -5,6 +5,11 @@ argument-hint: [message]
 
 Create a new stacked branch with the current changes using Graphite CLI.
 
+CRITICAL:
+- The user calling /gtc IS permission to execute the git commands in this workflow
+- NEVER push to remote (no git push, gt push, or any push commands)
+- ANY git actions after /gtc completes require explicit user confirmation
+
 IMPORTANT: This command is ONLY for creating NEW branches in the stack. For follow-up changes to an existing feature branch, use the amend workflow instead (see below).
 
 Stacking workflow principles:
@@ -31,11 +36,14 @@ Workflow steps for creating a new stacked branch:
 
 Follow-up changes (NOT using /gtc):
 When the user asks to "commit" changes after already using /gtc on a feature branch:
-1. ASK the user before committing (confirm they want to amend)
-2. Stage changes: `git add <files>`
-3. Amend using `gt modify -a` (or `gt modify -am "updated message"` if changing commit message)
-4. This automatically restacks any dependent branches
-5. Alternative: `git commit --amend --no-edit` then `gt restack`
+1. ALWAYS ASK the user for confirmation before executing ANY git commands
+2. Suggest the appropriate commands:
+   - Stage changes: `git add <files>`
+   - Amend using `gt modify -a` (or `gt modify -am "updated message"` if changing commit message)
+   - This automatically restacks any dependent branches
+   - Alternative: `git commit --amend --no-edit` then `gt restack`
+3. Wait for explicit confirmation before executing
+4. NEVER push without explicit instruction
 
 Message format:
 - For a simple commit: `git commit -m "[XS] Fix bug in X"`
