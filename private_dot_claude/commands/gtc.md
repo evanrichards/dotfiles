@@ -27,7 +27,7 @@ Workflow steps for creating a new stacked branch:
 1. Note the current branch name (this will be the parent branch)
 2. Review the current changes (git status, git diff)
 3. If no message is provided via $ARGUMENTS, analyze the changes and suggest an appropriate commit message with the correct t-shirt size prefix
-4. Create a new branch with `git checkout -b <descriptive-branch-name>`
+4. Create a new branch with `git checkout -b evan/<descriptive-branch-name>` (always prefix with "evan/")
 5. Stage and commit the changes using `git add` and `git commit -m "{message}"`
 6. Use `gt track` to track the new branch to the parent:
    - If the parent branch contains "swap" (a workaround for git worktrees), track to `main` instead

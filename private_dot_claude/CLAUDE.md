@@ -53,3 +53,7 @@ makes it easier to test.
 In the backend repo, you can use the `./apps/backend/scripts/prod_psql.sh`
 script as psql. you can run it like
 `echo "SELECT 1 as test;" | ./apps/backend/scripts/prod_psql.sh`
+
+There is no `yarn turbo run tsc:check`, you want to use `yarn turbo check-types`
+
+IMPORTANT: *NO `any` NO `unknown` NO ` as ` unless you ASK ME and I say ok*
