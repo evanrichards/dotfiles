@@ -6,8 +6,10 @@ Get GitHub PR comments for the current branch, triage them, and address issues.
 
 Workflow steps:
 1. Get the current branch name
-2. Use `gh pr view --json comments` to fetch PR comments for this branch
-3. Triage all comments into two categories:
+2. Fetch ALL PR comments for this branch:
+   - Use `gh pr view --json comments` for general PR comments
+   - Use `gh pr view --json reviews` or `gh api repos/{owner}/{repo}/pulls/{pr}/comments` for line-specific review comments
+3. Triage all comments (both general and line-specific) into two categories:
    - **Obviously correct**: Issues that are clearly bugs, typos, or objective improvements
    - **Taste/Unsure**: Issues that are subjective, unclear, or require discussion
 4. Address all "obviously correct" issues immediately
