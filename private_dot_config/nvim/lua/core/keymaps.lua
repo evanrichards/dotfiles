@@ -24,3 +24,50 @@ vmap(">", ">gv", "Reindent ›")
 -- clear search highlighting with <space>+</>
 nmap("<leader>/", ":nohlsearch<CR>", "Clear hlsearch")
 nmap("<leader>fw", "<cmd>w<cr>", "Write")
+
+-- Copy file path (with line numbers in visual mode)
+local function copy_file_reference()
+	local file_path = vim.fn.expand("%:.")
+	local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+	local cwd = vim.fn.getcwd()
+
+	-- Make path relative to git root if we're in a git repo
+	if vim.v.shell_error == 0 and git_root and git_root ~= "" then
+		file_path = vim.fn.fnamemodify(vim.fn.expand("%:p"), ":s?" .. git_root .. "/??")
+	end
+
+	vim.fn.setreg("+", file_path)
+	print("Copied: " .. file_path)
+end
+
+local function copy_file_reference_with_lines()
+	local file_path = vim.fn.expand("%:.")
+	local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+
+	-- Make path relative to git root if we're in a git repo
+	if vim.v.shell_error == 0 and git_root and git_root ~= "" then
+		file_path = vim.fn.fnamemodify(vim.fn.expand("%:p"), ":s?" .. git_root .. "/??")
+	end
+
+	-- Get visual selection range
+	local start_line = vim.fn.line("v")
+	local end_line = vim.fn.line(".")
+
+	-- Ensure start is before end
+	if start_line > end_line then
+		start_line, end_line = end_line, start_line
+	end
+
+	local reference
+	if start_line == end_line then
+		reference = file_path .. ":" .. start_line
+	else
+		reference = file_path .. ":" .. start_line .. "-" .. end_line
+	end
+
+	vim.fn.setreg("+", reference)
+	print("Copied: " .. reference)
+end
+
+nmap("<leader>ly", copy_file_reference, "Copy file path")
+vmap("<leader>ly", copy_file_reference_with_lines, "Copy file path with lines")
