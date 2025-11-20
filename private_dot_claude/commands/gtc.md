@@ -45,13 +45,14 @@ Workflow steps for creating a new stacked branch:
 2. Review the current changes (git status, git diff)
 3. If no message is provided via $ARGUMENTS, analyze the changes and suggest an appropriate commit message with the correct t-shirt size prefix
 4. Use `gt create` to create a new branch and commit in one step:
-   - Command: `gt create --all --message "[SIZE] descriptive message" --branch evan/<descriptive-branch-name>`
+   - Command: `gt create evan/<descriptive-branch-name> --all --message "[SIZE] descriptive message"`
    - Always prefix branch names with "evan/"
+   - The branch name is a positional argument (first argument after `gt create`)
    - This automatically tracks to the current branch (parent)
 
    Special case: If the parent branch contains "swap" (a workaround for git worktrees):
    - First checkout main: `gt checkout main`
-   - Then run: `gt create --all --message "[SIZE] descriptive message" --branch evan/<descriptive-branch-name>`
+   - Then run: `gt create evan/<descriptive-branch-name> --all --message "[SIZE] descriptive message"`
 
 Helpful commands after creating a stack:
 - `gt ls` or `gt log short` - View your stack structure
@@ -76,10 +77,10 @@ When the user asks to "commit" changes after already using /gtc on a feature bra
 4. NEVER push without explicit instruction
 
 Message format:
-- Simple message: `gt create --all --message "[XS] Fix bug in X" --branch evan/fix-bug-x`
+- Simple message: `gt create evan/fix-bug-x --all --message "[XS] Fix bug in X"`
 - Message with body: Use a HEREDOC to ensure correct formatting:
   ```
-  gt create --all --branch evan/add-feature-x --message "$(cat <<'EOF'
+  gt create evan/add-feature-x --all --message "$(cat <<'EOF'
   [M] Add feature X
 
   This implements feature X which handles Y.
