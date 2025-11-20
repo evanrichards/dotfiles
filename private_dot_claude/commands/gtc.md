@@ -12,6 +12,22 @@ CRITICAL:
 
 IMPORTANT: This command is ONLY for creating NEW branches in the stack. For follow-up changes to an existing feature branch, use the amend workflow instead (see below).
 
+Stacking Philosophy:
+- Break large changes into small, self-contained PRs that can be tested, reviewed, and merged independently
+- Benefits: Faster code review, reduced merge conflicts, unblocked development, better collaboration
+- Each diff should represent a single, coherent change
+- The unit of change is an individual commit, not a multi-commit PR
+
+When to create a NEW stacked branch (/gtc):
+- You're starting a logically distinct piece of work that builds on the current branch
+- You've finished one reviewable chunk and want to start the next dependent change
+- You want to keep working without being blocked by PR reviews
+
+Common stacking patterns:
+1. By functional components: Database layer → Backend service → Frontend UI
+2. Iterative improvements: Create PR as soon as you have something reviewable, then keep building
+3. Refactor/change pattern: Refactor first (PR 1), then add feature/fix on top (PR 2)
+
 Stacking workflow principles:
 - We use Graphite CLI for stacked diffs (branches stacked on branches)
 - ONE COMMIT PER BRANCH - each branch is an atomic changeset
@@ -27,29 +43,42 @@ Workflow steps for creating a new stacked branch:
 1. Note the current branch name (this will be the parent branch)
 2. Review the current changes (git status, git diff)
 3. If no message is provided via $ARGUMENTS, analyze the changes and suggest an appropriate commit message with the correct t-shirt size prefix
-4. Create a new branch with `git checkout -b evan/<descriptive-branch-name>` (always prefix with "evan/")
-5. Stage and commit the changes using `git add` and `git commit -m "{message}"`
-6. Use `gt track` to track the new branch to the parent:
-   - If the parent branch contains "swap" (a workaround for git worktrees), track to `main` instead
-   - Otherwise, track to the noted parent branch
-   - Command: `gt track --parent <parent-branch>`
+4. Use `gt create` to create a new branch and commit in one step:
+   - Command: `gt create --all --message "[SIZE] descriptive message" --branch evan/<descriptive-branch-name>`
+   - Always prefix branch names with "evan/"
+   - This automatically tracks to the current branch (parent)
+
+   Special case: If the parent branch contains "swap" (a workaround for git worktrees):
+   - First checkout main: `gt checkout main`
+   - Then run: `gt create --all --message "[SIZE] descriptive message" --branch evan/<descriptive-branch-name>`
+
+Helpful commands after creating a stack:
+- `gt ls` or `gt log short` - View your stack structure
+- `gt top` - Navigate to the top of the stack
+- `gt bottom` - Navigate to the bottom of the stack
+- `gt sync` - Sync the stack with the main branch
 
 Follow-up changes (NOT using /gtc):
 When the user asks to "commit" changes after already using /gtc on a feature branch:
 1. ALWAYS ASK the user for confirmation before executing ANY git commands
-2. Suggest the appropriate commands:
-   - Stage changes: `git add <files>`
-   - Amend using `gt modify -a` (or `gt modify -am "updated message"` if changing commit message)
+2. Suggest the appropriate Graphite commands (preferred):
+   - Amend all changes: `gt modify -a` or `gt modify --all`
+   - Amend with new message: `gt modify -am "updated message"`
+   - Add new commit on top: `gt modify -cam "additional change message"`
    - This automatically restacks any dependent branches
-   - Alternative: `git commit --amend --no-edit` then `gt restack`
+
+   Alternative using raw git (requires manual restack):
+   - Stage changes: `git add <files>`
+   - Amend: `git commit --amend --no-edit`
+   - Restack: `gt restack`
 3. Wait for explicit confirmation before executing
 4. NEVER push without explicit instruction
 
 Message format:
-- For a simple commit: `git commit -m "[XS] Fix bug in X"`
-- For a commit with body: Use a HEREDOC to ensure correct formatting:
+- Simple message: `gt create --all --message "[XS] Fix bug in X" --branch evan/fix-bug-x`
+- Message with body: Use a HEREDOC to ensure correct formatting:
   ```
-  git commit -m "$(cat <<'EOF'
+  gt create --all --branch evan/add-feature-x --message "$(cat <<'EOF'
   [M] Add feature X
 
   This implements feature X which handles Y.
