@@ -57,3 +57,19 @@ script as psql. you can run it like
 There is no `yarn turbo run tsc:check`, you want to use `yarn turbo check-types`
 
 IMPORTANT: *NO `any` NO `unknown` NO ` as ` unless you ASK ME and I say ok*
+
+When writing readmes, focus on the *what* and *why* of the project, not the 
+*how*. Unless explicitly asked *never* write:
+- hypothetical future work
+- FAQs or common issues
+- roadmaps
+- monitoring details
+
+When writing tickets:
+- Add links to relevant code
+- Unless explicitly asked, *never* include:
+  - productionization considerations
+  - testing considerations
+  - success criteria
+  - acceptance criteria
+  - time estimates
