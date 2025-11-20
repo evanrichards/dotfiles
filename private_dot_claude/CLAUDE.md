@@ -37,10 +37,8 @@ reviewer, not just lines of code changed. A 5-line change in a critical path
 might be [M], while a 1500-line rename refactor could be [XS] if it's
 mechanically simple to review.
 
-When writing documentation or tickets, limit emoji usage. Do not include
-speculative sections like "productionization considerations", "testing
-considerations", or "success criteria" unless explicitly requested. Keep
-content focused on what was asked for.
+When writing documentation or tickets, limit emoji usage. Keep content focused
+on what was asked for.
 
 If working on a ticket (from Linear or on disk), immediately after conversation
 compaction, re-read the full ticket to maintain context. Ensure the ticket ID
@@ -65,11 +63,18 @@ When writing readmes, focus on the *what* and *why* of the project, not the
 - roadmaps
 - monitoring details
 
-When writing tickets:
-- Add links to relevant code
-- Unless explicitly asked, *never* include:
-  - productionization considerations
-  - testing considerations
-  - success criteria
-  - acceptance criteria
-  - time estimates
+CRITICAL - When writing tickets:
+- Add links to relevant code when possible
+- Keep tickets focused on WHAT needs to be done and WHY, not speculative content
+
+NEVER INCLUDE THESE SECTIONS (unless explicitly requested by the user):
+- NO "Success Criteria" or "Acceptance Criteria" sections
+- NO "Testing Considerations" or "Test Plan" sections
+- NO "Productionization Considerations" sections
+- NO "Future Work" or "Future Considerations" sections
+- NO time estimates or effort estimates
+- NO "Monitoring" or "Observability" sections
+- NO "Rollout Plan" or "Deployment Strategy" sections
+
+If you find yourself writing any of these forbidden sections, STOP and remove them.
+The ticket should describe the work to be done, not how to validate or deploy it.

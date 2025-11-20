@@ -9,6 +9,7 @@ CRITICAL:
 - The user calling /gtc IS permission to execute the git commands in this workflow
 - NEVER push to remote (no git push, gt push, or any push commands)
 - ANY git actions after /gtc completes require explicit user confirmation
+- NEVER commit implementation docs - these are for local use only and should not be included in commits
 
 IMPORTANT: This command is ONLY for creating NEW branches in the stack. For follow-up changes to an existing feature branch, use the amend workflow instead (see below).
 

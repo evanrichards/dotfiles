@@ -15,3 +15,19 @@ Context:
 Remember that Linear tickets are standalone documents without chat context. Only include relevant details in the ticket, not the entire brainstorming discussion.
 
 When referencing code in the ticket, include relevant GitHub links when possible.
+
+CRITICAL - Ticket Content Rules:
+- Keep tickets focused on WHAT needs to be done and WHY
+- Limit emoji usage
+
+NEVER INCLUDE THESE SECTIONS (unless explicitly requested):
+- NO "Success Criteria" or "Acceptance Criteria"
+- NO "Testing Considerations" or "Test Plan"
+- NO "Productionization Considerations"
+- NO "Future Work" or "Future Considerations"
+- NO time estimates or effort estimates
+- NO "Monitoring" or "Observability"
+- NO "Rollout Plan" or "Deployment Strategy"
+
+If you find yourself writing any forbidden section, STOP and remove it immediately.
+The ticket describes the work to be done, not how to validate or deploy it.
