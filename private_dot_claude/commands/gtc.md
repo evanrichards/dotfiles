@@ -50,9 +50,10 @@ Workflow steps for creating a new stacked branch:
    - The branch name is a positional argument (first argument after `gt create`)
    - This automatically tracks to the current branch (parent)
 
-   Special case: If the parent branch contains "swap" (a workaround for git worktrees):
-   - First checkout main: `gt checkout main`
-   - Then run: `gt create evan/<descriptive-branch-name> --all --message "[SIZE] descriptive message"`
+5. Special case - If the parent branch contains "swap" (a workaround for git worktrees):
+   - After running `gt create`, re-track the new branch to main instead:
+   - Command: `gt track --parent main`
+   - This ensures the new branch stacks off main, not the swap branch
 
 Helpful commands after creating a stack:
 - `gt ls` or `gt log short` - View your stack structure
