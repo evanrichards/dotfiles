@@ -1,19 +1,27 @@
-local nmap = require("helpers.keys").nmap
 return {
 	"stevearc/conform.nvim",
 	event = { "BufWritePre" },
 	cmd = { "ConformInfo" },
+	keys = {
+		{
+			"<leader>af",
+			function()
+				require("conform").format({ async = true, lsp_fallback = true })
+			end,
+			desc = "[A]uto [F]ormat",
+		},
+	},
 	config = function()
 		require("conform").setup({
 			formatters_by_ft = {
 				python = { "isort", "black" },
 				lua = { "stylua" },
-				typescript = { "prettierd", "prettier", stop_after_first = true },
-				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
-				javascript = { "prettierd", "prettier", stop_after_first = true },
-				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+				typescript = { "prettier" },
+				typescriptreact = { "prettier" },
+				javascript = { "prettier" },
+				javascriptreact = { "prettier" },
 				yaml = { "prettier" },
-				json = { "prettierd", "prettier", stop_after_first = true },
+				json = { "prettier" },
 				sql = { "pg_format" },
 				sh = { "shfmt" },
 				rust = { "rustfmt" },
@@ -21,6 +29,10 @@ return {
 				go = { "gofmt" },
 			},
 			formatters = {
+				prettier = {
+					command = "yarn",
+					prepend_args = { "prettier" },
+				},
 				rustfmt = {
 					prepend_args = { "--edition=2021" },
 				},
@@ -29,8 +41,5 @@ return {
 				},
 			},
 		})
-		nmap("<leader>af", function()
-			require("conform").format({ async = true, lsp_fallback = true })
-		end, "[A]uto [F]ormat")
 	end,
 }
