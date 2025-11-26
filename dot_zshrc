@@ -1,18 +1,18 @@
 fpath+=$HOME/.zsh/completion
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-# add $HOME/scripts to the path
-export PATH=$HOME/scripts:$PATH
-eval "$(mise activate zsh)"
 
-NPM_GLOBAL_BIN="$(npm prefix -g)/bin"
+# Load secrets (interactive shells only)
+if [[ -f ~/.secrets_rc ]]; then
+  source ~/.secrets_rc
+fi
 
-export PATH=$NPM_GLOBAL_BIN:$PATH
-# 💾 History Settings
+# History Settings
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
@@ -27,7 +27,6 @@ setopt HIST_SAVE_NO_DUPS          # skip saving duplicate entries at all
 setopt HIST_IGNORE_SPACE          # ignore lines starting with space
 setopt EXTENDED_HISTORY           # save timestamps + duration
 
-#! /bin/zsh
 autoload -U compinit
 compinit -i
 
@@ -62,37 +61,13 @@ vscratch() {
 
 source ~/powerlevel10k/powerlevel10k.zsh-theme
 
-#compdef gt
-###-begin-gt-completions-###
-#
-# yargs command completion script
-#
-# Installation: gt completion >> ~/.zshrc
-#    or gt completion >> ~/.zprofile on OSX.
-#
-_gt_yargs_completions()
-{
-  local reply
-  local si=$IFS
-  IFS=$'
-' reply=($(COMP_CWORD="$((CURRENT-1))" COMP_LINE="$BUFFER" COMP_POINT="$CURSOR" gt --get-yargs-completions "${words[@]}"))
-  IFS=$si
-  _describe 'values' reply
-}
-compdef _gt_yargs_completions gt
-###-end-gt-completions-###
-#
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-# Load pyenv if installed
-if command -v pyenv >/dev/null; then
-  eval "$(pyenv init -)"
-fi
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-zmodload zsh/zprof
-# then run `zprof` after shell startup
-autoload -Uz add-zsh-hook
+
+# Uncomment to profile shell startup, then run `zprof` after shell starts:
+# zmodload zsh/zprof
 
 flush_history() {
   fc -RI   # Reread history file, then insert into history list

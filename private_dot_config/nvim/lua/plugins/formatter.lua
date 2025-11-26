@@ -1,60 +1,36 @@
 local nmap = require("helpers.keys").nmap
 return {
-	"mhartington/formatter.nvim",
+	"stevearc/conform.nvim",
+	event = { "BufWritePre" },
+	cmd = { "ConformInfo" },
 	config = function()
-		require("formatter").setup({
-			logging = true,
-			log_level = vim.log.levels.ERROR,
-
-			filetype = {
-				python = {
-					require("formatter.filetypes.python").black,
-					require("formatter.filetypes.python").isort,
+		require("conform").setup({
+			formatters_by_ft = {
+				python = { "isort", "black" },
+				lua = { "stylua" },
+				typescript = { "prettierd", "prettier", stop_after_first = true },
+				typescriptreact = { "prettierd", "prettier", stop_after_first = true },
+				javascript = { "prettierd", "prettier", stop_after_first = true },
+				javascriptreact = { "prettierd", "prettier", stop_after_first = true },
+				yaml = { "prettier" },
+				json = { "prettierd", "prettier", stop_after_first = true },
+				sql = { "pg_format" },
+				sh = { "shfmt" },
+				rust = { "rustfmt" },
+				markdown = { "prettier" },
+				go = { "gofmt" },
+			},
+			formatters = {
+				rustfmt = {
+					prepend_args = { "--edition=2021" },
 				},
-				lua = {
-					require("formatter.filetypes.lua").stylua,
-				},
-				typescript = {
-					require("formatter.filetypes.typescript").prettierd,
-				},
-				yaml = {
-					require("formatter.filetypes.yaml").pyyaml,
-				},
-				typescriptreact = {
-					require("formatter.filetypes.typescriptreact").prettierd,
-				},
-				sql = {
-					require("formatter.filetypes.sql").pgformat,
-				},
-				sh = {
-					require("formatter.filetypes.sh").shfmt,
-				},
-				rust = {
-					{
-						exe = "rustfmt",
-						args = { "--edition=2021" },
-						stdin = true,
-					},
-				},
-				markdown = {
-					require("formatter.filetypes.markdown").prettier,
-				},
-				go = {
-					function()
-						return {
-							exe = "gofmt",
-							args = { "-s" },
-							stdin = true,
-						}
-					end,
-				},
-				["*"] = {
-					-- "formatter.filetypes.any" defines default configurations for any
-					-- filetype
-					require("formatter.filetypes.any").remove_trailing_whitespace,
+				shfmt = {
+					prepend_args = { "-i", "2" },
 				},
 			},
 		})
-		nmap("<leader>af", ":FormatWrite<CR>", "[A]uto [F]ormat")
+		nmap("<leader>af", function()
+			require("conform").format({ async = true, lsp_fallback = true })
+		end, "[A]uto [F]ormat")
 	end,
 }

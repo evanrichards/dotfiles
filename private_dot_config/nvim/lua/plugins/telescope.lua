@@ -6,14 +6,12 @@ return {
 		"nvim-telescope/telescope.nvim",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
-			"BurntSushi/ripgrep",
 			"nvim-telescope/telescope-fzf-native.nvim",
 			"nvim-telescope/telescope-github.nvim",
-			"sharkdp/fd",
 			"nvim-tree/nvim-web-devicons",
 			"nvim-telescope/telescope-ui-select.nvim",
 			"nvim-telescope/telescope-live-grep-args.nvim",
-			{ "nvim-treesitter/nvim-treesitter", run = ":TSUpdate" },
+			"nvim-treesitter/nvim-treesitter",
 		},
 		config = function()
 			local telescope = require("telescope")
@@ -61,7 +59,6 @@ return {
 			end, "[F]ind [S]ymbols")
 			nmap("<leader>fh", builtins.help_tags, "[F]ind [H]elp")
 			nmap("<leader>f", builtins.builtin, "[F]ind something")
-			nmap("gd", builtins.lsp_definitions, "[G]oto [D]efinition")
 			nmap("gr", builtins.lsp_references, "[G]oto [R]eferences")
 			vmap("<leader>fg", function()
 				require("telescope-live-grep-args.shortcuts").grep_visual_selection()

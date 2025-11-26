@@ -5,7 +5,6 @@ local on_attach = function(_, bufnr)
 	lsp_map("<leader>rn", vim.lsp.buf.rename, bufnr, "Rename symbol")
 	lsp_map("<leader>ca", vim.lsp.buf.code_action, bufnr, "Code action")
 	lsp_map("gd", builtins.lsp_definitions, bufnr, "Goto Definition")
-	lsp_map("gr", builtins.lsp_references, bufnr, "Goto References")
 	lsp_map("K", vim.lsp.buf.hover, bufnr, "Hover Documentation")
 end
 

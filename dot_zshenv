@@ -1,26 +1,27 @@
+# Dedupe PATH entries
+typeset -U path
+
+# XDG Base Directories
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
+
 # Environment variables
 export EDITOR='nvim'
-export TERM='screen-256color'
 export ARCHFLAGS="-arch arm64"
-export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib"
-export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
-export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
-export FZF_DEFAULT_OPTS=" \
---color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
---color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
---color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+export LIBRARY_PATH="${LIBRARY_PATH:+$LIBRARY_PATH:}/usr/local/lib"
+export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include"
+export FZF_DEFAULT_OPTS="--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 export PYENV_ROOT="$HOME/.pyenv"
+export GOPATH="$HOME/go"
 
-# Load secrets
-if [ ! -f ~/.secrets_rc ]; then
-  touch ~/.secrets_rc
-fi
-source ~/.secrets_rc
-
-# PATH modifications
-export PATH="/Users/$USER/.local/bin:$PATH"
-export PATH="$PYENV_ROOT/shims:$PATH"
-export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+# PATH modifications (later prepends = higher priority)
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 export PATH="/Applications/kitty.app/Contents/MacOS:$PATH"
 export PATH="/opt/homebrew/opt/fzf/bin:$PATH"
-export PATH="/Users/$USER/go/bin:$PATH"
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:$PATH"
+export PATH="$GOPATH/bin:$PATH"
+export PATH="$PYENV_ROOT/shims:$PATH"

@@ -19,7 +19,7 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter-context",
-		requires = { "nvim-treesitter/nvim-treesitter" },
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
 		opts = function(_, opts)
 			opts.enable = true
 			opts.max_lines = 3
@@ -36,9 +36,5 @@ return {
 				},
 			}
 		end,
-	},
-	{
-		"nvim-treesitter/playground",
-		requires = { "nvim-treesitter/nvim-treesitter" },
 	},
 }

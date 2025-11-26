@@ -7,18 +7,18 @@ return {
 			"williamboman/mason-lspconfig.nvim",
 			{
 				"j-hui/fidget.nvim",
-				tag = "legacy",
 				event = "LspAttach",
 			},
-			"folke/neodev.nvim",
+			{
+				"folke/lazydev.nvim",
+				ft = "lua",
+				opts = {},
+			},
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
 			-- Set up Mason before anything else
 			require("mason").setup()
-
-			-- Neodev setup before LSP config
-			require("neodev").setup()
 
 			-- Turn on LSP status information
 			require("fidget").setup()
@@ -137,7 +137,7 @@ return {
 					plugins = {
 						{
 							name = "@styled/typescript-styled-plugin",
-							location = "~/.asdf/installs/nodejs/18.18.2/lib/node_modules/@styled/typescript-styled-plugin",
+							location = "~/.local/share/mise/installs/node/22.14.0/lib/node_modules/@styled/typescript-styled-plugin",
 							languages = {
 								"typescript",
 								"javascript",
