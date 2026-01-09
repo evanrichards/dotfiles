@@ -24,7 +24,7 @@ return {
 			require("fidget").setup()
 
 			-- Set up cool signs for diagnostics
-			local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+			local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 			for type, icon in pairs(signs) do
 				local hl = "DiagnosticSign" .. type
 				vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
@@ -129,38 +129,11 @@ return {
 				},
 			})
 
-			vim.lsp.config("ts_ls", {
-
+			vim.lsp.config("tsgo", {
 				on_attach = on_attach,
-				init_options = {
-					maxTsServerMemory = 8192,
-					plugins = {
-						{
-							name = "@styled/typescript-styled-plugin",
-							location = "~/.local/share/mise/installs/node/22.14.0/lib/node_modules/@styled/typescript-styled-plugin",
-							languages = {
-								"typescript",
-								"javascript",
-							},
-						},
-					},
-					preferences = {
-						quotePreference = "single",
-						includeCompletionsWithSnippetText = false,
-						importModuleSpecifierPreference = "relative",
-						noUnusedParameters = false,
-						autoImportFileExcludePatterns = {
-							"./**/node_modules/@aws-sdk/client-textract/**",
-							"**/node_modules/@aws-sdk/client-textract/**",
-						},
-						includePackageJsonAutoImports = "on",
-						includeCompletionsForModuleExports = true,
-						suggestFromUnimportedFiles = false,
-					},
-				},
 			})
 
-			vim.lsp.enable({ "ts_ls", "jsonls", "yamlls", "pylsp", "lua_ls", "gopls" })
+			vim.lsp.enable({ "tsgo", "jsonls", "yamlls", "pylsp", "lua_ls", "gopls" })
 		end,
 	},
 }
