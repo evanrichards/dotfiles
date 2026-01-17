@@ -32,6 +32,8 @@ Your bash environment has access to some useful non-default tools:
 Do not leave chat-context implementation comments in the code base. Examples
 are things like "// Here we have improved the perf (new!)".
 
+Do not create index.ts barrel files unless explicitly asked.
+
 You should always type check your changes before saying you are done.
 
 When writing classes, if a method has no `self.` accesses, you should perfer
