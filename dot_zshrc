@@ -55,6 +55,7 @@ alias gr="gt"
 alias startDocker="open /Applications/Docker.app"
 # makes a new scratch buffer
 alias scratch="nvim -c 'set buftype=nofile' -c 'enew'"
+alias claude="claude --allow-dangerously-skip-permissions"
 
 vscratch() {
     tmux split-window -h "nvim -c 'set buftype=nofile' -c 'enew' -c 'autocmd BufLeave <buffer> :q!'"
