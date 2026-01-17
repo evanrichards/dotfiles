@@ -12,6 +12,9 @@ if [[ -f ~/.secrets_rc ]]; then
   source ~/.secrets_rc
 fi
 
+# Add local bin to PATH
+export PATH="$HOME/local/bin:$PATH"
+
 # History Settings
 HISTFILE=$HOME/.zsh_history
 HISTSIZE=1000000
