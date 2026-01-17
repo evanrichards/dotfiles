@@ -89,3 +89,10 @@ Message format:
   EOF
   )"
   ```
+
+Commit message content:
+- The code shows the "what" - the commit message should capture the "why" and key decisions
+- Include salient tradeoffs and choices made during implementation that aren't obvious from the diff
+- A future reader should understand why this approach was chosen over alternatives
+- Be terse but complete - focus on decisions a human reviewer needs to understand
+- Skip obvious choices; document non-obvious ones (e.g., "Used X instead of Y because Z")
