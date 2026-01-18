@@ -7,7 +7,7 @@ Implement Linear ticket $1 using the following structured workflow:
 
 ## Phase 1: Read and Understand the Ticket
 
-Fetch the Linear ticket and read it carefully. Note any code references, linked PRs, or related tickets mentioned.
+Fetch the Linear ticket and all its comments. Read both carefully - comments often contain important context, clarifications, or scope changes. Note any code references, linked PRs, or related tickets mentioned.
 
 ## Phase 2: Explore the Codebase
 
