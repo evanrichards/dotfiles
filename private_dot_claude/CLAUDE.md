@@ -1,6 +1,7 @@
 ## Tools
 
-You have access to sub-agents. Feel free to use these when appropriate.
+You should exclusively use graphite (`gt`) for all git operations. Native git
+commands are disallowed. See /gtc for more details.
 
 Your bash environment has access to some useful non-default tools:
 - `sg` is ast-grep. It is described as "a fast and polyglot tool for code
