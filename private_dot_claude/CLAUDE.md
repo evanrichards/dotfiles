@@ -1,20 +1,3 @@
-## Linear
-
-You have access to the linear mcp. Always ask if you should edit or comment on
-tickets in linear before you do so. Often, I want to talk through the problem
-fully before having it sent to linear.
-
-Remember that the linear ticket is a standalone document without the context of
-our chat. Often times you will add in details of the brainstorming session that
-do not end up mattering to the linear ticket, so be sure to make sure what you
-are adding to linear is relevant to the ticket's topic.
-
-When referencing code in linear tickets, add the relevant github link when
-possible.
-
-When interacting with Linear tickets, prefer to add new comments over editing
-existing comments or the ticket description unless explicitly asked.
-
 ## Tools
 
 You have access to sub-agents. Feel free to use these when appropriate.
@@ -32,8 +15,6 @@ Your bash environment has access to some useful non-default tools:
 Do not leave chat-context implementation comments in the code base. Examples
 are things like "// Here we have improved the perf (new!)".
 
-Do not create index.ts barrel files unless explicitly asked.
-
 You should always type check your changes before saying you are done.
 
 When writing classes, if a method has no `self.` accesses, you should perfer
@@ -50,12 +31,6 @@ Commit messages should be prefixed with a t-shirt size in brackets (e.g.,
 reviewer, not just lines of code changed. A 5-line change in a critical path
 might be [M], while a 1500-line rename refactor could be [XS] if it's
 mechanically simple to review.
-
-## Context Management
-
-If working on a ticket (from Linear or on disk), immediately after conversation
-compaction, re-read the full ticket to maintain context. Ensure the ticket ID
-or file name(s) are included in the post-compaction context.
 
 ## Writing
 
