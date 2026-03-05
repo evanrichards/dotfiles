@@ -16,6 +16,7 @@ export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include"
 export FZF_DEFAULT_OPTS="--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc --color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
 export PYENV_ROOT="$HOME/.pyenv"
 export GOPATH="$HOME/go"
+export GIT_SPICE_NO_GS_WARNING=1
 
 # PATH modifications (later prepends = higher priority)
 export PATH="$HOME/.local/bin:$PATH"

@@ -1,7 +1,9 @@
 ## Tools
 
-You should exclusively use graphite (`gt`) for all git operations. Native git
-commands are disallowed. See /gtc for more details.
+You should use git-spice (`gs`) for stacked branch workflows. Use `gs` (not
+`gt` or raw git) for branch creation, navigation, restacking, and submitting
+PRs. See /gtc for the branch creation workflow. Full docs:
+https://abhinav.github.io/git-spice/llms-full.txt
 
 Your bash environment has access to some useful non-default tools:
 - `sg` is ast-grep. It is described as "a fast and polyglot tool for code
