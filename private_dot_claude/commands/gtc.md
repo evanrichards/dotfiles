@@ -1,13 +1,13 @@
 ---
-description: Create a new branch with current changes using graphite
+description: Create a new branch with current changes using git-spice
 argument-hint: [message]
 ---
 
-Create a new stacked branch with the current changes using Graphite CLI.
+Create a new stacked branch with the current changes using git-spice (`gs`).
 
 CRITICAL:
 - The user calling /gtc IS permission to execute the git commands in this workflow
-- NEVER push to remote (no git push, gt push, or any push commands)
+- NEVER push to remote (no git push, gs branch submit, or any push/submit commands)
 - ANY git actions after /gtc completes require explicit user confirmation
 - NEVER commit implementation docs - these are for local use only and should not be included in commits
 
@@ -30,7 +30,7 @@ Common stacking patterns:
 3. Refactor/change pattern: Refactor first (PR 1), then add feature/fix on top (PR 2)
 
 Stacking workflow principles:
-- We use Graphite CLI for stacked diffs (branches stacked on branches)
+- We use git-spice (`gs`) for stacked diffs (branches stacked on branches)
 - ONE COMMIT PER BRANCH - each branch is an atomic changeset
 - Each new feature/change gets its own branch stacked on the current branch
 - Commit messages MUST be prefixed with a t-shirt size in brackets: [XS], [S], [M], [L], [XL]
@@ -41,47 +41,43 @@ Stacking workflow principles:
 - Do NOT include Claude as co-author
 
 Workflow steps for creating a new stacked branch:
-1. Note the current branch name (this will be the parent branch)
+1. Note the current branch name (this will be the parent/base branch)
 2. Review the current changes (git status, git diff)
 3. If no message is provided via $ARGUMENTS, analyze the changes and suggest an appropriate commit message with the correct t-shirt size prefix
-4. Use `gt create` to create a new branch and commit in one step:
-   - Command: `gt create evan/<descriptive-branch-name> --all --message "[SIZE] descriptive message"`
-   - Always prefix branch names with "evan/"
-   - The branch name is a positional argument (first argument after `gt create`)
-   - This automatically tracks to the current branch (parent)
+4. Use `gs branch create` (shorthand: `gs bc`) to create a new branch and commit in one step:
+   - Command: `gs bc <descriptive-branch-name> --all --message "[SIZE] descriptive message"`
+   - The branch name is a positional argument (first argument after `gs bc`)
+   - Always prefix branch names with `evan/` (e.g., `evan/fix-bug-x`)
+   - The new branch uses the current branch as its base automatically
 
 5. Special case - If the parent branch contains "swap" (a workaround for git worktrees):
-   - After running `gt create`, re-track the new branch to main instead:
-   - Command: `gt track --parent main`
+   - After creating the branch, move it onto main instead:
+   - Command: `gs branch onto main`
    - This ensures the new branch stacks off main, not the swap branch
 
 Helpful commands after creating a stack:
-- `gt ls` or `gt log short` - View your stack structure
-- `gt top` - Navigate to the top of the stack
-- `gt bottom` - Navigate to the bottom of the stack
-- `gt sync` - Sync the stack with the main branch
+- `gs ls` or `gs ll` - View your stack structure (short/long)
+- `gs up` / `gs down` - Navigate up/down the stack
+- `gs top` / `gs bottom` - Jump to top/bottom of stack
+- `gs repo sync` (shorthand: `gs rs`) - Sync with remote, delete merged branches
+- `gs stack restack` (shorthand: `gs sr`) - Restack all branches in the stack
 
 Follow-up changes (NOT using /gtc):
 When the user asks to "commit" changes after already using /gtc on a feature branch:
 1. ALWAYS ASK the user for confirmation before executing ANY git commands
-2. Suggest the appropriate Graphite commands (preferred):
-   - Amend all changes: `gt modify -a` or `gt modify --all`
-   - Amend with new message: `gt modify -am "updated message"`
-   - Add new commit on top: `gt modify -cam "additional change message"`
-   - This automatically restacks any dependent branches
-
-   Alternative using raw git (requires manual restack):
-   - Stage changes: `git add <files>`
-   - Amend: `git commit --amend --no-edit`
-   - Restack: `gt restack`
+2. Suggest the appropriate git-spice commands:
+   - Amend all changes (keep message): `gs commit amend --all --no-edit` (shorthand: `gs ca --all --no-edit`)
+   - Amend with new message: `gs ca --all --message "updated message"`
+   - Add new commit on top: `gs commit create --all --message "additional change"` (shorthand: `gs cc --all --message "..."`)
+   - These automatically restack any dependent branches
 3. Wait for explicit confirmation before executing
-4. NEVER push without explicit instruction
+4. NEVER push/submit without explicit instruction
 
 Message format:
-- Simple message: `gt create evan/fix-bug-x --all --message "[XS] Fix bug in X"`
+- Simple message: `gs bc evan/fix-bug-x --all --message "[XS] Fix bug in X"`
 - Message with body: Use a HEREDOC to ensure correct formatting:
   ```
-  gt create evan/add-feature-x --all --message "$(cat <<'EOF'
+  gs bc evan/add-feature-x --all --message "$(cat <<'EOF'
   [M] Add feature X
 
   This implements feature X which handles Y.

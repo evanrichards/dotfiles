@@ -16,6 +16,7 @@ brew "eza"
 brew "fzf"
 brew "gh"
 brew "git-lfs"
+brew "git-spice"
 brew "go"
 brew "gpg"
 brew "huggingface-cli", link: false
