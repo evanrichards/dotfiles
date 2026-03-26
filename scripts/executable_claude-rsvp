@@ -1,0 +1,509 @@
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# dependencies = ["pygments"]
+# ///
+"""RSVP (Rapid Serial Visual Presentation) reader for Claude Code responses."""
+
+import json
+import os
+import select
+import subprocess
+import sys
+import termios
+import time
+import tty
+
+CONFIG_PATH = os.path.expanduser("~/.config/claude-rsvp.json")
+DEFAULT_WPM = 100
+WPM_STEP = 50
+
+
+def load_config():
+    try:
+        with open(CONFIG_PATH) as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def save_config(config):
+    os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(config, f)
+
+
+def find_claude_child(shell_pid):
+    result = subprocess.run(
+        ["ps", "-o", "pid=", "-o", "ppid=", "-o", "comm="],
+        capture_output=True,
+        text=True,
+    )
+    for line in result.stdout.strip().split("\n"):
+        parts = line.strip().split(None, 2)
+        if len(parts) >= 3:
+            pid, ppid, comm = parts[0], parts[1], parts[2]
+            if ppid == str(shell_pid) and "claude" in comm:
+                return int(pid)
+    return None
+
+
+def get_last_assistant_text(claude_pid):
+    session_file = os.path.expanduser(f"~/.claude/sessions/{claude_pid}.json")
+    if not os.path.exists(session_file):
+        return None
+
+    with open(session_file) as f:
+        session = json.load(f)
+
+    session_id = session["sessionId"]
+    cwd = session["cwd"]
+    project_dir = cwd.replace("/", "-").replace(".", "-")
+    jsonl_path = os.path.expanduser(
+        f"~/.claude/projects/{project_dir}/{session_id}.jsonl"
+    )
+
+    if not os.path.exists(jsonl_path):
+        return None
+
+    last_text = None
+    with open(jsonl_path, "rb") as f:
+        f.seek(0, 2)
+        size = f.tell()
+        f.seek(max(0, size - 200_000))
+        tail = f.read().decode("utf-8", errors="replace")
+
+    for line in tail.strip().split("\n"):
+        try:
+            d = json.loads(line)
+            if d.get("type") == "assistant":
+                content = d.get("message", {}).get("content", [])
+                texts = []
+                for block in content:
+                    if isinstance(block, dict) and block.get("type") == "text":
+                        texts.append(block["text"])
+                if texts:
+                    last_text = "\n\n".join(texts)
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    return last_text
+
+
+def get_terminal_size():
+    try:
+        cols, rows = os.get_terminal_size()
+        return rows, cols
+    except OSError:
+        return 24, 80
+
+
+def highlight_code(fenced_block):
+    """Syntax-highlight a fenced code block using Pygments."""
+    from pygments import highlight
+    from pygments.formatters import TerminalFormatter
+    from pygments.lexers import get_lexer_by_name, guess_lexer
+    from pygments.util import ClassNotFound
+
+    # Strip the fences and extract language hint
+    lines = fenced_block.split("\n")
+    lang_hint = lines[0].lstrip("`").strip() if lines else ""
+    # Remove opening and closing fence lines
+    code = "\n".join(lines[1:-1]) if len(lines) > 2 else ""
+
+    try:
+        if lang_hint:
+            lexer = get_lexer_by_name(lang_hint)
+        else:
+            lexer = guess_lexer(code)
+    except ClassNotFound:
+        lexer = get_lexer_by_name("text")
+
+    return highlight(code, lexer, TerminalFormatter()).rstrip("\n")
+
+
+def find_orp(word):
+    """Find the Optimal Recognition Point — the middle letter of the word."""
+    return display_len(word) // 2
+
+
+def is_inline_code(word):
+    return word.startswith("`") and word.endswith("`") and len(word) > 2
+
+
+def strip_backticks(word):
+    return word[1:-1]
+
+
+def display_len(word):
+    """Length of word as displayed (without backticks for inline code)."""
+    if is_inline_code(word):
+        return len(word) - 2
+    return len(word)
+
+
+# Baby blue: 256-color code 117
+INLINE_CODE_COLOR = "\033[38;5;117m"
+
+
+def render_word(word, orp_idx):
+    """Render word with the ORP letter in a different color."""
+    if is_inline_code(word):
+        display = strip_backticks(word)
+        orp_idx = min(orp_idx, len(display) - 1)
+        before = display[:orp_idx]
+        focus = display[orp_idx]
+        after = display[orp_idx + 1:]
+        return f"{INLINE_CODE_COLOR}{before}\033[1;31m{focus}\033[0m{INLINE_CODE_COLOR}{after}\033[0m"
+    before = word[:orp_idx]
+    focus = word[orp_idx]
+    after = word[orp_idx + 1:]
+    return f"\033[1m{before}\033[1;31m{focus}\033[0m\033[1m{after}\033[0m"
+
+
+def handle_key(ch, wpm, config):
+    """Handle speed adjustment keys. Returns new wpm or None if unchanged."""
+    if ch in ("+", "="):
+        wpm += WPM_STEP
+        config["wpm"] = wpm
+        save_config(config)
+        return wpm
+    elif ch in ("-", "_"):
+        wpm = max(WPM_STEP, wpm - WPM_STEP)
+        config["wpm"] = wpm
+        save_config(config)
+        return wpm
+    return None
+
+
+def run_rsvp(words, wpm):
+    total = sum(1 for w in words if isinstance(w, str))
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    config = load_config()
+
+    try:
+        tty.setcbreak(fd)
+        sys.stdout.write("\033[?25l")
+        sys.stdout.flush()
+
+        while True:  # outer loop for replay
+            paused = False
+            idx = 0
+
+            while idx < len(words):
+                word = words[idx]
+
+                # Code block — display all at once, wait for space
+                if isinstance(word, dict) and "code" in word:
+                    rows, cols = get_terminal_size()
+                    sys.stdout.write("\033[2J")
+
+                    code = word["code"]
+                    highlighted = highlight_code(code)
+                    lines = highlighted.split("\n")
+                    start_row = max(1, (rows - len(lines)) // 2)
+
+                    for i, line in enumerate(lines):
+                        row = start_row + i
+                        if row >= rows:
+                            break
+                        display_line = line[:cols - 1]
+                        sys.stdout.write(f"\033[{row};2H{display_line}\033[0m")
+
+                    label = f" {sum(1 for w in words[:idx+1] if isinstance(w, str))}/{total}  {wpm} WPM  [CODE - space to continue] "
+                    bar_width = cols - len(label)
+                    filled = int(bar_width * sum(1 for w in words[:idx+1] if isinstance(w, str)) / total)
+                    bar = "\u2588" * filled + "\u2591" * (bar_width - filled)
+                    sys.stdout.write(f"\033[{rows};1H{bar}{label}")
+                    sys.stdout.flush()
+
+                    while True:
+                        if select.select([sys.stdin], [], [], 0.1)[0]:
+                            ch = sys.stdin.read(1)
+                            if ch in ("q", "\x1b", "\x03"):
+                                return
+                            elif ch == " ":
+                                break
+                    idx += 1
+                    continue
+
+                # Newline sentinel — pause for 3x delay then advance
+                if word is None:
+                    pause_time = (60.0 / wpm) * 3
+                    elapsed = 0.0
+                    while elapsed < pause_time:
+                        time.sleep(0.03)
+                        elapsed += 0.03
+                        if select.select([sys.stdin], [], [], 0)[0]:
+                            ch = sys.stdin.read(1)
+                            if ch in ("q", "\x1b", "\x03"):
+                                return
+                            elif ch == " ":
+                                paused = True
+                                break
+                    idx += 1
+                    continue
+
+                rows, cols = get_terminal_size()
+                y = rows // 2
+                anchor_col = cols // 2
+
+                orp_idx = find_orp(word)
+                x = max(1, anchor_col - orp_idx)
+                rendered = render_word(word, orp_idx)
+
+                if paused:
+                    sys.stdout.write("\033[2J")
+
+                    # Words before: fill leftward (skip sentinels)
+                    before_parts = []
+                    col_budget = x - 2
+                    for i in range(idx - 1, -1, -1):
+                        w = words[i]
+                        if w is None:
+                            continue
+                        needed = len(w) + 1
+                        if needed > col_budget:
+                            break
+                        before_parts.insert(0, w)
+                        col_budget -= needed
+
+                    # Words after: fill rightward (skip sentinels)
+                    after_parts = []
+                    col_budget = cols - (x + display_len(word)) - 1
+                    for i in range(idx + 1, len(words)):
+                        w = words[i]
+                        if w is None:
+                            continue
+                        needed = len(w) + 1
+                        if needed > col_budget:
+                            break
+                        after_parts.append(w)
+                        col_budget -= needed
+
+                    if before_parts:
+                        before_str = " ".join(before_parts) + " "
+                        bx = x - len(before_str)
+                        sys.stdout.write(f"\033[{y};{max(1, bx)}H\033[2m{before_str}\033[0m")
+
+                    sys.stdout.write(f"\033[{y};{x}H{rendered}")
+
+                    if after_parts:
+                        after_str = " " + " ".join(after_parts)
+                        sys.stdout.write(f"\033[{y};{x + display_len(word)}H\033[2m{after_str}\033[0m")
+
+                    # Progress bar
+                    label = f" {sum(1 for w in words[:idx+1] if isinstance(w, str))}/{total}  {wpm} WPM  [PAUSED] "
+                    bar_width = cols - len(label)
+                    filled = int(bar_width * (idx + 1) / total)
+                    bar = "\u2588" * filled + "\u2591" * (bar_width - filled)
+                    sys.stdout.write(f"\033[{rows};1H{bar}{label}")
+                    sys.stdout.flush()
+
+                    while True:
+                        if select.select([sys.stdin], [], [], 0.1)[0]:
+                            ch = sys.stdin.read(1)
+                            if ch in ("q", "\x1b", "\x03"):
+                                return
+                            elif ch == " ":
+                                paused = False
+                                break
+                            elif ch == "h":
+                                new_idx = idx - 1
+                                while new_idx >= 0 and not isinstance(words[new_idx], str):
+                                    new_idx -= 1
+                                if new_idx >= 0:
+                                    idx = new_idx
+                                break  # redraw
+                            elif ch == "l":
+                                new_idx = idx + 1
+                                while new_idx < len(words) and not isinstance(words[new_idx], str):
+                                    new_idx += 1
+                                if new_idx < len(words):
+                                    idx = new_idx
+                                break  # redraw
+                            elif ch == "K":
+                                # Jump to previous paragraph (find previous None sentinel)
+                                new_idx = idx - 1
+                                # Skip past current paragraph's words
+                                while new_idx >= 0 and words[new_idx] is not None:
+                                    new_idx -= 1
+                                # Skip the sentinel
+                                while new_idx >= 0 and words[new_idx] is None:
+                                    new_idx -= 1
+                                # Find start of that paragraph
+                                while new_idx > 0 and isinstance(words[new_idx - 1], str):
+                                    new_idx -= 1
+                                if new_idx >= 0 and isinstance(words[new_idx], str):
+                                    idx = new_idx
+                                break  # redraw
+                            elif ch == "J":
+                                # Jump to next paragraph (find next None sentinel, then first word after)
+                                new_idx = idx + 1
+                                while new_idx < len(words) and words[new_idx] is not None:
+                                    new_idx += 1
+                                # Skip sentinels
+                                while new_idx < len(words) and not isinstance(words[new_idx], str):
+                                    new_idx += 1
+                                if new_idx < len(words):
+                                    idx = new_idx
+                                break  # redraw
+                            else:
+                                new_wpm = handle_key(ch, wpm, config)
+                                if new_wpm is not None:
+                                    wpm = new_wpm
+                    continue
+
+                # Normal (not paused) display
+                sys.stdout.write(f"\033[2J\033[{y};{x}H{rendered}")
+
+                # Progress bar
+                label = f" {sum(1 for w in words[:idx+1] if isinstance(w, str))}/{total}  {wpm} WPM "
+                bar_width = cols - len(label)
+                filled = int(bar_width * (idx + 1) / total)
+                bar = "\u2588" * filled + "\u2591" * (bar_width - filled)
+                sys.stdout.write(f"\033[{rows};1H{bar}{label}")
+                sys.stdout.flush()
+
+                base_delay = 60.0 / wpm
+                # Proportional: scales smoothly with word length
+                # 1-char: 0.6x, 5-char: 1.0x, 10-char: 1.5x, 20-char: 2.5x, etc.
+                scale = max(0.6, 0.5 + display_len(word) * 0.1)
+                if is_inline_code(word):
+                    scale *= 2
+                # Sentence-end pause: 1.5x extra for words ending in . ? !
+                if word and word[-1] in ".?!":
+                    scale *= 1.5
+                delay = base_delay * scale
+                elapsed = 0.0
+                while elapsed < delay:
+                    time.sleep(0.03)
+                    elapsed += 0.03
+                    if select.select([sys.stdin], [], [], 0)[0]:
+                        ch = sys.stdin.read(1)
+                        if ch in ("q", "\x1b", "\x03"):
+                            return
+                        elif ch == " ":
+                            paused = True
+                            break
+                        else:
+                            new_wpm = handle_key(ch, wpm, config)
+                            if new_wpm is not None:
+                                wpm = new_wpm
+                                break
+
+                if not paused:
+                    idx += 1
+
+            # Finished all words — offer replay
+            rows, cols = get_terminal_size()
+            msg = "[done] r to replay, q to close"
+            sys.stdout.write(f"\033[2J\033[{rows // 2};{max(1, (cols - len(msg)) // 2 + 1)}H{msg}")
+            sys.stdout.flush()
+
+            while True:
+                if select.select([sys.stdin], [], [], 0.1)[0]:
+                    ch = sys.stdin.read(1)
+                    if ch in ("q", "\x1b", "\x03"):
+                        return
+                    elif ch == "r":
+                        break  # restart outer loop
+
+    finally:
+        sys.stdout.write("\033[?25h\033[2J\033[H")
+        sys.stdout.flush()
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+
+
+def strip_markdown(word):
+    """Strip markdown syntax from a word, preserving the text content."""
+    import re
+    # Bold/italic: **word**, __word__, *word*, _word_
+    word = re.sub(r"^\*{1,3}(.*?)\*{1,3}$", r"\1", word)
+    word = re.sub(r"^_{1,3}(.*?)_{1,3}$", r"\1", word)
+    # Strikethrough: ~~word~~
+    word = re.sub(r"^~~(.*?)~~$", r"\1", word)
+    # Links: [text](url) -> text
+    word = re.sub(r"^\[([^\]]+)\]\([^\)]+\)$", r"\1", word)
+    # Headers: ## word -> word
+    word = re.sub(r"^#{1,6}\s*", "", word)
+    # Bullet points
+    word = re.sub(r"^[-*+]\s+", "", word)
+    # Numbered lists: 1. word
+    word = re.sub(r"^\d+\.\s+", "", word)
+    return word
+
+
+def tokenize(text):
+    """Split text into tokens: strings for words, None for newline breaks,
+    and {"code": "..."} dicts for fenced code blocks."""
+    import re
+
+    tokens = []
+    # Split on fenced code blocks first
+    parts = re.split(r"(```[\s\S]*?```)", text)
+
+    for part in parts:
+        if part.startswith("```") and part.endswith("```"):
+            tokens.append({"code": part})
+        else:
+            for paragraph in part.split("\n"):
+                # Split on inline backtick spans, keeping them as single tokens
+                chunks = re.split(r"(`[^`]+`)", paragraph)
+                has_words = False
+                for chunk in chunks:
+                    if chunk.startswith("`") and chunk.endswith("`"):
+                        tokens.append(chunk)
+                        has_words = True
+                    else:
+                        words = chunk.split()
+                        if words:
+                            tokens.extend(
+                                w for w in (strip_markdown(w) for w in words) if w
+                            )
+                            has_words = True
+                if has_words or (tokens and tokens[-1] is not None):
+                    if tokens and tokens[-1] is not None:
+                        tokens.append(None)
+
+    # Remove trailing sentinels
+    while tokens and tokens[-1] is None:
+        tokens.pop()
+
+    return tokens
+
+
+def main():
+    config = load_config()
+    wpm = config.get("wpm", DEFAULT_WPM)
+
+    if len(sys.argv) < 2:
+        print("Usage: claude-rsvp <pane_shell_pid>")
+        sys.exit(1)
+
+    pane_pid = int(sys.argv[1])
+
+    claude_pid = find_claude_child(pane_pid)
+    if claude_pid is None:
+        print(f"No Claude process found as child of PID {pane_pid}")
+        time.sleep(3)
+        sys.exit(1)
+
+    text = get_last_assistant_text(claude_pid)
+    if text is None:
+        print("No assistant message found")
+        time.sleep(3)
+        sys.exit(1)
+
+    words = tokenize(text)
+    if not words:
+        print("Empty response")
+        time.sleep(3)
+        sys.exit(1)
+
+    run_rsvp(words, wpm)
+
+
+if __name__ == "__main__":
+    main()
