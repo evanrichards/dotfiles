@@ -4,7 +4,7 @@ return {
 		branch = "main",
 		lazy = false,
 
-		dependencies = { "nvim-treesitter/nvim-treesitter-textobjects" },
+		dependencies = { { "nvim-treesitter/nvim-treesitter-textobjects", branch = "main" } },
 
 		build = ":TSUpdate",
 		config = function()
