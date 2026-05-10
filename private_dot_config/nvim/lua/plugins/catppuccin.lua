@@ -1,8 +1,10 @@
 return {
 	"catppuccin/nvim",
 	name = "catppuccin",
-	opts = function()
-		return {
+	priority = 1000,
+	config = function()
+		require("catppuccin").setup({
+			flavour = "mocha",
 			integrations = {
 				cmp = true,
 				gitsigns = true,
@@ -17,10 +19,7 @@ return {
 				telekasten = true,
 				which_key = true,
 			},
-		}
-	end,
-	config = function()
-		vim.g.catppuccin_flavour = "mocha" -- latte, frappe, macchiato, mocha
+		})
 		vim.cmd([[colorscheme catppuccin]])
 	end,
 }
