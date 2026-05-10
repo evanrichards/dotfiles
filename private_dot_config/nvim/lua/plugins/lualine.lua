@@ -1,7 +1,7 @@
 -- Fancier statusline
 return {
 	"nvim-lualine/lualine.nvim",
-	dependencies = { "kyazdani42/nvim-web-devicons" },
+	dependencies = { "kyazdani42/nvim-web-devicons", "catppuccin/nvim" },
 	config = function()
 		local function lsp_progress()
 			local messages = vim.lsp.status()
@@ -22,7 +22,7 @@ return {
 		require("lualine").setup({
 			options = {
 				icons_enabled = true,
-				theme = "catppuccin-nvim",
+				theme = require("catppuccin.utils.lualine")(),
 				component_separators = "|",
 				section_separators = { left = "", right = "" },
 			},
