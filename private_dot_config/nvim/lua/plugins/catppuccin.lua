@@ -8,7 +8,6 @@ return {
 			integrations = {
 				cmp = true,
 				gitsigns = true,
-				lualine = true,
 				mason = true,
 				notify = true,
 				treesitter = true,
