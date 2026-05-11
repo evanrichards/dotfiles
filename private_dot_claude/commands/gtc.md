@@ -44,13 +44,17 @@ Workflow steps for creating a new stacked branch:
 1. Note the current branch name (this will be the parent/base branch)
 2. Review the current changes (git status, git diff)
 3. If no message is provided via $ARGUMENTS, analyze the changes and suggest an appropriate commit message with the correct t-shirt size prefix
-4. Use `gs branch create` (shorthand: `gs bc`) to create a new branch and commit in one step:
+4. Stage any untracked files BEFORE creating the branch:
+   - `--all` only stages modified/deleted files, NOT new (untracked) files
+   - Run `git add` on any untracked files/directories shown in `git status` first
+   - Example: `git add lib/domain-foo/src/new-module/`
+5. Use `gs branch create` (shorthand: `gs bc`) to create a new branch and commit in one step:
    - Command: `gs bc <descriptive-branch-name> --all --message "[SIZE] descriptive message"`
    - The branch name is a positional argument (first argument after `gs bc`)
    - Always prefix branch names with `evan/` (e.g., `evan/fix-bug-x`)
    - The new branch uses the current branch as its base automatically
 
-5. Special case - If the parent branch contains "swap" (a workaround for git worktrees):
+6. Special case - If the parent branch contains "swap" (a workaround for git worktrees):
    - After creating the branch, move it onto main instead:
    - Command: `gs branch onto main`
    - This ensures the new branch stacks off main, not the swap branch

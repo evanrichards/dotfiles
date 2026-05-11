@@ -1,4 +1,7 @@
 {
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "hooks": {
     "PreToolUse": [
       {
@@ -28,15 +31,28 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/no-preexisting-errors.js"
+          }
+        ]
+      }
     ]
   },
   "enabledPlugins": {
     "frontend-design@claude-code-plugins": false,
     "pr-review-toolkit@claude-plugins-official": true,
-    "ralph-wiggum@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
     "document-skills@anthropic-agent-skills": true,
     "typescript-lsp@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": true,
+  "effortLevel": "xhigh",
+  "skipDangerousModePermissionPrompt": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }

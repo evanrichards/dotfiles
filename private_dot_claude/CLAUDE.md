@@ -12,6 +12,12 @@ Your bash environment has access to some useful non-default tools:
 - `fastmod` is a code modification tool forked from codemod. Very useful for
   large refactors or refactoring code. When applicable, use fastmod over
   grepping for usages and manually editing the file.
+- `temporal` is the Temporal CLI. When debugging workflows, use
+  `temporal --env prod` to query production for workflow history, status,
+  and other details.
+- We use the loop-corp MCP a _lot_ for debugging. If i am asking you about
+  historical data or logs or mutating stuff, i am most likely asking you to use
+  the MCP to write a script to get the answer.
 
 ## Code Style
 
@@ -19,6 +25,11 @@ Do not leave chat-context implementation comments in the code base. Examples
 are things like "// Here we have improved the perf (new!)".
 
 You should always type check your changes before saying you are done.
+
+When type checking reveals errors, fix them — even if they appear
+pre-existing or unrelated to the current changes. Do not dismiss errors
+or move on without fixing them. Most cross-package type errors are
+resolved by running `pnpm install && pnpm turbo build`.
 
 When writing classes, if a method has no `self.` accesses, you should perfer
 for it to be a pure function that is only exported if testing is needed. This
