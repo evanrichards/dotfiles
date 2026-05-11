@@ -67,6 +67,8 @@ def get_last_assistant_text(claude_pid):
         return None
 
     last_text = None
+    last_plan_path = None
+    last_tool = None
     with open(jsonl_path, "rb") as f:
         f.seek(0, 2)
         size = f.tell()
@@ -80,12 +82,25 @@ def get_last_assistant_text(claude_pid):
                 content = d.get("message", {}).get("content", [])
                 texts = []
                 for block in content:
-                    if isinstance(block, dict) and block.get("type") == "text":
-                        texts.append(block["text"])
+                    if isinstance(block, dict):
+                        if block.get("type") == "text":
+                            texts.append(block["text"])
+                        elif block.get("type") == "tool_use":
+                            name = block.get("name", "")
+                            last_tool = name
+                            if name == "Write":
+                                fp = block.get("input", {}).get("file_path", "")
+                                if "/.claude/plans/" in fp:
+                                    last_plan_path = fp
                 if texts:
                     last_text = "\n\n".join(texts)
         except (json.JSONDecodeError, KeyError):
             pass
+
+    # If the session ended with ExitPlanMode, read the plan file
+    if last_tool == "ExitPlanMode" and last_plan_path and os.path.exists(last_plan_path):
+        with open(last_plan_path) as f:
+            return f.read()
 
     return last_text
 
