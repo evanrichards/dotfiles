@@ -24,12 +24,15 @@ Your bash environment has access to some useful non-default tools:
 Do not leave chat-context implementation comments in the code base. Examples
 are things like "// Here we have improved the perf (new!)".
 
-You should always type check your changes before saying you are done.
+By default, type check your changes before saying you are done. Exception:
+if a PR is already open for the branch, push your changes and let CI run
+the type check instead of running it locally first. Type checking is slow,
+and running it locally and then again in CI doubles the wait.
 
-When type checking reveals errors, fix them — even if they appear
-pre-existing or unrelated to the current changes. Do not dismiss errors
-or move on without fixing them. Most cross-package type errors are
-resolved by running `pnpm install && pnpm turbo build`.
+When type checking reveals errors (locally or in CI), fix them, even if
+they appear pre-existing or unrelated to the current changes. Do not
+dismiss errors or move on without fixing them. Most cross-package type
+errors are resolved by running `pnpm install && pnpm turbo build`.
 
 When writing classes, if a method has no `self.` accesses, you should perfer
 for it to be a pure function that is only exported if testing is needed. This
@@ -50,6 +53,11 @@ mechanically simple to review.
 
 When writing documentation or tickets, limit emoji usage. Keep content focused
 on what was asked for.
+
+When providing a URL in chat output, paste the raw URL on its own (or inline as
+plain text). Do not wrap it in markdown link syntax like `[label](url)`. My
+terminal renders markdown links as the label only, hiding the URL — raw URLs
+are clickable as-is and easier to copy.
 
 When writing readmes, focus on the *what* and *why* of the project, not the
 *how*. Unless explicitly asked *never* write:
