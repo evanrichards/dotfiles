@@ -49,6 +49,34 @@ reviewer, not just lines of code changed. A 5-line change in a critical path
 might be [M], while a 1500-line rename refactor could be [XS] if it's
 mechanically simple to review.
 
+## Worktrees
+
+When the session is running in a git worktree (the environment's working
+directory is under a `worktrees/` path, e.g.
+`.../backend/.claude/worktrees/<name>`), every file you touch must live under
+that worktree root. Before the first Edit/Write of a session, note the worktree
+root from the environment and treat it as the only valid prefix for file paths.
+
+The trap: worktrees live *inside* the main repo, so a recursive search finds two
+copies of every file — the main-repo copy and the worktree copy. Subagents
+(Explore, etc.) and search tools routinely report the **main-repo** absolute
+path (`.../backend/lib/...`) because it's the shorter, canonical-looking one.
+If you paste that path straight into Read/Edit, you silently edit the wrong
+checkout — usually a different branch with unrelated uncommitted work. Bash
+commands run with cwd in the worktree, so `git rm`/`git status` land correctly,
+which makes the divergence even harder to notice (deletions in the worktree,
+edits in main).
+
+Rules:
+- Never edit a path under the main `backend/lib` (or any path outside the
+  worktree root) while in a worktree. Translate every agent-supplied or
+  search-supplied absolute path to the worktree root before opening it.
+- After a batch of edits, run `git status` in the worktree and confirm the
+  modified files actually show up there. If they don't, you edited the wrong
+  copy — revert in the main repo with `git checkout HEAD -- <files>` (only after
+  confirming those files were clean at HEAD so you don't clobber other work) and
+  re-apply in the worktree.
+
 ## Writing
 
 When writing documentation or tickets, limit emoji usage. Keep content focused
