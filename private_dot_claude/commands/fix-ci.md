@@ -6,16 +6,31 @@ Fix CI for the current branch's PR. "Green" means **mergeable** — zero cancell
 
 ## Workflow
 
-0. **Read the rollup state AND mergeStateStatus first.** The rollup catches most "Expected — Waiting for status to be reported" required checks (branch-protection-required checks with no CheckRun for the current SHA — invisible to any count-based query). `mergeStateStatus` is the only signal that catches the rest (see the jobless-cancelled-twin trap in step 2b):
+0. **Read mergeability, the rollup state, AND mergeStateStatus first — in one query.** Fetch `mergeable` alongside the rollup so a merge conflict is caught before you ever look at (or wait on) CI. The rollup catches most "Expected — Waiting for status to be reported" required checks (branch-protection-required checks with no CheckRun for the current SHA — invisible to any count-based query). `mergeStateStatus` is the only signal that catches the rest (see the jobless-cancelled-twin trap in step 2b):
    ```bash
-   gh api graphql -f query='{ repository(owner:"<owner>", name:"<repo>") { pullRequest(number:<n>) { mergeStateStatus reviewDecision commits(last:1) { nodes { commit { oid statusCheckRollup { state } } } } } } }' --jq '.data.repository.pullRequest | {mergeStateStatus, reviewDecision, sha: .commits.nodes[0].commit.oid, rollup: .commits.nodes[0].commit.statusCheckRollup.state}'
+   gh api graphql -f query='{ repository(owner:"<owner>", name:"<repo>") { pullRequest(number:<n>) { mergeable mergeStateStatus reviewDecision commits(last:1) { nodes { commit { oid statusCheckRollup { state } } } } } } }' --jq '.data.repository.pullRequest | {mergeable, mergeStateStatus, reviewDecision, sha: .commits.nodes[0].commit.oid, rollup: .commits.nodes[0].commit.statusCheckRollup.state}'
    ```
+
+   **CHECK `mergeable` BEFORE ANYTHING ELSE.** If `mergeable: CONFLICTING` (equivalently `mergeStateStatus: DIRTY`), the branch has merge conflicts with the base — **CI is irrelevant and waiting on it is wrong.** Rerunning or polling checks will never clear a `DIRTY` PR; it stays unmergeable no matter how green CI goes. Resolve the conflict first (see step 0a), then come back to the CI workflow. Do NOT pause to wait for CI to pass while the PR is conflicting. (`mergeable: UNKNOWN` means GitHub is still computing it — re-query after a few seconds before concluding.)
+
    Rollup states: `SUCCESS`, `PENDING`, `FAILURE`, `ERROR`, `EXPECTED`. **Never report green based on enumerating CheckRuns** — a PENDING state with zero FAILED CheckRuns still blocks merge because GitHub is waiting on required-check names that have no CheckRun yet.
 
    **Rollup `SUCCESS` alone does NOT mean mergeable.** Interpret the pair:
    - rollup `SUCCESS` + `mergeStateStatus` not `BLOCKED` → green.
    - rollup `SUCCESS` + `mergeStateStatus: BLOCKED` + `reviewDecision` missing/`REVIEW_REQUIRED` → CI is green but the PR needs approval; say so.
    - rollup `SUCCESS` + `BLOCKED` + `APPROVED` → almost certainly the **jobless cancelled twin** (step 2b). Branch protection still counts N required checks as "expected" even though every visible check run succeeded; `enqueuePullRequest` / merge will reject with "N of M required status checks are expected".
+
+0a. **Resolve merge conflicts (only if `mergeable: CONFLICTING`).** Rebase the branch onto the fresh base and force-push:
+   ```bash
+   gh pr view <n> --json headRefName,baseRefName --jq '{head: .headRefName, base: .baseRefName}'
+   git fetch origin <base>
+   git fetch origin <headRefName>   # remote may carry a CI auto-fix commit your local checkout lacks — see below
+   ```
+   - **Rebase the *remote* head, not a stale local copy.** A "Auto-fix PR (oxlint, oxfmt, graphql + openapi schemas, ...)" commit is often pushed by CI on top of your last commit. If you rebase a local branch that predates it you'll silently drop it. `git reset --hard origin/<headRefName>` first, then `git rebase origin/<base>`, so both your commit(s) and the auto-fix commit get carried forward.
+   - If the current checkout is a different branch (e.g. a stacked branch), do the rebase in a throwaway worktree: `git worktree add .claude/worktrees/fix-conflict-<n> <headRefName>` (then `cd` in, reset to `origin/<headRefName>`, rebase, push, and `git worktree remove --force` after).
+   - Resolve each conflict, `git add` the files, `GIT_EDITOR=true git rebase --continue`. **Verify any kept imports/symbols are actually referenced** (`grep -c` the symbol) so you don't leave an unused-import lint failure.
+   - `git push --force-with-lease origin <headRefName>`. A `(stale info)` rejection means the remote moved (usually that auto-fix commit) — re-fetch, re-`reset --hard origin/<headRefName>`, redo the rebase, push again.
+   - Confirm the fix: re-run the step 0 query and check `mergeable` flipped to `MERGEABLE`. The force-push retriggers CI, so `mergeStateStatus` will briefly return to `BLOCKED` on PENDING checks — that's expected; now proceed with the normal CI workflow below.
 
 1. **Find non-success records** (cancelled OR failing), keeping every row — do not group by name:
    ```bash
@@ -53,4 +68,5 @@ Fix CI for the current branch's PR. "Green" means **mergeable** — zero cancell
 
 - **Force-pushed rebase always creates a fresh CANCELLED batch.** GitHub queues two parallel triggers per workflow on push and concurrency-cancels one within seconds. After every push, expect ~half the checks to immediately show CANCELLED. Don't read this as "the previous push left checks cancelled" — they're new ones from the latest push and need the same rerun treatment.
 - **"Expected — Waiting for status to be reported" rows in the UI are invisible to `.statusCheckRollup[]`.** They live at the branch-protection layer, not in CheckRuns. A count-based query like `select(.conclusion == "FAILURE") | length == 0` will lie. The rollup `state` field reflects most of them — but NOT the jobless-cancelled-twin case (step 2b), where rollup stays `SUCCESS`. `mergeStateStatus` is the only signal that covers both. Check rollup `state == "SUCCESS"` AND `mergeStateStatus != "BLOCKED"`.
+- **A `DIRTY` / `CONFLICTING` PR cannot be fixed by touching CI.** Merge conflicts are a base-divergence problem, not a check problem — no amount of rerunning or waiting clears them. Always read `mergeable` in step 0 and resolve the conflict (step 0a) before waiting on or rerunning any check. Pausing to wait for CI on a conflicting PR is the most common wasted-loop mistake.
 - If there's no PR for the branch or everything is clean (rollup `SUCCESS` and not `BLOCKED`), tell the user.
