@@ -1,9 +1,48 @@
+## Parallel agents & misdirected messages
+
+I am often running multiple agents in parallel across different chats and
+worktrees. Because of this, I sometimes paste a message into the wrong chat.
+
+If a message arrives that sounds "apropos of nothing" — it doesn't follow from
+the current task, references work or context this chat hasn't touched, or
+otherwise reads like it was meant for a different agent — STOP and push back.
+Ask whether it was actually intended for this chat before acting on it. Do NOT
+quietly decide "well, I guess I'm doing this now" and try your best to comply;
+that just burns time and makes it slower for me to notice I put it in the wrong
+place. A quick "this doesn't seem related to what we were doing — did you mean
+to send this here?" is exactly what I want.
+
 ## Tools
 
 You should use git-spice (`gs`) for stacked branch workflows. Use `gs` (not
 `gt` or raw git) for branch creation, navigation, restacking, and submitting
 PRs. See /gtc for the branch creation workflow. Full docs:
 https://abhinav.github.io/git-spice/llms-full.txt
+
+### Stacking with the merge queue (squash-only)
+
+Our repos are squash-merge-only and use a GitHub merge queue. The queue rebases
+each PR onto the live tip of main and lands it as a brand-new squashed commit, so
+the base PR's original commits never appear in main by identity. A stacked child
+(B on A) still contains A's commits in its history, so the ONLY thing that keeps a
+restack conflict-free is git-spice replaying just the child's own commits via
+`git rebase --onto main A B`. Anything that rebases the child onto main without
+excluding the old base's commits will replay B's copy of A's changes on top of the
+squashed A already in main → "same lines changed twice" conflicts. To stay safe:
+
+- Always sync and restack through git-spice (`gs repo sync` / `gs rs`, then
+  `gs stack restack`). NEVER `git pull main` + raw `git rebase main` on a stacked
+  branch — raw git has no idea to drop the old base's commits.
+- Only restack a child AFTER its base PR has actually landed in the queue (green
+  merge). Restacking while the base is still mid-queue rebases the child onto an
+  A-less main; when A later lands squashed, the next sync collides the child's
+  A-copy with it.
+- Don't delete merged local branches by hand or rebase branches out-of-band before
+  syncing — that destroys the base reference git-spice needs for `--onto`. Let
+  `gs repo sync` detect merged PRs and clean up.
+- Residual conflicts against OTHER people's PRs that the queue rebased ahead of you
+  are legitimate and unavoidable; only "child vs its own base" conflicts indicate a
+  workflow/tooling mistake.
 
 Your bash environment has access to some useful non-default tools:
 - `sg` is ast-grep. It is described as "a fast and polyglot tool for code
@@ -134,3 +173,28 @@ When debugging, read the relevant domain READMEs first before diving into
 code or storage. Let README reading cascade - if one references another domain,
 read that README too. Don't stop at the surface; build a full picture of how
 something works. Use judgment on depth - you can always go back and read more.
+
+## Design & Idioms
+
+- **Remove root causes; don't engineer around them.** If you're adding a
+  factory, adapter, wrapper, or dynamic module whose only job is to make
+  something fit a constraint, stop — that's a signal the design is wrong
+  upstream. Name the actual constraint, then change the thing that creates it.
+  "Make it work" is not the bar; the idiomatic shape is.
+- **Find the existing precedent and copy it.** Before inventing a structure,
+  locate how the codebase already solves the same shape (a sibling factory, a
+  peer module) and match it. The right pattern is usually a few files away.
+- **Respect domain ownership — no domain-hopping.** A consumer must not reach
+  into a peer/owning domain's internals to reassemble what it needs. The domain
+  that owns a concern keeps that concern's code, exposes composable pieces, and
+  other domains compose only from their legitimate dependencies.
+- **For non-mechanical changes, give me the state of the world and the shape of
+  the options before executing.** Lay out the root problem and 2–3 solution
+  shapes with a recommendation; let me pick. Don't charge ahead on structure.
+- **When stuck — or when I push back twice — stop patching and state the root
+  problem plainly.** Bullet the actual constraint and why each workaround fails,
+  then re-derive the design from the constraint, not from the last broken attempt.
+- **Smells to recognize:** indirection that loses traceability (string/registry
+  lookup chosen over injecting a concrete instance); configurable/dynamic modules
+  with an `imports`/options passthrough; "add then revert" churn. Prefer plain
+  static wiring and injected instances.
