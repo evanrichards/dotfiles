@@ -2,6 +2,7 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "model": "opus[1m]",
   "hooks": {
     "PreToolUse": [
       {
@@ -28,6 +29,10 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/use-trash.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/git-spice-no-raw-rebase.py"
           }
         ]
       }
@@ -38,6 +43,22 @@
           {
             "type": "command",
             "command": "node ~/.claude/hooks/no-preexisting-errors.js"
+          },
+          {
+            "type": "command",
+            "command": "node ~/.claude/hooks/qid-url-must-have-qid-path.js"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude/scripts/ensure-loop-frontend-cert.sh",
+            "timeout": 120,
+            "statusMessage": "Ensuring loop frontend dev cert…"
           }
         ]
       }
@@ -52,8 +73,9 @@
     "frontend-design@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "xhigh",
+  "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true
 }
