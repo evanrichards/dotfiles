@@ -118,6 +118,10 @@ Rules:
 
 ## Writing
 
+Never write the word "substrate" or the word "honest" unless the user used it
+in their input first. If one of these words appears in your draft, rewrite the
+sentence with a different word.
+
 When writing documentation or tickets, limit emoji usage. Keep content focused
 on what was asked for.
 
