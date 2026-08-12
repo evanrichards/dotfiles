@@ -54,9 +54,34 @@ Your bash environment has access to some useful non-default tools:
 - `temporal` is the Temporal CLI. When debugging workflows, use
   `temporal --env prod` to query production for workflow history, status,
   and other details.
-- We use the loop-corp MCP a _lot_ for debugging. If i am asking you about
-  historical data or logs or mutating stuff, i am most likely asking you to use
-  the MCP to write a script to get the answer.
+- `ldcli` is the LaunchDarkly CLI. Use it to inspect and manage feature flags
+  directly rather than asking me to check the LaunchDarkly UI.
+- We use the loop-corp sandbox a _lot_ for debugging. If i am asking you about
+  historical data or logs or mutating stuff, i am most likely asking you to
+  write a script to get the answer.
+- Run those scripts with `./apps/backend/scripts/prod_sandbox.sh`, not the
+  `execute_sandbox` MCP tool. Write the script to a file first, then run it:
+  - `prod_sandbox.sh --readonly script.ts` is the default. Drop `--readonly`
+    only when the task actually needs to write.
+  - `prod_sandbox.sh --inputs qids.json script.ts` keeps a bulk list in its own
+    file and exposes it to the script as `inputs`. Use it instead of pasting
+    hundreds of qids into the script.
+  - Iterate by editing the file, not by re-emitting the whole script. When a
+    tool call gets blocked, give me the command and i can run it myself.
+  - Auth is OAuth. The first run opens a browser; after that it is silent.
+    `node apps/backend/scripts/loop-mcp-auth.mjs --logout` resets it.
+  - Keep the script in a temp directory OUTSIDE the repo, never in the working
+    tree or a worktree. These are not files to commit, and a worktree can be
+    deleted out from under them. `prod_sandbox.sh` just reads the file, so any
+    absolute path works.
+    - In a background job: `$CLAUDE_JOB_DIR/tmp`.
+    - Otherwise: `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/`. Not bare
+      `/tmp/script.ts` — parallel agents share `/tmp` and clobber each other.
+    - Pick the directory once and reuse it for the whole task, script plus any
+      `--inputs` json, so you can edit and re-run in place.
+    - This is the one exception to the worktree rule below.
+- Host function discovery still goes through the MCP tools: `list_libraries`,
+  `search_functions`, `get_function_docs`.
 
 ## Code Style
 
@@ -77,6 +102,48 @@ When writing classes, if a method has no `self.` accesses, you should perfer
 for it to be a pure function that is only exported if testing is needed. This
 makes it easier to test.
 
+## Simplified Technical English
+
+Write code comments and commit messages in ASD-STE100 Simplified Technical
+English (STE). This covers line comments, block comments, and doc comments,
+plus the subject line and body of every commit message. It does not change
+the rules about which comments to write at all: STE controls how a comment
+reads, not whether it earns its place. Delete the comment that only restates
+the code. Write the one that explains the non-obvious reason in STE.
+
+The rules that matter most:
+
+- One meaning per word. Use a word in one approved sense only, and use the
+  same word for the same thing every time. Do not swap in synonyms for
+  variety.
+- Use the active voice, and name the actor. "The consumer drops the event",
+  not "the event is dropped".
+- Use simple present, simple past, or the imperative. No perfect tenses, no
+  progressive tenses, no future tense.
+- One instruction per sentence. Keep instruction sentences to 20 words or
+  fewer and descriptive sentences to 25 words or fewer. Keep paragraphs to
+  six sentences or fewer.
+- Write out what you mean instead of using noun clusters. Three nouns in a
+  row is the limit: "the retry count for the shipment job", not "the shipment
+  job retry count limit".
+- Do not drop articles, helper verbs, or relative pronouns. Write "the rows
+  that the query returns", not "rows returned by query".
+- Say why in a separate sentence, in plain words. No idioms, no metaphors, no
+  humor, no "basically" or "essentially".
+
+Code identifiers, file paths, ticket IDs, and error strings are quoted
+technical names and stay exactly as they are in the code.
+
+```ts
+// ❌ Passive, perfect tense, noun cluster, and an idiom.
+// The rows have been filtered by the tenant scope check, so downstream
+// authz can take a back seat here.
+
+// ✅ Active, simple present, one idea per sentence.
+// The query returns only the rows for this tenant. Downstream code does
+// not repeat the authorization check. See LOOP-1234.
+```
+
 ## Git
 
 When creating git commits, do not include Claude as a co-author or add any
@@ -87,6 +154,17 @@ Commit messages should be prefixed with a t-shirt size in brackets (e.g.,
 reviewer, not just lines of code changed. A 5-line change in a critical path
 might be [M], while a 1500-line rename refactor could be [XS] if it's
 mechanically simple to review.
+
+Write commit messages in Simplified Technical English. The subject line and
+the body both follow it, after the t-shirt size prefix. See the section
+above.
+
+```
+[S] Send the retry count to the shipment job consumer
+
+The consumer read the count from the payload. The payload does not always
+contain the count. This change reads the count from `ShipmentJobDto`.
+```
 
 ## Worktrees
 
@@ -109,7 +187,10 @@ edits in main).
 Rules:
 - Never edit a path under the main `backend/lib` (or any path outside the
   worktree root) while in a worktree. Translate every agent-supplied or
-  search-supplied absolute path to the worktree root before opening it.
+  search-supplied absolute path to the worktree root before opening it. The one
+  exception is throwaway scratch files (sandbox scripts, query files), which
+  belong in a temp directory outside every checkout — see the `prod_sandbox.sh`
+  bullets above.
 - After a batch of edits, run `git status` in the worktree and confirm the
   modified files actually show up there. If they don't, you edited the wrong
   copy — revert in the main repo with `git checkout HEAD -- <files>` (only after
@@ -117,6 +198,12 @@ Rules:
   re-apply in the worktree.
 
 ## Writing
+
+The `evans-writing-style` skill is my living style guide for prose docs. When
+we are writing or reviewing docs together, proactively and frequently ask
+whether stylistic feedback I give should be added to that skill — don't wait
+for me to say "add this". Load the skill before drafting or reviewing any doc
+for me.
 
 Never write the word "substrate" or the word "honest" unless the user used it
 in their input first. If one of these words appears in your draft, rewrite the
@@ -195,6 +282,13 @@ something works. Use judgment on depth - you can always go back and read more.
 - **For non-mechanical changes, give me the state of the world and the shape of
   the options before executing.** Lay out the root problem and 2–3 solution
   shapes with a recommendation; let me pick. Don't charge ahead on structure.
+- **Never assume backwards compatibility is a goal.** Do not mark things
+  deprecated, keep old and new paths side by side, alias old args, or write
+  migration shims on your own initiative — that's how dead code accumulates.
+  The default is the clean break: delete the old thing and update its callers
+  in the same change. When a break has real blast radius (persisted data,
+  running workflows, callers outside the repo), name it and ask whether to
+  break, migrate, or preserve compatibility — don't silently pick preservation.
 - **When stuck — or when I push back twice — stop patching and state the root
   problem plainly.** Bullet the actual constraint and why each workaround fails,
   then re-derive the design from the constraint, not from the last broken attempt.
