@@ -1,43 +1,38 @@
-Setup should be easy:
+# Dotfiles
 
-Make the secret file
+The terminal configuration is shared by macOS and Linux/WSL through
+[chezmoi](https://www.chezmoi.io/). Platform-specific behavior uses
+chezmoi's built-in `.chezmoi.os` template value.
+
+## Install
+
+Install chezmoi, then initialize and apply this repository:
 
 ```sh
-$ touch ~/.secrets_rc
+chezmoi init --apply https://github.com/evanrichards/dotfiles.git
 ```
 
-This should trigger command line tools to be installed
+Preview future changes before applying them:
 
 ```sh
-$ git
+chezmoi diff
+chezmoi apply --dry-run --verbose
 ```
 
-Install Homebrew if on MacOS
+## Platform layout
 
-```sh
-$ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-$ echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> /Users/$(whoami)/.zprofile
-$ eval "$(/opt/homebrew/bin/brew shellenv)"
-```
+- `dot_zshrc.tmpl` is shared, with small macOS and Linux branches.
+- `Brewfile.tmpl` shares CLI packages while keeping taps and casks macOS-only.
+- `dot_profile.tmpl` removes stale Homebrew paths and is installed only on Linux.
+- `.chezmoiignore` keeps Kitty and the macOS Brew bundle lock off Linux/WSL.
+- Neovim, tmux, Vim, the prompt, aliases, and tool versions remain shared.
 
-Install chezmoi
+When adding platform-specific settings, prefer a small template branch:
 
-```sh
-$ brew install chezmoi
-$ chezmoi init --apply evanrichards
-```
-
-#QMK setup
-
-## Install QMK
-
-[Official Docs](https://docs.qmk.fm/#/newbs_getting_started)
-
-```sh
-brew install qmk/qmk/qmk
-# I needed to install the following manually for some reason
-# above @8 it complains
-brew tap osx-cross/avr
-brew install avr-gcc@8
-qmk setup evanrichards/qmk_firmware
+```text
+{{ if eq .chezmoi.os "darwin" }}
+# macOS only
+{{ else if eq .chezmoi.os "linux" }}
+# Linux/WSL only
+{{ end }}
 ```

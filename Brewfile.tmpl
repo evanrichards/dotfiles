@@ -1,9 +1,11 @@
-tap "huytd/cask-fonts"
 tap "nextdns/tap"
-tap "osx-cross/arm"
-tap "osx-cross/avr"
 tap "qmk/qmk"
 tap "vmware-tanzu/carvel"
+{{ if eq .chezmoi.os "darwin" -}}
+tap "huytd/cask-fonts"
+tap "osx-cross/arm"
+tap "osx-cross/avr"
+{{ end -}}
 brew "mise"
 brew "ast-grep"
 brew "awscli"
@@ -34,9 +36,11 @@ brew "zsh-syntax-highlighting"
 brew "fd"
 brew "wget"
 brew "nextdns"
+{{ if eq .chezmoi.os "darwin" -}}
 cask "1password"
 cask "1password-cli"
 cask "font-fira-code"
 cask "font-haskplex-nerd"
 cask "github"
 cask "kitty"
+{{ end -}}

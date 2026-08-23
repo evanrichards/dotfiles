@@ -1,0 +1,17 @@
+{{- if eq .chezmoi.os "linux" }}
+# Login-shell environment for Linux/WSL.
+if [ -n "$BASH_VERSION" ] && [ -r "$HOME/.bashrc" ]; then
+  . "$HOME/.bashrc"
+fi
+
+for user_bin in "$HOME/bin" "$HOME/.local/bin"; do
+  [ -d "$user_bin" ] && PATH="$user_bin:$PATH"
+done
+unset user_bin
+
+if [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi
+
+[ -r "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+{{- end }}

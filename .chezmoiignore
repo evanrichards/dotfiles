@@ -1,1 +1,11 @@
+README.md
 lazy-lock.json
+
+{{ if eq .chezmoi.os "linux" }}
+# GUI applications and the macOS-specific bundle lock belong on the Mac host.
+.config/kitty
+Brewfile.lock.json
+{{ else if eq .chezmoi.os "darwin" }}
+# Ubuntu/WSL login-shell setup.
+.profile
+{{ end }}

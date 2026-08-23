@@ -1,0 +1,137 @@
+{{- $isDarwin := eq .chezmoi.os "darwin" -}}
+{{- $isLinux := eq .chezmoi.os "linux" -}}
+fpath+=("$HOME/.zsh/completion")
+
+# Enable Powerlevel10k instant prompt. Keep this near the top of ~/.zshrc.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+autoload -U compinit
+compinit -i
+
+export EDITOR="nvim"
+export TERM="screen-256color"
+export NVM_DIR="$HOME/.nvm"
+export PATH="$HOME/.local/bin:$PATH"
+
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=1000000
+SAVEHIST=1000000
+setopt APPEND_HISTORY
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_FIND_NO_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_IGNORE_SPACE
+setopt EXTENDED_HISTORY
+
+{{ if $isDarwin -}}
+export ARCHFLAGS="-arch arm64"
+{{ end -}}
+
+# Homebrew lives in different prefixes on Apple Silicon, Intel macOS, and Linux.
+for brew_bin in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [[ -x "$brew_bin" ]]; then
+    eval "$("$brew_bin" shellenv)"
+    break
+  fi
+done
+unset brew_bin
+
+[[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh"
+[[ -s "$NVM_DIR/bash_completion" ]] && source "$NVM_DIR/bash_completion"
+
+for asdf_init in \
+  /opt/homebrew/opt/asdf/libexec/asdf.sh \
+  /usr/local/opt/asdf/libexec/asdf.sh \
+  /home/linuxbrew/.linuxbrew/opt/asdf/libexec/asdf.sh; do
+  if [[ -r "$asdf_init" ]]; then
+    source "$asdf_init"
+    break
+  fi
+done
+unset asdf_init
+
+bindkey -e
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
+# Load syntax highlighting without installing software during shell startup.
+if (( $+commands[brew] )); then
+  syntax_highlighting="$(brew --prefix zsh-syntax-highlighting 2>/dev/null)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+elif [[ -r /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  syntax_highlighting=/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+[[ -n "$syntax_highlighting" && -r "$syntax_highlighting" ]] && source "$syntax_highlighting"
+unset syntax_highlighting
+
+[[ -r "$HOME/.zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh" ]] && \
+  source "$HOME/.zsh/catppuccin_mocha-zsh-syntax-highlighting.zsh"
+ZSH_HIGHLIGHT_STYLES[cursor]="bold"
+
+[[ -r "$HOME/gitrc.sh" ]] && source "$HOME/gitrc.sh"
+
+alias vim="nvim"
+alias v="nvim"
+if (( $+commands[eza] )); then
+  alias tree="eza --tree"
+  alias ls="eza"
+  alias ll="eza -alh"
+elif (( $+commands[exa] )); then
+  alias tree="exa --tree"
+  alias ls="exa"
+  alias ll="exa -alh"
+fi
+(( $+commands[bat] )) && alias cat="bat"
+alias chezmoicd='cd "$HOME/.local/share/chezmoi"'
+alias dotfiles='cd "$HOME/.local/share/chezmoi"'
+alias python="python3"
+alias gs="git-spice"
+alias gr="git-spice"
+alias scratch="nvim -c 'set buftype=nofile' -c 'enew'"
+alias claude="claude --allow-dangerously-skip-permissions"
+alias clauded="command claude --dangerously-skip-permissions"
+
+vscratch() {
+  tmux split-window -h "nvim -c 'set buftype=nofile' -c 'enew' -c 'autocmd BufLeave <buffer> :q!'"
+}
+
+if (( $+commands[yarn] )); then
+  yarn_bin="$(yarn global bin 2>/dev/null)"
+  [[ -n "$yarn_bin" ]] && export PATH="$yarn_bin:$PATH"
+  unset yarn_bin
+fi
+
+{{ if $isDarwin -}}
+export LIBRARY_PATH="${LIBRARY_PATH:+$LIBRARY_PATH:}/usr/local/lib"
+if [[ -d /opt/homebrew/opt/openssl@3 ]]; then
+  export LDFLAGS="-L/opt/homebrew/opt/openssl@3/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/openssl@3/include"
+elif [[ -d /usr/local/opt/openssl@3 ]]; then
+  export LDFLAGS="-L/usr/local/opt/openssl@3/lib"
+  export CPPFLAGS="-I/usr/local/opt/openssl@3/include"
+fi
+alias startDocker="open /Applications/Docker.app"
+{{ else if $isLinux -}}
+alias startDocker="docker info >/dev/null 2>&1 || echo 'Start Docker Desktop in Windows'"
+{{ end -}}
+
+[[ -e "$HOME/.secrets_rc" ]] || : > "$HOME/.secrets_rc"
+source "$HOME/.secrets_rc"
+
+[[ -r "$HOME/.fzf.zsh" ]] && source "$HOME/.fzf.zsh"
+export FZF_DEFAULT_OPTS=" \
+--color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8 \
+--color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc \
+--color=marker:#f5e0dc,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8"
+
+[[ -r "$HOME/powerlevel10k/powerlevel10k.zsh-theme" ]] && \
+  source "$HOME/powerlevel10k/powerlevel10k.zsh-theme"
+[[ -r "$HOME/.p10k.zsh" ]] && source "$HOME/.p10k.zsh"
+
+flush_history() {
+  fc -RI
+}
