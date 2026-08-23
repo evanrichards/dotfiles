@@ -1,0 +1,4 @@
+{{- if eq .chezmoi.os "windows" -}}
+@echo off
+start "" "{{ joinPath .chezmoi.homeDir ".config" "autohotkey" "mac-shortcuts.ahk" }}"
+{{- end }}

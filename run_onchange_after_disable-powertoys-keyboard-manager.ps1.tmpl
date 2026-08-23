@@ -1,0 +1,13 @@
+{{- if eq .chezmoi.os "windows" }}
+$ErrorActionPreference = 'Stop'
+$settingsPath = Join-Path $env:LOCALAPPDATA 'Microsoft\PowerToys\settings.json'
+
+if (Test-Path -LiteralPath $settingsPath) {
+    $settings = Get-Content -LiteralPath $settingsPath -Raw
+    if ($settings -match '"Keyboard Manager":true') {
+        $settings = $settings.Replace('"Keyboard Manager":true', '"Keyboard Manager":false')
+        Set-Content -LiteralPath $settingsPath -Value $settings -Encoding utf8NoBOM -NoNewline
+    }
+    Stop-Process -Name 'PowerToys.KeyboardManagerEngine' -ErrorAction SilentlyContinue
+}
+{{- end }}

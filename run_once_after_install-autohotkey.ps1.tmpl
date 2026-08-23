@@ -1,0 +1,18 @@
+{{- if eq .chezmoi.os "windows" }}
+$ErrorActionPreference = 'Stop'
+
+if (-not (Get-Command winget.exe -ErrorAction SilentlyContinue)) {
+    throw 'winget is required to install AutoHotkey v2.'
+}
+
+$installedPackages = winget.exe list --exact --id AutoHotkey.AutoHotkey --accept-source-agreements | Out-String
+if ($installedPackages -notmatch 'AutoHotkey\.AutoHotkey') {
+    winget.exe install --exact --id AutoHotkey.AutoHotkey --accept-package-agreements --accept-source-agreements --silent
+    if ($LASTEXITCODE -ne 0) {
+        throw "AutoHotkey installation failed with exit code $LASTEXITCODE."
+    }
+}
+
+$shortcutScript = Join-Path $HOME '.config\autohotkey\mac-shortcuts.ahk'
+Start-Process -FilePath $shortcutScript
+{{- end }}

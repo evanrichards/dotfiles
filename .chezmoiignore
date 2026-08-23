@@ -9,3 +9,9 @@ Brewfile.lock.json
 # Ubuntu/WSL login-shell setup.
 .profile
 {{ end }}
+
+{{ if ne .chezmoi.os "windows" }}
+# Native Windows keyboard configuration.
+.config/autohotkey
+AppData
+{{ end }}
