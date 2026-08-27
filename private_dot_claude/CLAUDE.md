@@ -58,30 +58,20 @@ Your bash environment has access to some useful non-default tools:
   directly rather than asking me to check the LaunchDarkly UI.
 - We use the loop-corp sandbox a _lot_ for debugging. If i am asking you about
   historical data or logs or mutating stuff, i am most likely asking you to
-  write a script to get the answer.
-- Run those scripts with `./apps/backend/scripts/prod_sandbox.sh`, not the
-  `execute_sandbox` MCP tool. Write the script to a file first, then run it:
-  - `prod_sandbox.sh --readonly script.ts` is the default. Drop `--readonly`
-    only when the task actually needs to write.
-  - `prod_sandbox.sh --inputs qids.json script.ts` keeps a bulk list in its own
-    file and exposes it to the script as `inputs`. Use it instead of pasting
-    hundreds of qids into the script.
-  - Iterate by editing the file, not by re-emitting the whole script. When a
-    tool call gets blocked, give me the command and i can run it myself.
-  - Auth is OAuth. The first run opens a browser; after that it is silent.
-    `node apps/backend/scripts/loop-mcp-auth.mjs --logout` resets it.
-  - Keep the script in a temp directory OUTSIDE the repo, never in the working
-    tree or a worktree. These are not files to commit, and a worktree can be
-    deleted out from under them. `prod_sandbox.sh` just reads the file, so any
-    absolute path works.
-    - In a background job: `$CLAUDE_JOB_DIR/tmp`.
-    - Otherwise: `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/`. Not bare
-      `/tmp/script.ts` — parallel agents share `/tmp` and clobber each other.
-    - Pick the directory once and reuse it for the whole task, script plus any
-      `--inputs` json, so you can edit and re-run in place.
-    - This is the one exception to the worktree rule below.
-- Host function discovery still goes through the MCP tools: `list_libraries`,
-  `search_functions`, `get_function_docs`.
+  write a script to get the answer. Write the script to a file and run it with
+  `prod_sandbox.sh`, not the `execute_sandbox` MCP tool. Iterate by editing the
+  file, not by re-emitting the whole script. When a tool call gets blocked, give
+  me the command and i can run it myself. That repo's CLAUDE.md and the
+  `prod-sandbox` skill have the flags and the auth.
+- Keep scratch scripts and query files in a temp directory OUTSIDE every
+  checkout, never in the working tree or a worktree. These are not files to
+  commit, and a worktree can be deleted out from under them.
+  - In a background job: `$CLAUDE_JOB_DIR/tmp`.
+  - Otherwise: `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/`. Not bare
+    `/tmp/script.ts` — parallel agents share `/tmp` and clobber each other.
+  - Pick the directory once and reuse it for the whole task, script plus any
+    `--inputs` json, so you can edit and re-run in place.
+  - This is the one exception to the worktree rule below.
 
 ## Code Style
 
@@ -159,6 +149,13 @@ Write commit messages in Simplified Technical English. The subject line and
 the body both follow it, after the t-shirt size prefix. See the section
 above.
 
+A commit message must make sense to a reader who has only the repository. Do
+not name or link a document, a plan, a spec, or a design note that the repo
+does not contain. Examples of what to leave out are a file in
+`/Users/evan/evans-docs/`, a Google Doc, a rich doc, and a chat transcript.
+Write the necessary information into the commit body instead. A Linear ticket
+ID or a PR number stays allowed, because the team can open it.
+
 ```
 [S] Send the retry count to the shipment job consumer
 
@@ -189,7 +186,7 @@ Rules:
   worktree root) while in a worktree. Translate every agent-supplied or
   search-supplied absolute path to the worktree root before opening it. The one
   exception is throwaway scratch files (sandbox scripts, query files), which
-  belong in a temp directory outside every checkout — see the `prod_sandbox.sh`
+  belong in a temp directory outside every checkout — see the scratch-directory
   bullets above.
 - After a batch of edits, run `git status` in the worktree and confirm the
   modified files actually show up there. If they don't, you edited the wrong
@@ -272,6 +269,12 @@ something works. Use judgment on depth - you can always go back and read more.
   something fit a constraint, stop — that's a signal the design is wrong
   upstream. Name the actual constraint, then change the thing that creates it.
   "Make it work" is not the bar; the idiomatic shape is.
+- **Modules should be large and dense.** A Nest module is a feature boundary,
+  not a filing cabinet: never create a module to hold one workflow, one
+  schema, one CLI command, or one provider. Register new providers in the
+  existing module that owns the feature (subagents: put this in their
+  prompts — they default to one-module-per-thing). A new module is justified
+  only by a genuinely new feature boundary, and it should arrive dense.
 - **Find the existing precedent and copy it.** Before inventing a structure,
   locate how the codebase already solves the same shape (a sibling factory, a
   peer module) and match it. The right pattern is usually a few files away.
