@@ -68,7 +68,7 @@ Entering here on a finished doc, read it and ask only two things: who the audien
 
 **Generated readers.** Draw 3-5 personas from the doc's real audience, and for each, the 5-10 questions that reader arrives with. A persona is a role with a stake rather than a demographic: the on-call engineer who has to operate this, the staff engineer reviewing the PR, the exec funding it.
 
-**Standing reviewers.** Read [`REVIEWERS.md`](REVIEWERS.md) on every Stage 3 run. It holds three reviewers, each with its own launch condition: a fresh-context editor for any Claude-drafted prose, and two design reviewers for docs that propose building something.
+**Standing reviewers.** Read [`REVIEWERS.md`](REVIEWERS.md) on every Stage 3 run. It holds five reviewers, each with its own launch condition: a fresh-context editor for agent-drafted prose, half-length and flow editors by default for document reviews, and two design reviewers for docs that propose building something.
 
 Dispatch one subagent per reviewer, giving it only the doc content and that reviewer's brief. No context from this conversation. That isolation is the whole mechanism: **Reader Claude** has to be as ignorant as the reader.
 

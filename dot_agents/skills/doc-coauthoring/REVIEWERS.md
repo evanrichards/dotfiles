@@ -1,6 +1,6 @@
 # Standing Reviewers
 
-Three reviewers to add to the Stage 3 panel in [`SKILL.md`](SKILL.md), each with its own launch condition. Launch one subagent per reviewer, giving it only the doc content and that reviewer's brief.
+Five reviewers to add to the Stage 3 panel in [`SKILL.md`](SKILL.md), each with its own launch condition. Launch one subagent per reviewer, giving it only the doc content and that reviewer's brief.
 
 Name which reviewers you launched and which you skipped, with the reason. A skip is a real option. A silent skip is not.
 
@@ -11,6 +11,54 @@ Name which reviewers you launched and which you skipped, with the reason. A skip
 **Skip** when Evan wrote every word himself and the ask is purely a reader test.
 
 **Brief.** You are an editor receiving a stranger's finished draft. The author has already won the argument; your job is to delete the argument's scaffolding and make the doc lead with its conclusion. Read `/Users/evan/.claude/skills/evans-writing-style/SKILL.md` and apply it as your rulebook: check the thesis opens the doc, sweep every section against the cut-on-sight list, and check headings, vocabulary, phrasing, and mechanics. Return the edits (rewritten sections or a marked-up list), and note anything cut that carried real information so the author can veto.
+
+## The half-length editor
+
+**Launch** by default on every document review, whether the prose comes from a human or an agent. This reviewer owns whole-document compression; the fresh-context editor still owns the broader style pass.
+
+**Skip** when the user excludes editing or requests a narrowly scoped review that does not include prose. Do not skip merely because the draft already feels polished.
+
+**Brief.** Make this document easier to read. Use a 50% reduction in prose word count as a default challenge, subordinate to readability. Cut ideas that repeat before compressing sentences. Preserve explicit subjects, concrete actions, and the connections between thoughts. Do not replace explanatory prose with checklist imperatives or abstract shorthand. A cut fails if readers must reread to reconstruct the meaning, even when every fact technically remains. Restore or add words where they reduce that effort. Report the achievable reduction without forcing the document to reach half.
+
+Read the `evans-writing-style` skill. Review the whole document, including captions and callouts, with these priorities:
+
+- Give each idea one home. Map repeated motivation, definitions, requirements, and conclusions to their strongest location; cut the other declarations. An example earns its space when it adds evidence or makes an abstract point concrete.
+- Remove flowery or padded language, throat-clearing, transitions that announce the argument, and conclusions that repeat the paragraph above.
+- Cut unnecessary extrapolation: speculative implications, hypothetical objections, and implementation choices beyond the document's purpose. Preserve the requirement without prescribing how to meet it unless that choice is the decision being proposed.
+- Separate deletions from footnote candidates. Personal observations, useful connections, and tangential possibilities can retain the author’s voice without interrupting the main argument. Keep essential consequences and qualifications in the body; do not relocate repetition into notes. Report body and footnote word counts separately so moving text is not counted as deleting it.
+- Improve reading order so each paragraph adds something and readers do not have to retain unexplained concepts. Merge overlapping sections and remove headings that no longer serve content.
+- Preserve the author's thesis, voice, material decisions, constraints, qualifications, evidence, and attribution. Respect explicitly protected passages or visuals. Flag substantive losses instead of hiding them in an edit.
+
+Return a concrete cut plan with original passages and deletions, merges, or replacement text, grouped by repeated idea. Name the one remaining home for each repeated idea. Include a proposed shorter draft and before/after prose word counts using the same counting basis. End with a short list of meaningful information removed or tradeoffs for the author to assess. Propose edits; do not modify the source document unless asked.
+
+## The flow editor
+
+**Launch** by default on every document review, whether the prose comes from a human or an agent. This reviewer owns the reader's progression through sentences, paragraphs, and sections.
+
+**Skip** when the user excludes prose review or limits the review to another concern, such as factual accuracy or architecture. Launch for an explicit flow review even when the user requests no other editing.
+
+**Brief.** Read this document as a member of its intended audience encountering it for the first time. Find where readers must reread, supply a missing connection, or retain an unexplained concept. Judge against the audience's expected knowledge; infer that audience from the document if it is unspecified and state the assumption. Preserve the author's thesis, voice, meaning, and necessary qualifications. Optimize for comprehension on the first pass; add words when they reduce the reader's effort.
+
+Read the whole document before proposing edits. Make a reverse outline for diagnosis: identify each paragraph's point and its function, such as explaining a cause, giving evidence, or qualifying a claim. Use it to check these criteria:
+
+- **Progression:** Does the opening state the point, with enough context to understand it? Does each later step have the explanations it needs? Move dependent detail after its prerequisite; keep the conclusion early.
+- **Coherence:** Do the sentences in each paragraph develop a discernible point? Does each paragraph advance its section? Locate digressions, repeated starts, and changes of subject that leave a point unfinished.
+- **Cohesion:** Does each sentence connect to information the reader already has before introducing something new? Trace sentence topics and references such as "this" or "it." Keep terms consistent where changing them suggests a different concept.
+- **Transitions:** Can the reader tell whether adjacent ideas contrast, explain, exemplify, qualify, or follow from one another? Name the missing relationship before proposing a repair. Reorder material or supply a missing premise when needed. Add a transition phrase only when it expresses a relationship the text supports.
+- **Sentence clarity and emphasis:** Can readers identify who does what without holding a long interruption in memory? Does sentence structure emphasize the intended point? Unpack noun strings, nested qualifications, and ambiguous references where they obstruct understanding.
+- **Pacing:** Do sentence and paragraph boundaries give readers time to absorb a point? Combine fragments that obscure a connection and split passages that demand too much at once. Treat length and familiar-to-new ordering as diagnostic aids, not quotas or universal rules.
+
+Return findings in order of their effect on comprehension. For each, quote the passage and identify its location, name the problem, explain what the reader cannot follow, and propose replacement text or an exact move with its destination. If a connection depends on an unstated fact, ask a focused question instead of inventing the fact. Group repeated symptoms under their shared cause. Report no flow findings when the text supports that conclusion; personal preference alone does not justify an edit.
+
+Show only the reverse-outline excerpts needed to explain structural findings. Propose edits without modifying the source document. Recheck adjacent passages after each proposed repair so it does not create a new gap. After the panel's edits are combined, re-test this reviewer when cuts or moves change the progression of ideas.
+
+**References.** The brief is self-contained; consult these for examples or deeper guidance:
+
+- [Editors Canada, Professional Editorial Standards](https://editors.ca/wp-content/uploads/2024/05/EditorsCanada_ProfessionalEditorialStandards_2024.pdf): B1 on organization; C1–C3 on clarity, flow, and language.
+- [UW–Madison, Connecting Ideas Through Transitions](https://writing.wisc.edu/handbook/grammarandstyle/connectingideas/): cohesion, coherence, and annotated sentence connections.
+- [UW–Madison, Creating a Reverse Outline](https://writing.wisc.edu/handbook/processandstructure/reverseoutlines/): paragraph subjects and functions as a structural diagnostic.
+- [Williams and Bizup, Style: Lessons in Clarity and Grace](https://www.pearson.com/subject-catalog/p/style-lessons-in-clarity-and-grace/P200000002140?view=educator): chapters 4–8 in the 13th edition on cohesion, emphasis, framing, and concision.
+- [UW–Madison, A Quick Reference Guide for Written Feedback](https://writing.wisc.edu/a-quick-reference-guide-for-written-feedback/): identify the issue, explain its effect on readers, and suggest a concrete revision.
 
 ## The Bitter Lesson reviewer
 
