@@ -96,3 +96,11 @@ Commit message content:
 - A future reader should understand why this approach was chosen over alternatives
 - Be terse but complete - focus on decisions a human reviewer needs to understand
 - Skip obvious choices; document non-obvious ones (e.g., "Used X instead of Y because Z")
+
+Submitting a PR (only when the user asks for it):
+- Submit with `gs branch submit` (shorthand: `gs bs`). Pass `--title` and `--body`, or `--fill` and then set the body with `gh pr edit <branch> --body-file <file>`.
+- ALWAYS verify the PR after you create or edit it. Run `gh pr view <number> --json title,body,commits,files` and compare each field with what you intended:
+  - The title must match the intended commit subject. `--fill` can take the subject of a different commit when local `main` is behind `origin/main`.
+  - The body must be the full intended body, not the commit message and not a truncated one.
+  - The commits and files must be only this branch's change.
+- If a field is wrong, fix it with `gh pr edit` and run `gh pr view` again. Do not report the PR as done until the check passes.

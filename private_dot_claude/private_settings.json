@@ -1,8 +1,14 @@
 {
+  "cleanupPeriodDays": 3650,
   "permissions": {
+    "deny": [
+      "EnterPlanMode",
+      "ExitPlanMode",
+      "AskUserQuestion"
+    ],
     "defaultMode": "auto"
   },
-  "model": "opus[1m]",
+  "model": "opus",
   "hooks": {
     "PreToolUse": [
       {
@@ -64,18 +70,80 @@
       }
     ]
   },
+  "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "frontend-design@claude-code-plugins": false,
     "pr-review-toolkit@claude-plugins-official": true,
     "linear@claude-plugins-official": true,
-    "document-skills@anthropic-agent-skills": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": false,
+    "i-have-adhd@i-have-adhd": true,
+    "superpowers@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": false,
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "hookify@claude-plugins-official": true,
+    "mattpocock-skills@mattpocock": true
+  },
+  "extraKnownMarketplaces": {
+    "i-have-adhd": {
+      "source": {
+        "source": "github",
+        "repo": "ayghri/i-have-adhd"
+      }
+    },
+    "mattpocock": {
+      "source": {
+        "source": "github",
+        "repo": "mattpocock/skills"
+      }
+    }
   },
   "alwaysThinkingEnabled": true,
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
+  "remoteControlAtStartup": false,
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(temporal workflow list:*) and other read-only `temporal` queries (describe, show, workflow list) against loop-payments workflows, including `--env prod` history reads",
+      "Bash(ldcli:*) read-only feature flag inspection (list/get) for the loop-payments LaunchDarkly account",
+      "Bash(gs:*) git-spice stack operations in /Users/evan/loop-payments/backend (branch create, navigate, restack, repo sync, submit)",
+      "allow mcp__claude_ai_Linear__save_issue"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(./apps/backend/scripts/prod_sandbox.sh:*) invoked without `--readonly` — production sandbox writes in loop-payments/backend",
+      "Bash(./apps/backend/scripts/prod_psql_write.sh:*) and Bash(./apps/backend/scripts/prod_db_url_write.sh:*) — direct production database write access",
+      "Bash(ldcli:*) flag mutations (create, update, delete, toggle) against loop-payments LaunchDarkly environments"
+    ],
+    "environment": [
+      "### Org-wide",
+      "**Organization**: loop-payments (GitHub org; repo `loop-payments/backend`, monorepo for Loop's web app backend)",
+      "**Cloud provider(s)**: AWS (`aws` CLI used in this project's transcripts and shell history; `loop-payments/cdk` and `loop-payments/lambdas` checkouts present)",
+      "**Repository visibility**: private — `loop-payments/backend` reported private by the authenticated gh API",
+      "**Internal sharing / snippet hosting**: None configured — treat public paste/gist services as outside the trust boundary",
+      "**Secrets management**: GitHub Actions secrets for CI (names only observed: ANTHROPIC_API_KEY, DATADOG_API_KEY, DOCKER_HUB_USER/PASSWORD, GITHUB_TOKEN, PACKAGE_REGISTRY_TOKEN, TS_OAUTH_CLIENT_ID/SECRET, assorted bot PATs); local `.env.development` / `.env.production` files under `apps/backend` and `apps/durable-event-proxy-go`; sandbox access via OAuth (`loop-mcp-auth.mjs`)",
+      "**Default / protected branches**: default branch `main`; protected by active rulesets `Default Branch PRs Require Approval`, `Default Branch Requires Pull Requests`, `No force push for bots` (+1 redacted). Classic protected-branch list not queryable here — rulesets govern",
+      "**CI/CD deploy targets**: GitHub Actions workflows in `.github/workflows` for this repo; GitHub merge queue with squash-only merges into `main`",
+      "**Network posture**: Tailscale-adjacent access paths present for this repo (`apps/backend/.env.production.tailscale`, TS_OAUTH_* CI secrets, `prod_tunnel_run.sh`); production access is tunneled, not open",
+      "**Source control**: GitHub — `github.com/loop-payments/backend` (this repo and its `origin` remote) only",
+      "**Trusted internal domains**: github.com/loop-payments (this repo's remote host and org)",
+      "**Trusted cloud buckets**: None configured",
+      "**Key internal services**: Temporal (`temporal` CLI, `--env prod` for workflow history), LaunchDarkly (`ldcli` feature flags), Loop sandbox via `./apps/backend/scripts/prod_sandbox.sh` and the MCP host-function tools (`list_libraries`, `search_functions`, `get_function_docs`); repo stack includes Cerbos, OpenSearch, Kafka, PostgreSQL/Prisma, Redis",
+      "**Internal package registry**: npm.pkg.github.com (GitHub Packages for the loop-payments org)",
+      "**Sensitive data locations & audiences**: production database and Redis access scripts under `apps/backend/scripts/` (`prod_db_url.sh`, `prod_db_url_write.sh`, `prod_psql.sh`, `prod_psql_write.sh`, `prod_redis.sh`, `prod_d2l.sh`, `prod_siqc.sh`, `dump_prod_schema.sh`, `diff_prod_dev_entities.sh`, `prod_tunnel_run.sh`); `.env.production` and `.env.development` files; customer-specific config such as `lib/client-configs/src/aritzia.prod.static-loop-config.ts`; sandbox query output about historical data or logs. Preserve exact handles when known and share only with audiences cleared at the [named+specifics] bar",
+      "**Data retention / declassification**: None configured",
+      "**Sensitive remote targets**: any namespace, host, or container whose name carries `prod` or `production` as a whole word or name segment (hyphen/underscore/dot-delimited — e.g. matches `prod-db`, not `producer`); in this repo that includes the `apps/backend/scripts/prod_*.sh` production access scripts and `temporal --env prod`",
+      "**Protected deployment namespaces / environments**: production for `loop-payments/backend` — writes through `prod_sandbox.sh` without `--readonly`, `prod_psql_write.sh` / `prod_db_url_write.sh`, and any `temporal --env prod` mutation; the repo ships a `.claude/hooks/no-prod-write.ts` guard",
+      "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment — including AWS CDK/lambda infrastructure owned by this org",
+      "### User-specific",
+      "**Primary use of Claude Code**: software development on the Loop backend monorepo — TypeScript/NestJS feature work, debugging via prod sandbox scripts, Temporal workflow investigation, and stacked-PR workflows",
+      "**Trusted repo**: `/Users/evan/loop-payments/backend` and its configured remote `github.com/loop-payments/backend` (private). Confidential material is fine in this private repo; secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions)",
+      "**Org-specific CLIs**: `temporal` (Temporal CLI, `--env prod` for production workflow queries), `ldcli` (LaunchDarkly), `gs` (git-spice, required for stacked branches instead of raw git rebase), `fastmod`, `sg` (ast-grep), `mise`, `chezmoi`, `aws`",
+      "**Routine under repo prefix**: read-only sandbox scripting via `./apps/backend/scripts/prod_sandbox.sh --readonly` with scratch scripts kept in `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/` or `$CLAUDE_JOB_DIR/tmp`, outside every checkout"
+    ]
+  }
 }

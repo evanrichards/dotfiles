@@ -136,8 +136,13 @@ technical names and stay exactly as they are in the code.
 
 ## Git
 
-When creating git commits, do not include Claude as a co-author or add any
-"Generated with Claude Code" attribution.
+When creating git commits or writing pull request descriptions, do not
+include Claude as a co-author and do not add a "Generated with Claude
+Code" attribution.
+
+Never write a link to a Claude Code session. This applies everywhere you
+write on my behalf: a commit message, a pull request title or body, a
+pull request or issue comment, a Linear ticket, and a document.
 
 Commit messages should be prefixed with a t-shirt size in brackets (e.g.,
 "[XS] fix typo in xyz"). This size estimates the cognitive load for the

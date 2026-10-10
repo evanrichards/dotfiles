@@ -97,6 +97,17 @@ fluff on the cut list below.
 
 ## Phrasing
 
+- Optimize for ease of reading, not minimum word count. Cut repetition, but
+  preserve explicit subjects and the connections between sentences. A shorter
+  sentence is worse if readers must reconstruct who acts, what a term means,
+  or why one thought follows another. Allow more words when they reduce that
+  effort.
+- Explain proposals as prose, not compressed checklist instructions. Name the
+  people or agents doing the work. For example, replace "Agree on expected
+  observations before implementation" with "The people shaping the project
+  agree on what success would look like before implementation." Imperatives
+  still belong in actual instructions.
+
 - Plain beats aphoristic. If the author would need a second read, no reader
   gets it on the first. Metaphors ("wearing costumes", "triages like a
   person who..."), motto sentences ("depth is a level, levels do not reveal
@@ -104,6 +115,10 @@ fluff on the cut list below.
 - No em dashes. Use colons, semicolons, parentheses, or two sentences.
 - No quippy one-liners in work docs. Limit emoji.
 - Never write "substrate" or "honest" unless Evan used the word first.
+
+## Footnotes
+
+Use footnotes for personal observations, useful connections, and tangential possibilities that add voice or depth without interrupting the main argument. Distinguish deleting repetition from moving a worthwhile aside. Keep essential consequences, requirements, and qualifications in the body. Do not preserve every cut as a footnote or repeat the main argument there.
 
 ## Mechanics
 
