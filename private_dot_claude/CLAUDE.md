@@ -44,6 +44,25 @@ linear (no fan-out). The rules that keep a stack conflict-free:
   are legitimate and unavoidable; only "child vs its own base" conflicts indicate a
   workflow/tooling mistake.
 
+### Launching handoffs as background agents
+
+I run many agents in parallel through the `claude agents` list. After every
+handoff (`mattpocock-skills:handoff`), offer to launch each handoff as its own
+standalone background agent: one agent per handoff, each in a new worktree. Do
+not launch them as sub-agents of the current session. Run this from the root
+of the repo that the handoff works in:
+
+```
+claude --bg -w <kebab-name> "Read the handoff at <full path> and continue that work. Give Evan the state of the world and the options before you build."
+```
+
+- `-w <name>` creates `.claude/worktrees/<name>` on branch `worktree-<name>`.
+  Always pass it. Without it, the agent starts in the main checkout.
+- `claude --bg` prints an id. `claude agents` lists the agents, and `claude
+  attach|logs|stop <id>` manages one.
+- Write each handoff outside every checkout (the OS temp dir), and print its
+  full path.
+
 Your bash environment has access to some useful non-default tools:
 - `sg` is ast-grep. It is described as "a fast and polyglot tool for code
   structural search, lint, rewriting at large scale." More info at
