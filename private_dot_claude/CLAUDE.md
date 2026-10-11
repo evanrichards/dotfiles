@@ -14,32 +14,38 @@ to send this here?" is exactly what I want.
 
 ## Tools
 
-You should use git-spice (`gs`) for stacked branch workflows. Use `gs` (not
-`gt` or raw git) for branch creation, navigation, restacking, and submitting
-PRs. See /gtc for the branch creation workflow. Full docs:
-https://abhinav.github.io/git-spice/llms-full.txt
+Use GitHub native stacked PRs through the `gh stack` CLI extension for
+stacked branch workflows. Use `gh stack` (not `gs`, `gt`, or raw git) for stack
+creation, navigation, restacking, and submitting PRs. See /gtc for the branch
+creation workflow. Docs:
+https://docs.github.com/en/pull-requests/reference/stacked-prs-cli-commands
+
+git-spice (`gs`) stays installed only for the branches it already tracks. Do
+not start a new stack with it, and never run `gs branch submit` or
+`gs stack submit` on a PR that is in a native stack: GitHub rejects the base
+change after git-spice has already pushed the first branch. Never run
+`gh stack alias` without a name, because its default name `gs` shadows git-spice.
 
 ### Stacking with the merge queue (squash-only)
 
-Our repos are squash-merge-only and use a GitHub merge queue. The queue rebases
-each PR onto the live tip of main and lands it as a brand-new squashed commit, so
-the base PR's original commits never appear in main by identity. A stacked child
-(B on A) still contains A's commits in its history, so the ONLY thing that keeps a
-restack conflict-free is git-spice replaying just the child's own commits via
-`git rebase --onto main A B`. Anything that rebases the child onto main without
-excluding the old base's commits will replay B's copy of A's changes on top of the
-squashed A already in main → "same lines changed twice" conflicts. To stay safe:
+Our repos are squash-merge-only and use a GitHub merge queue. A native stack is
+linear (no fan-out). The rules that keep a stack conflict-free:
 
-- Always sync and restack through git-spice (`gs repo sync` / `gs rs`, then
-  `gs stack restack`). NEVER `git pull main` + raw `git rebase main` on a stacked
-  branch — raw git has no idea to drop the old base's commits.
-- Only restack a child AFTER its base PR has actually landed in the queue (green
-  merge). Restacking while the base is still mid-queue rebases the child onto an
-  A-less main; when A later lands squashed, the next sync collides the child's
-  A-copy with it.
-- Don't delete merged local branches by hand or rebase branches out-of-band before
-  syncing — that destroys the base reference git-spice needs for `--onto`. Let
-  `gs repo sync` detect merged PRs and clean up.
+- After a PR in the stack merges, GitHub rebases the PRs above it on the server
+  and retargets the next one to `main`. Let it. Then run `gh stack sync --prune`
+  to bring the local branches up to date.
+- NEVER `git pull main` + raw `git rebase main` on a stacked branch. The child
+  still holds the base's original commits, and the squashed base in main does
+  not match them. A raw rebase replays them and makes "same lines changed twice"
+  conflicts. A manual fix uses `git rebase --onto origin/main <old-base-head-sha>
+  <branch>`, with the SHA from `gh pr view <base-pr> --json headRefOid`.
+- `gh stack rebase` can make the same mistake after a squash merge (gh-stack
+  issue #512). If its conflict replays the merged PR's own commits, abort and use
+  the manual `--onto` form.
+- Do not restack a child while its base PR is still in the merge queue.
+- `gh stack merge <pr#>` merges that PR and every unmerged PR below it, all or
+  nothing, as one merge group in the queue. A PR in the middle of a stack cannot
+  merge alone, and bypass works only for the bottom PR.
 - Residual conflicts against OTHER people's PRs that the queue rebased ahead of you
   are legitimate and unavoidable; only "child vs its own base" conflicts indicate a
   workflow/tooling mistake.

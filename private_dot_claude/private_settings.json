@@ -38,7 +38,7 @@
           },
           {
             "type": "command",
-            "command": "python3 ~/.claude/hooks/git-spice-no-raw-rebase.py"
+            "command": "python3 ~/.claude/hooks/stack-no-raw-rebase.py"
           }
         ]
       }
@@ -110,7 +110,7 @@
       "$defaults",
       "Bash(temporal workflow list:*) and other read-only `temporal` queries (describe, show, workflow list) against loop-payments workflows, including `--env prod` history reads",
       "Bash(ldcli:*) read-only feature flag inspection (list/get) for the loop-payments LaunchDarkly account",
-      "Bash(gs:*) git-spice stack operations in /Users/evan/loop-payments/backend (branch create, navigate, restack, repo sync, submit)",
+      "Bash(gh stack:*) GitHub native stacked-PR operations in /Users/evan/loop-payments/backend (init, add, navigate, view, rebase, sync, push, submit, link)",
       "allow mcp__claude_ai_Linear__save_issue"
     ],
     "soft_deny": [
@@ -140,9 +140,9 @@
       "**Protected deployment namespaces / environments**: production for `loop-payments/backend` — writes through `prod_sandbox.sh` without `--readonly`, `prod_psql_write.sh` / `prod_db_url_write.sh`, and any `temporal --env prod` mutation; the repo ships a `.claude/hooks/no-prod-write.ts` guard",
       "**Protected IaC scopes**: IAM, RBAC, networking, quota, and node-pool resources; anything whose name or tag carries `prod` or `production` as a whole word or name segment — including AWS CDK/lambda infrastructure owned by this org",
       "### User-specific",
-      "**Primary use of Claude Code**: software development on the Loop backend monorepo — TypeScript/NestJS feature work, debugging via prod sandbox scripts, Temporal workflow investigation, and stacked-PR workflows",
+      "**Primary use of Claude Code**: software development on the Loop backend monorepo — TypeScript/NestJS feature work, debugging via prod sandbox scripts, Temporal workflow investigation, and stacked-PR workflows (GitHub native stacks through `gh stack`)",
       "**Trusted repo**: `/Users/evan/loop-payments/backend` and its configured remote `github.com/loop-payments/backend` (private). Confidential material is fine in this private repo; secrets and sensitive data (personal & entrusted) are never cleared into any repo by its visibility (see Definitions)",
-      "**Org-specific CLIs**: `temporal` (Temporal CLI, `--env prod` for production workflow queries), `ldcli` (LaunchDarkly), `gs` (git-spice, required for stacked branches instead of raw git rebase), `fastmod`, `sg` (ast-grep), `mise`, `chezmoi`, `aws`",
+      "**Org-specific CLIs**: `temporal` (Temporal CLI, `--env prod` for production workflow queries), `ldcli` (LaunchDarkly), `gh stack` (GitHub native stacked PRs, required for stacked branches instead of raw git rebase), `fastmod`, `sg` (ast-grep), `mise`, `chezmoi`, `aws`",
       "**Routine under repo prefix**: read-only sandbox scripting via `./apps/backend/scripts/prod_sandbox.sh --readonly` with scratch scripts kept in `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/` or `$CLAUDE_JOB_DIR/tmp`, outside every checkout"
     ]
   }
