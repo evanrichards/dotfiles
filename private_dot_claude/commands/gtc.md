@@ -10,7 +10,6 @@ CRITICAL:
 - NEVER push to remote unless the user asks. These commands push: `git push`, `gh stack submit`, `gh stack push`, `gh stack sync`, `gh stack link`, `gh stack merge`. Use `gh stack rebase` for a local-only restack.
 - ANY git actions after /gtc completes require explicit user confirmation
 - NEVER commit implementation docs - these are for local use only and should not be included in commits
-- NEVER run `gh stack alias` without a name argument. Its default name `gs` shadows git-spice.
 
 IMPORTANT: This command is ONLY for creating NEW branches in the stack. For follow-up changes to an existing feature branch, use the amend workflow instead (see below).
 

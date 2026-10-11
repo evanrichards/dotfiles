@@ -15,16 +15,10 @@ to send this here?" is exactly what I want.
 ## Tools
 
 Use GitHub native stacked PRs through the `gh stack` CLI extension for
-stacked branch workflows. Use `gh stack` (not `gs`, `gt`, or raw git) for stack
+stacked branch workflows. Use `gh stack` (not git-spice, Graphite, or raw git) for stack
 creation, navigation, restacking, and submitting PRs. See /gtc for the branch
 creation workflow. Docs:
 https://docs.github.com/en/pull-requests/reference/stacked-prs-cli-commands
-
-git-spice (`gs`) stays installed only for the branches it already tracks. Do
-not start a new stack with it, and never run `gs branch submit` or
-`gs stack submit` on a PR that is in a native stack: GitHub rejects the base
-change after git-spice has already pushed the first branch. Never run
-`gh stack alias` without a name, because its default name `gs` shadows git-spice.
 
 ### Stacking with the merge queue (squash-only)
 
