@@ -82,6 +82,15 @@ Your bash environment has access to some useful non-default tools:
   file, not by re-emitting the whole script. When a tool call gets blocked, give
   me the command and i can run it myself. That repo's CLAUDE.md and the
   `prod-sandbox` skill have the flags and the auth.
+- Run these commands bare: `./apps/backend/scripts/prod_sandbox.sh`,
+  `gh stack submit --auto`, `git push`, and `git commit --amend`. A bare
+  command has no `cd`, pipe, redirect, `&&`, or heredoc. My allow rules match
+  only a bare command. The auto-mode classifier often blocks a compound call
+  of these commands and almost never blocks a bare call.
+  - Use the relative script path from the repo or worktree root.
+  - Write a commit message to a file and pass it with `-F <file>`.
+  - Make a sandbox script return a small result. Do not pipe its output to
+    `tail`.
 - Keep scratch scripts and query files in a temp directory OUTSIDE every
   checkout, never in the working tree or a worktree. These are not files to
   commit, and a worktree can be deleted out from under them.

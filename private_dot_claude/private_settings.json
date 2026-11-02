@@ -2,7 +2,8 @@
   "cleanupPeriodDays": 3650,
   "permissions": {
     "allow": [
-      "Bash(./apps/backend/scripts/prod_sandbox.sh:*)"
+      "Bash(./apps/backend/scripts/prod_sandbox.sh:*)",
+      "Bash(gh stack submit --auto)"
     ],
     "deny": [
       "EnterPlanMode",
@@ -119,7 +120,8 @@
       "Bash(temporal workflow list:*) and other read-only `temporal` queries (describe, show, workflow list) against loop-payments workflows, including `--env prod` history reads",
       "Bash(ldcli:*) read-only feature flag inspection (list/get) for the loop-payments LaunchDarkly account",
       "Bash(gh stack:*) GitHub native stacked-PR operations in /Users/evan/loop-payments/backend and its .claude/worktrees (init, add, navigate, view, rebase, sync, push, submit, link). This includes `gh stack submit --auto` to push Claude's own `evan/*` branch and open DRAFT PRs, plus `gh pr edit` and `gh pr view` on those PRs, as soon as the work is done and without an in-session request: Evan reviews all work in GitHub and wants the draft PR opened unprompted",
-      "allow mcp__claude_ai_Linear__save_issue"
+      "allow mcp__claude_ai_Linear__save_issue",
+      "Bash(git commit --amend:*) with `-F <file>` or `--no-edit` on Claude's own `evan/*` or `worktree-*` branch inside a `.claude/worktrees/` checkout of loop-payments/backend or loop-payments/frontend. It rewrites only Claude's own unmerged commit, and `gh stack submit --auto` then updates the draft PR. Evan wants one commit per PR and asks for amends routinely"
     ],
     "soft_deny": [
       "$defaults",
