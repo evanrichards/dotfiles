@@ -1,6 +1,9 @@
 {
   "cleanupPeriodDays": 3650,
   "permissions": {
+    "allow": [
+      "Bash(./apps/backend/scripts/prod_sandbox.sh:*)"
+    ],
     "deny": [
       "EnterPlanMode",
       "ExitPlanMode",
@@ -99,6 +102,11 @@
     }
   },
   "alwaysThinkingEnabled": true,
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "xhigh"
+    }
+  },
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "skipWorkflowUsageWarning": true,
@@ -110,7 +118,7 @@
       "$defaults",
       "Bash(temporal workflow list:*) and other read-only `temporal` queries (describe, show, workflow list) against loop-payments workflows, including `--env prod` history reads",
       "Bash(ldcli:*) read-only feature flag inspection (list/get) for the loop-payments LaunchDarkly account",
-      "Bash(gh stack:*) GitHub native stacked-PR operations in /Users/evan/loop-payments/backend (init, add, navigate, view, rebase, sync, push, submit, link)",
+      "Bash(gh stack:*) GitHub native stacked-PR operations in /Users/evan/loop-payments/backend and its .claude/worktrees (init, add, navigate, view, rebase, sync, push, submit, link). This includes `gh stack submit --auto` to push Claude's own `evan/*` branch and open DRAFT PRs, plus `gh pr edit` and `gh pr view` on those PRs, as soon as the work is done and without an in-session request: Evan reviews all work in GitHub and wants the draft PR opened unprompted",
       "allow mcp__claude_ai_Linear__save_issue"
     ],
     "soft_deny": [

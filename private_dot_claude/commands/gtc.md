@@ -7,8 +7,9 @@ Create a new stacked branch with the current changes using GitHub native stacks 
 
 CRITICAL:
 - The user calling /gtc IS permission to execute the git commands in this workflow
-- NEVER push to remote unless the user asks. These commands push: `git push`, `gh stack submit`, `gh stack push`, `gh stack sync`, `gh stack link`, `gh stack merge`. Use `gh stack rebase` for a local-only restack.
-- ANY git actions after /gtc completes require explicit user confirmation
+- When the work on the branch is done (the specs pass and the commit is in), submit it as a DRAFT PR without asking. See "Submitting PRs" below. The user reviews all work in GitHub, so the user does not ask for the PR.
+- Ask before these remote actions: `gh stack merge`, `gh stack submit --open` or any other change that marks a PR ready for review, and a push to a branch that the user did not create. Use `gh stack rebase` for a local-only restack.
+- ANY other git actions after /gtc completes require explicit user confirmation
 - NEVER commit implementation docs - these are for local use only and should not be included in commits
 
 IMPORTANT: This command is ONLY for creating NEW branches in the stack. For follow-up changes to an existing feature branch, use the amend workflow instead (see below).
@@ -78,7 +79,7 @@ When the user asks to "commit" changes after already using /gtc on a feature bra
    - Then restack the branches above: `gh stack rebase --upstack --no-trunk`. gh stack does NOT restack automatically after a commit.
    - Check `git diff --cached --stat` before an amend on a lower branch. The index can hold work that belongs to a branch higher in the stack.
 3. Wait for explicit confirmation before executing
-4. NEVER push/submit without explicit instruction
+4. After the commit, push it to the open draft PR with `gh stack push`. Do not ask again for the push.
 
 Message format:
 - Simple message: `gh stack add -Am "[XS] Fix bug in X" evan/fix-bug-x`
@@ -100,7 +101,7 @@ Commit message content:
 - Be terse but complete - focus on decisions a human reviewer needs to understand
 - Skip obvious choices; document non-obvious ones (e.g., "Used X instead of Y because Z")
 
-Submitting PRs (only when the user asks for it):
+Submitting PRs (do this without asking, as soon as the work is done):
 - Run `gh stack submit --auto`. It pushes every branch, creates the missing PRs as DRAFTS, sets each base, and creates or updates the stack object on GitHub. Pass `--open` only when the user asks for ready-for-review PRs (it also un-drafts existing PRs).
 - `--auto` makes its own titles and adds a "Stack created with GitHub Stacks CLI" footer. Then set each new PR's title and body: `gh pr edit <branch> --title "..." --body-file <file>`.
 - A single branch (a stack of one) gets no stack object on GitHub. That is fine; `gh stack submit` links it when a second branch arrives.

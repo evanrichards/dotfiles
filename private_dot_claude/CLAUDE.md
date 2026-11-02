@@ -102,6 +102,12 @@ if a PR is already open for the branch, push your changes and let CI run
 the type check instead of running it locally first. Type checking is slow,
 and running it locally and then again in CI doubles the wait.
 
+After a rebase or a merge brings new base commits into a PR, run the specs
+of each package that the PR changes before you push, even when a PR is
+open. When the base removes or renames a symbol, git merges it into the
+PR's new call sites with no conflict marker, and the specs are the first
+check that sees the break. The type check still goes to CI as above.
+
 When type checking reveals errors (locally or in CI), fix them, even if
 they appear pre-existing or unrelated to the current changes. Do not
 dismiss errors or move on without fixing them. Most cross-package type
@@ -154,6 +160,12 @@ technical names and stay exactly as they are in the code.
 ```
 
 ## Git
+
+When you finish a code change, open a draft PR without asking. I review
+all work in GitHub, and a finished change with no PR waits on me for
+nothing. Use `gh stack submit --auto`, then set the title and the body.
+Ask before you merge, before you mark a PR ready for review, and before
+you push to a branch that someone else created.
 
 When creating git commits or writing pull request descriptions, do not
 include Claude as a co-author and do not add a "Generated with Claude
