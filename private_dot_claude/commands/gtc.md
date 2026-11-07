@@ -105,6 +105,9 @@ Submitting PRs (do this without asking, as soon as the work is done):
 - Run `gh stack submit --auto`. It pushes every branch, creates the missing PRs as DRAFTS, sets each base, and creates or updates the stack object on GitHub. Pass `--open` only when the user asks for ready-for-review PRs (it also un-drafts existing PRs).
 - `--auto` makes its own titles and adds a "Stack created with GitHub Stacks CLI" footer. Then set each new PR's title and body: `gh pr edit <branch> --title "..." --body-file <file>`.
 - A single branch (a stack of one) gets no stack object on GitHub. That is fine; `gh stack submit` links it when a second branch arrives.
+- Never open a stacked PR with `gh pr create --base <branch below>`. That PR is not in a native stack, and GitHub merges it into the branch below, not into main. The `stack-no-plain-stacked-pr.py` hook blocks it.
+- If the local stack state is not usable (another worktree has an open `gh stack rebase`, or has the base branch checked out), run `gh stack link <base-branch-or-pr> <your-branch>`. It pushes the branch, opens a draft PR with the correct base, and adds the PR to the stack on GitHub. It does not read the local stack state.
+- If `gh stack link` refuses because the base PR has auto-merge on, push the branch with no PR, tell the user, and open the PR on `main` after the base merges.
 - To push changes to branches that already have PRs, use `gh stack push` (per-branch `--force-with-lease`). It skips merged and queued branches.
 - ALWAYS verify each PR after you create or edit it. Run `gh pr view <number> --json title,body,baseRefName,commits,files` and compare each field with what you intended:
   - The title must match the intended commit subject.
