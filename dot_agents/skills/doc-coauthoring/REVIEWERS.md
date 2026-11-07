@@ -4,6 +4,12 @@ Five reviewers to add to the Stage 3 panel in [`SKILL.md`](SKILL.md), each with 
 
 Name which reviewers you launched and which you skipped, with the reason. A skip is a real option. A silent skip is not.
 
+## Loop vocabulary for every brief
+
+A reviewer knows only the doc and its brief, so it reads Loop words in their general sense. When the doc is a Loop document, add these definitions to every brief you dispatch.
+
+- **Script** means a TS sandbox script. It is soft surface: it changes without a deploy, and in most cases an agent writes it. It is not committed code, and engineers mostly do not write it. Say "code" or "committed code" for anything that goes through a PR and a deploy. Judge a script by whether something measures it (a harness, a backtest, a grader), not by who writes it.
+
 ## The fresh-context editor
 
 **Launch** whenever the doc contains prose drafted or substantially revised by Claude in a working session. The drafting context is invested in its own justifications and remembers the design debate, which makes reasoning residue and ghost-fighting invisible from inside; this editor has none of that context, which is what lets it cut.
