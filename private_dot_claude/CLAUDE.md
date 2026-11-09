@@ -5,8 +5,8 @@ worktrees. Because of this, I sometimes paste a message into the wrong chat.
 
 If a message arrives that sounds "apropos of nothing" — it doesn't follow from
 the current task, references work or context this chat hasn't touched, or
-otherwise reads like it was meant for a different agent — STOP and push back.
-Ask whether it was actually intended for this chat before acting on it. Do NOT
+otherwise reads like it was meant for a different agent — stop and push back.
+Ask whether it was actually intended for this chat before acting on it. Do not
 quietly decide "well, I guess I'm doing this now" and try your best to comply;
 that just burns time and makes it slower for me to notice I put it in the wrong
 place. A quick "this doesn't seem related to what we were doing — did you mean
@@ -28,7 +28,7 @@ linear (no fan-out). The rules that keep a stack conflict-free:
 - After a PR in the stack merges, GitHub rebases the PRs above it on the server
   and retargets the next one to `main`. Let it. Then run `gh stack sync --prune`
   to bring the local branches up to date.
-- NEVER `git pull main` + raw `git rebase main` on a stacked branch. The child
+- Do not `git pull main` + raw `git rebase main` on a stacked branch. The child
   still holds the base's original commits, and the squashed base in main does
   not match them. A raw rebase replays them and makes "same lines changed twice"
   conflicts. A manual fix uses `git rebase --onto origin/main <old-base-head-sha>
@@ -40,7 +40,7 @@ linear (no fan-out). The rules that keep a stack conflict-free:
 - `gh stack merge <pr#>` merges that PR and every unmerged PR below it, all or
   nothing, as one merge group in the queue. A PR in the middle of a stack cannot
   merge alone, and bypass works only for the bottom PR.
-- Residual conflicts against OTHER people's PRs that the queue rebased ahead of you
+- Residual conflicts against other people's PRs that the queue rebased ahead of you
   are legitimate and unavoidable; only "child vs its own base" conflicts indicate a
   workflow/tooling mistake.
 
@@ -49,11 +49,23 @@ linear (no fan-out). The rules that keep a stack conflict-free:
 I run many agents in parallel through the `claude agents` list. After every
 handoff (`mattpocock-skills:handoff`), offer to launch each handoff as its own
 standalone background agent: one agent per handoff, each in a new worktree. Do
-not launch them as sub-agents of the current session. Run this from the root
-of the repo that the handoff works in:
+not launch them as sub-agents of the current session.
+
+A background agent works without me. The handoff must carry the decisions of
+this chat, so that the agent asks me only about real open questions. End each
+handoff with these four sections:
+
+- **Decided**: the design and scope choices that this chat made.
+- **Done when**: the observable result. Examples: "the draft PR is open and CI
+  is green", "the sandbox query returns 0 rows".
+- **Verify with**: the exact checks that the agent runs (specs, a sandbox
+  script, a production signal after deploy).
+- **Open decisions**: each question that needs me, or "None".
+
+Run this from the root of the repo that the handoff works in:
 
 ```
-claude --bg -w <kebab-name> "Read the handoff at <full path> and continue that work. Give Evan the state of the world and the options before you build."
+claude --bg -w <kebab-name> "Read the handoff at <full path> and continue that work. For each item in its Open decisions section, give Evan the state of the world and the options, and continue with the work that does not depend on it. Build what the handoff decided without asking. Verify it as the handoff says, and open the draft PR."
 ```
 
 - `-w <name>` creates `.claude/worktrees/<name>` on branch `worktree-<name>`.
@@ -91,7 +103,7 @@ Your bash environment has access to some useful non-default tools:
   - Write a commit message to a file and pass it with `-F <file>`.
   - Make a sandbox script return a small result. Do not pipe its output to
     `tail`.
-- Keep scratch scripts and query files in a temp directory OUTSIDE every
+- Keep scratch scripts and query files in a temp directory outside every
   checkout, never in the working tree or a worktree. These are not files to
   commit, and a worktree can be deleted out from under them.
   - In a background job: `$CLAUDE_JOB_DIR/tmp`.
@@ -106,10 +118,10 @@ Your bash environment has access to some useful non-default tools:
 Do not leave chat-context implementation comments in the code base. Examples
 are things like "// Here we have improved the perf (new!)".
 
-By default, type check your changes before saying you are done. Exception:
-if a PR is already open for the branch, push your changes and let CI run
-the type check instead of running it locally first. Type checking is slow,
-and running it locally and then again in CI doubles the wait.
+Do not type check on this machine (`pnpm ct`, `check-types`, `tsc`). Many
+sessions run at the same time, and their multi-GB tsc processes crash the
+machine. Push, and let CI type check. Cheap local checks are fine: focused
+specs, `oxlint` on a few files, and `check-nest-module`.
 
 After a rebase or a merge brings new base commits into a PR, run the specs
 of each package that the PR changes before you push, even when a PR is
@@ -117,10 +129,9 @@ open. When the base removes or renames a symbol, git merges it into the
 PR's new call sites with no conflict marker, and the specs are the first
 check that sees the break. The type check still goes to CI as above.
 
-When type checking reveals errors (locally or in CI), fix them, even if
-they appear pre-existing or unrelated to the current changes. Do not
-dismiss errors or move on without fixing them. Most cross-package type
-errors are resolved by running `pnpm install && pnpm turbo build`.
+When CI reports type errors, fix them, even if they appear pre-existing or
+unrelated to the current changes. Most cross-package type errors go away
+after `pnpm install && pnpm turbo build`.
 
 When writing classes, if a method has no `self.` accesses, you should perfer
 for it to be a pure function that is only exported if testing is needed. This
@@ -176,13 +187,14 @@ nothing. Use `gh stack submit --auto`, then set the title and the body.
 Ask before you merge, before you mark a PR ready for review, and before
 you push to a branch that someone else created.
 
-When creating git commits or writing pull request descriptions, do not
-include Claude as a co-author and do not add a "Generated with Claude
-Code" attribution.
+The change is done when CI on its PR is green, not when you push. After a
+push, run `gh pr checks <n> --watch --fail-fast` in the background and end
+your turn. When it exits, fix any failure with /fix-ci. A Stop hook
+enforces this in every session that pushed.
 
-Never write a link to a Claude Code session. This applies everywhere you
-write on my behalf: a commit message, a pull request title or body, a
-pull request or issue comment, a Linear ticket, and a document.
+Do not add Claude attribution (co-author, "Generated with Claude Code") or a
+link to a Claude Code session to anything you write for me. This includes
+Linear tickets and documents. Settings and a hook cover commits and PRs.
 
 Commit messages should be prefixed with a t-shirt size in brackets (e.g.,
 "[XS] fix typo in xyz"). This size estimates the cognitive load for the
@@ -247,9 +259,8 @@ whether stylistic feedback I give should be added to that skill — don't wait
 for me to say "add this". Load the skill before drafting or reviewing any doc
 for me.
 
-Never write the word "substrate" or the word "honest" unless the user used it
-in their input first. If one of these words appears in your draft, rewrite the
-sentence with a different word.
+Do not write the word "substrate" or the word "honest" unless I used it first.
+Do not write em dashes. A hook checks both in commits and GitHub text.
 
 When writing documentation or tickets, limit emoji usage. Keep content focused
 on what was asked for.
@@ -260,27 +271,15 @@ terminal renders markdown links as the label only, hiding the URL — raw URLs
 are clickable as-is and easier to copy.
 
 When writing readmes, focus on the *what* and *why* of the project, not the
-*how*. Unless explicitly asked *never* write:
-- hypothetical future work
-- FAQs or common issues
-- roadmaps
-- monitoring details
+*how*. Unless I ask for them, leave out hypothetical future work, FAQs or
+common issues, roadmaps, and monitoring details.
 
-CRITICAL - When writing tickets:
-- Add links to relevant code when possible
-- Keep tickets focused on WHAT needs to be done and WHY, not speculative content
-
-NEVER INCLUDE THESE SECTIONS (unless explicitly requested by the user):
-- NO "Success Criteria" or "Acceptance Criteria" sections
-- NO "Testing Considerations" or "Test Plan" sections
-- NO "Productionization Considerations" sections
-- NO "Future Work" or "Future Considerations" sections
-- NO time estimates or effort estimates
-- NO "Monitoring" or "Observability" sections
-- NO "Rollout Plan" or "Deployment Strategy" sections
-
-If you find yourself writing any of these forbidden sections, STOP and remove them.
-The ticket should describe the work to be done, not how to validate or deploy it.
+When writing tickets, link to the relevant code, and describe what needs to
+be done and why. Leave out speculation. A ticket describes the work, not how
+to validate or deploy it. Unless I ask for them, leave out these sections:
+success or acceptance criteria, testing considerations or a test plan,
+productionization, future work, time or effort estimates, monitoring or
+observability, and a rollout or deployment plan.
 
 ## Dual Goals
 
@@ -330,6 +329,7 @@ something works. Use judgment on depth - you can always go back and read more.
 - **For non-mechanical changes, give me the state of the world and the shape of
   the options before executing.** Lay out the root problem and 2–3 solution
   shapes with a recommendation; let me pick. Don't charge ahead on structure.
+  Skip this step when this chat or your handoff already decided the shape.
 - **Never assume backwards compatibility is a goal.** Do not mark things
   deprecated, keep old and new paths side by side, alias old args, or write
   migration shims on your own initiative — that's how dead code accumulates.

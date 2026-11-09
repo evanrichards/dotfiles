@@ -47,6 +47,10 @@
           {
             "type": "command",
             "command": "python3 ~/.claude/hooks/stack-no-plain-stacked-pr.py"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/commit-and-pr-text-rules.py"
           }
         ]
       }
@@ -61,6 +65,11 @@
           {
             "type": "command",
             "command": "node ~/.claude/hooks/qid-url-must-have-qid-path.js"
+          },
+          {
+            "type": "command",
+            "command": "python3 ~/.claude/hooks/ci-green-before-stop.py",
+            "timeout": 30
           }
         ]
       }
@@ -159,5 +168,10 @@
       "**Org-specific CLIs**: `temporal` (Temporal CLI, `--env prod` for production workflow queries), `ldcli` (LaunchDarkly), `gh stack` (GitHub native stacked PRs, required for stacked branches instead of raw git rebase), `fastmod`, `sg` (ast-grep), `mise`, `chezmoi`, `aws`",
       "**Routine under repo prefix**: read-only sandbox scripting via `./apps/backend/scripts/prod_sandbox.sh --readonly` with scratch scripts kept in `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/` or `$CLAUDE_JOB_DIR/tmp`, outside every checkout"
     ]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
   }
 }
