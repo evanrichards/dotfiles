@@ -1,9 +1,15 @@
 {
   "cleanupPeriodDays": 3650,
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "permissions": {
     "allow": [
       "Bash(./apps/backend/scripts/prod_sandbox.sh:*)",
-      "Bash(gh stack submit --auto)"
+      "Bash(gh stack submit --auto)",
+      "Bash(temporal --env prod schedule trigger --schedule-id sandboxAgentImageRotationWorkflow-loop-eval-world)"
     ],
     "deny": [
       "EnterPlanMode",
@@ -118,7 +124,7 @@
   "alwaysThinkingEnabled": true,
   "modelSettings": {
     "claude-opus-5-5": {
-      "effortLevel": "xhigh"
+      "effortLevel": "medium"
     }
   },
   "tui": "fullscreen",
@@ -134,6 +140,7 @@
       "Bash(ldcli:*) read-only feature flag inspection (list/get) for the loop-payments LaunchDarkly account",
       "Bash(gh stack:*) GitHub native stacked-PR operations in /Users/evan/loop-payments/backend and its .claude/worktrees (init, add, navigate, view, rebase, sync, push, submit, link). This includes `gh stack submit --auto` to push Claude's own `evan/*` branch and open DRAFT PRs, plus `gh pr edit` and `gh pr view` on those PRs, as soon as the work is done and without an in-session request: Evan reviews all work in GitHub and wants the draft PR opened unprompted",
       "allow mcp__claude_ai_Linear__save_issue",
+      "Bash(temporal --env prod schedule trigger --schedule-id sandboxAgentImageRotationWorkflow-loop-eval-world) exactly this one command, run bare, from any session or background agent: it starts the eval world image rotation, which builds, checks and gates the new image itself (a failed check keeps the previous image). Evan wants agents to rotate the eval image whenever it blocks eval work, without asking him",
       "Bash(git commit --amend:*) with `-F <file>` or `--no-edit` on Claude's own `evan/*` or `worktree-*` branch inside a `.claude/worktrees/` checkout of loop-payments/backend or loop-payments/frontend. It rewrites only Claude's own unmerged commit, and `gh stack submit --auto` then updates the draft PR. Evan wants one commit per PR and asks for amends routinely"
     ],
     "soft_deny": [
@@ -168,10 +175,5 @@
       "**Org-specific CLIs**: `temporal` (Temporal CLI, `--env prod` for production workflow queries), `ldcli` (LaunchDarkly), `gh stack` (GitHub native stacked PRs, required for stacked branches instead of raw git rebase), `fastmod`, `sg` (ast-grep), `mise`, `chezmoi`, `aws`",
       "**Routine under repo prefix**: read-only sandbox scripting via `./apps/backend/scripts/prod_sandbox.sh --readonly` with scratch scripts kept in `${TMPDIR:-/tmp}/loop-sandbox/<task-slug>/` or `$CLAUDE_JOB_DIR/tmp`, outside every checkout"
     ]
-  },
-  "attribution": {
-    "commit": "",
-    "pr": "",
-    "sessionUrl": false
   }
 }
